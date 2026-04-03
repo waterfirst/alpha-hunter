@@ -1,0 +1,366 @@
+---
+title: "ALPHA HUNTER Daily Intelligence Report"
+author: "Alpha Hunter AI"
+date: today
+format:
+  html:
+    theme: darkly
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    fig-width: 10
+    fig-height: 6
+    self-contained: true
+    css: |
+      body { font-family: 'NanumSquare', sans-serif; }
+lang: ko
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("/usr/lib/R/library", .libPaths()))
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(DT)
+library(scales)
+
+# 테마 설정
+theme_alpha <- function() {
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.background = element_rect(fill = "#1a1a2e", color = NA),
+    panel.background = element_rect(fill = "#16213e", color = NA),
+    panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+    panel.grid.minor = element_blank(),
+    text = element_text(color = "#e0e0e0"),
+    plot.title = element_text(face = "bold", size = 16, color = "#64b5f6"),
+    plot.subtitle = element_text(size = 11, color = "#90a4ae"),
+    axis.text = element_text(color = "#b0b0b0"),
+    axis.title = element_text(color = "#90a4ae"),
+    legend.background = element_rect(fill = "#1a1a2e", color = NA),
+    legend.text = element_text(color = "#e0e0e0"),
+    legend.title = element_text(color = "#64b5f6")
+  )
+}
+theme_set(theme_alpha())
+```
+
+# 시장 개요 {.tabset}
+
+## 주요 지수 현황
+
+```{r}
+#| label: fig-market-indices
+#| fig-cap: "주요 지수 Q1 2026 수익률"
+
+indices <- data.frame(
+  Index = c("S&P 500", "Nasdaq", "KOSPI", "VIX", "Brent Oil", "10Y Treasury"),
+  Level = c("5,528", "21,796", "3,180", "24.5", "$118", "4.25%"),
+  Q1_Return = c(-4.6, -7.0, 12.5, 45.0, 96.7, -3.2),
+  Category = c("US Equity", "US Equity", "KR Equity", "Volatility", "Commodity", "Fixed Income")
+)
+
+colors <- c("US Equity" = "#4fc3f7", "KR Equity" = "#81c784",
+            "Volatility" = "#ff8a65", "Commodity" = "#ffd54f", "Fixed Income" = "#ce93d8")
+
+p <- ggplot(indices, aes(x = reorder(Index, Q1_Return), y = Q1_Return, fill = Category)) +
+  geom_col(width = 0.7, alpha = 0.85) +
+  geom_text(aes(label = paste0(ifelse(Q1_Return > 0, "+", ""), Q1_Return, "%")),
+            hjust = ifelse(indices$Q1_Return > 0, -0.1, 1.1),
+            color = "white", size = 4, fontface = "bold") +
+  coord_flip() +
+  scale_fill_manual(values = colors) +
+  labs(title = "Q1 2026 Market Performance",
+       subtitle = "에너지 폭등, 기술주 조정, 한국 강세",
+       x = NULL, y = "Q1 Return (%)") +
+  scale_y_continuous(limits = c(-20, 110))
+
+ggplotly(p)
+```
+
+::: {.callout-warning}
+## Q1 2026 핵심 이슈
+- **이란-이스라엘 전쟁** → 호르무즈 해협 봉쇄 → 브렌트유 $118
+- **S&P 500 -4.6%** — 2022 Q3 이후 최악의 분기
+- **에너지 섹터** 단독 강세 (XLE +37.9%)
+- **Fed** 금리 동결 (3.50-3.75%), 연내 1회 인하 전망
+:::
+
+## 섹터 성과 랭킹
+
+```{r}
+#| label: fig-sector-rotation
+#| fig-cap: "Q1 2026 섹터 로테이션 히트맵"
+
+sectors <- data.frame(
+  Sector = c("Energy", "Materials", "Utilities", "Staples", "Healthcare",
+             "Financials", "Industrials", "Real Estate", "Comm Svc", "Discretionary", "Tech"),
+  Q1_Return = c(37.9, 15.2, 10.0, 5.5, 2.1, -4.0, -2.5, -5.2, -6.8, -8.5, -12.3),
+  Signal = c("STRONG BUY", "BUY", "BUY", "HOLD", "HOLD",
+             "HOLD", "HOLD", "SELL", "SELL", "SELL", "WATCH")
+)
+
+sectors$color <- ifelse(sectors$Q1_Return > 0, "#4caf50", "#f44336")
+
+p2 <- ggplot(sectors, aes(x = reorder(Sector, Q1_Return), y = Q1_Return, fill = Q1_Return)) +
+  geom_col(width = 0.75) +
+  geom_text(aes(label = paste0(ifelse(Q1_Return > 0, "+", ""), Q1_Return, "%")),
+            hjust = ifelse(sectors$Q1_Return > 0, -0.15, 1.15),
+            color = "white", size = 3.8, fontface = "bold") +
+  coord_flip() +
+  scale_fill_gradient2(low = "#e53935", mid = "#37474f", high = "#43a047", midpoint = 0) +
+  labs(title = "Sector Performance — Q1 2026",
+       subtitle = "Great Defensive Pivot: Growth → Value/Energy 대전환",
+       x = NULL, y = "Q1 Return (%)") +
+  theme(legend.position = "none")
+
+ggplotly(p2)
+```
+
+# Wall Street TOP 10 Picks
+
+```{r}
+#| label: tbl-wallstreet-top10
+
+ws_picks <- data.frame(
+  Rank = 1:10,
+  Ticker = c("AVGO", "CEG", "AMZN", "GOOGL", "C", "GEV", "GLNG", "NOW", "SPOT", "MRK"),
+  Company = c("Broadcom", "Constellation Energy", "Amazon", "Alphabet",
+              "Citigroup", "GE Vernova", "Golar LNG", "ServiceNow", "Spotify", "Merck"),
+  Firm = c("Goldman/JPM", "BofA", "BofA/MS", "JPMorgan",
+           "Morgan Stanley", "JPMorgan", "Goldman", "Goldman", "BofA", "BofA"),
+  Sector = c("Semiconductor", "AI Power", "Cloud/E-comm", "AI/Search",
+             "Financials", "AI Power", "Energy/LNG", "Enterprise SW", "Media", "Pharma"),
+  Rating = c("Strong Buy", "Strong Buy", "Buy", "Buy",
+             "Top Pick", "Buy", "Conviction", "Conviction", "Buy", "Buy"),
+  Upside = c("40-100%", "+35%", "+25%", "+30%",
+             "+38.6%", "+50%", "+41%", "+40%", "+20%", "+18%"),
+  Thesis = c("AI 반도체 네트워크 핵심, $55-60B AI 매출",
+             "원자력 기반 AI 데이터센터 전력",
+             "AWS 29/32% 성장, 클라우드+리테일",
+             "AI/검색 지배력, 광고 회복",
+             "은행주 Top Pick, 구조조정 효과",
+             "AI 인프라 전력 수요 핵심 수혜",
+             "LNG 운송 수요 폭증, 호르무즈 수혜",
+             "엔터프라이즈 AI 자동화 선두",
+             "구독자 성장 + 수익성 개선",
+             "종양학 파이프라인 + 방어적 밸류")
+)
+
+datatable(ws_picks,
+          options = list(pageLength = 10, scrollX = TRUE, dom = 'tip',
+                         columnDefs = list(list(width = '150px', targets = 7))),
+          class = 'cell-border stripe',
+          caption = "Wall Street 주요 증권사 Top Picks (2026년 4월)")
+```
+
+::: {.callout-note}
+## 투자 테마 변화
+**2023-2025:** GPU를 사라 (NVIDIA, AMD)
+**2026:** **전력을 사라** — AI 데이터센터 전력 수요 → GE Vernova, Constellation Energy
+**2026:** **네트워크를 사라** — GPU→네트워크 백본 → Broadcom, Marvell
+:::
+
+# Alpha Hunter ETF Portfolio (1억원)
+
+## 포트폴리오 배분
+
+```{r}
+#| label: fig-etf-allocation
+#| fig-cap: "Alpha Hunter ETF 포트폴리오 배분"
+
+alloc <- data.frame(
+  ETF = c("VOO", "SOXX", "SCHD", "TIGER반도체\nTOP10", "KODEX200",
+          "XLE", "BOTZ", "GEV", "CEG", "TIGER\n2차전지", "Cash"),
+  Category = c("Core", "Core", "Core", "Core", "Core",
+               "Core", "Satellite", "Satellite", "Satellite", "Satellite", "Cash"),
+  Pct = c(10, 10, 10, 10, 10, 10, 7, 3.5, 3.5, 6, 10),
+  Amount_M = c(10, 10, 10, 10, 10, 10, 7, 3.5, 3.5, 6, 10),
+  Color = c("#4fc3f7", "#7e57c2", "#66bb6a", "#ef5350", "#ffa726",
+            "#26a69a", "#42a5f5", "#ab47bc", "#ec407a", "#78909c", "#455a64")
+)
+
+# 도넛 차트
+alloc$ymax <- cumsum(alloc$Pct)
+alloc$ymin <- c(0, head(alloc$ymax, n=-1))
+alloc$labelPosition <- (alloc$ymax + alloc$ymin) / 2
+
+p3 <- ggplot(alloc, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2.5, fill=ETF)) +
+  geom_rect(alpha = 0.85) +
+  geom_text(aes(x = 3.25, y = labelPosition, label = paste0(ETF, "\n", Pct, "%")),
+            size = 2.8, color = "white", fontface = "bold") +
+  coord_polar(theta = "y") +
+  xlim(c(1, 4.5)) +
+  annotate("text", x = 1, y = 0, label = "1억원\nETF Portfolio",
+           color = "#64b5f6", size = 5, fontface = "bold") +
+  scale_fill_manual(values = setNames(alloc$Color, alloc$ETF)) +
+  theme_void() +
+  theme(
+    plot.background = element_rect(fill = "#1a1a2e", color = NA),
+    legend.position = "none",
+    plot.title = element_text(color = "#64b5f6", face = "bold", size = 16, hjust = 0.5)
+  ) +
+  labs(title = "Alpha Hunter ETF Allocation")
+
+p3
+```
+
+## ETF 상세 현황
+
+```{r}
+#| label: tbl-etf-details
+
+etf_details <- data.frame(
+  Category = c("Core", "Core", "Core", "Core", "Core", "Core",
+               "Satellite", "Satellite", "Satellite", "Satellite"),
+  Ticker = c("VOO", "SOXX", "SCHD", "TIGER반도체TOP10", "KODEX200", "XLE",
+             "BOTZ", "GEV", "CEG", "TIGER 2차전지"),
+  Allocation = c("10%", "10%", "10%", "10%", "10%", "10%",
+                 "7%", "3.5%", "3.5%", "6%"),
+  Amount = c("1,000만", "1,000만", "1,000만", "1,000만", "1,000만", "1,000만",
+             "700만", "350만", "350만", "600만"),
+  EntryPrice = c("$510", "$339", "$30.51", "33,210원", "81,225원", "$105",
+                 "$38", "$320", "$240", "23,950원"),
+  YTD = c("-4.4%", "+9.2%", "+12.1%", "+27%", "+137%", "+37.9%",
+          "+14.8%", "+22%", "+18%", "+13.2%"),
+  Thesis = c("S&P500 핵심, 조정후 진입", "반도체 AI/HBM 구조적 성장",
+             "배당3.4% 방어주, YTD최강", "삼성+SK하이닉스 75%",
+             "코리아 밸류업, KOSPI5000", "에너지 Q1 최강섹터",
+             "글로벌 로보틱스/AI", "AI데이터센터 전력핵심",
+             "원자력 AI인프라, BofA픽", "2차전지 회복, ESS수요")
+)
+
+datatable(etf_details,
+          options = list(pageLength = 10, scrollX = TRUE, dom = 'tip'),
+          class = 'cell-border stripe',
+          caption = "Alpha Hunter ETF Portfolio — 진입 현황 (2026-04-02)")
+```
+
+## 전략 비교: Core vs Satellite
+
+```{r}
+#| label: fig-strategy-compare
+#| fig-cap: "Core(안정) vs Satellite(공격) 전략 비교"
+
+strategy <- data.frame(
+  ETF = c("VOO", "SOXX", "SCHD", "TIGER반도체", "KODEX200", "XLE",
+          "BOTZ", "GEV", "CEG", "TIGER2차전지"),
+  YTD = c(-4.4, 9.2, 12.1, 27, 15, 37.9, 14.8, 22, 18, 13.2),
+  Risk = c(12, 25, 10, 30, 18, 28, 22, 35, 32, 26),
+  Type = c(rep("Core (60%)", 6), rep("Satellite (30%)", 4)),
+  Alloc = c(10, 10, 10, 10, 10, 10, 7, 3.5, 3.5, 6)
+)
+
+p4 <- ggplot(strategy, aes(x = Risk, y = YTD, size = Alloc, color = Type, label = ETF)) +
+  geom_point(alpha = 0.8) +
+  geom_text(vjust = -1.2, size = 3.5, color = "white", fontface = "bold") +
+  scale_size_continuous(range = c(4, 12), guide = "none") +
+  scale_color_manual(values = c("Core (60%)" = "#4fc3f7", "Satellite (30%)" = "#ff7043")) +
+  labs(title = "Risk vs Return — ETF Portfolio",
+       subtitle = "버블 크기 = 배분 비중",
+       x = "Risk (Volatility)", y = "YTD Return (%)", color = "Strategy") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "#555555") +
+  annotate("text", x = 8, y = -2, label = "손실 구간", color = "#ef5350", size = 3)
+
+ggplotly(p4)
+```
+
+# 개별종목 포트폴리오 ($100K)
+
+## AROC & HPSP 현황
+
+```{r}
+#| label: fig-stock-portfolio
+#| fig-cap: "Alpha Hunter 개별종목 포트폴리오"
+
+stocks <- data.frame(
+  Ticker = c("AROC", "HPSP", "Cash"),
+  Name = c("Archrock Inc.", "HPSP Co. (403870)", "현금"),
+  Allocation = c(50.0, 36.0, 14.0),
+  Invested = c(49980, 36000, 14020),
+  Entry = c("$35.70", "50,400원", "-"),
+  Target = c("$39 (+9.2%)", "70,000원 (+38.9%)", "-"),
+  StopLoss = c("$30 (-16%)", "40,000원 (-20.6%)", "-"),
+  Consensus = c("Strong Buy 8/0/0", "Strong Buy 8/1/0", "-")
+)
+
+colors_stock <- c("#43a047", "#7e57c2", "#455a64")
+
+p5 <- ggplot(stocks, aes(x = "", y = Allocation, fill = Ticker)) +
+  geom_col(width = 1) +
+  coord_polar("y", start = 0) +
+  scale_fill_manual(values = setNames(colors_stock, stocks$Ticker)) +
+  geom_text(aes(label = paste0(Ticker, "\n", Allocation, "%")),
+            position = position_stack(vjust = 0.5), color = "white",
+            fontface = "bold", size = 4.5) +
+  theme_void() +
+  theme(
+    plot.background = element_rect(fill = "#1a1a2e", color = NA),
+    legend.position = "none",
+    plot.title = element_text(color = "#64b5f6", face = "bold", size = 16, hjust = 0.5)
+  ) +
+  labs(title = "Individual Stock Portfolio ($100K)")
+
+p5
+```
+
+```{r}
+#| label: tbl-stock-fundamentals
+
+fund <- data.frame(
+  Metric = c("Market Cap", "P/E (TTM)", "Forward P/E", "EPS", "배당수익률",
+             "매출 성장 YoY", "영업이익률", "부채", "애널리스트", "핵심 촉매"),
+  AROC = c("$6.2B", "19.5x", "18.9x", "$1.83", "2.4%",
+           "+28.7%", "~35%", "$2.4B", "Strong Buy 8/0/0", "LNG수출 확대+배당인상"),
+  HPSP = c("3.9T KRW", "48.0x", "40.0x", "894 KRW", "1.0%",
+           "+30%", "51.8%", "거의 0 (순현금170B)", "Strong Buy 8/1/0", "GAA/HBM+5/14실적")
+)
+
+datatable(fund,
+          options = list(pageLength = 10, dom = 't', scrollX = TRUE),
+          class = 'cell-border stripe',
+          caption = "AROC vs HPSP 펀더멘탈 비교")
+```
+
+# Trading Rules & Risk Management
+
+::: {.panel-tabset}
+
+## 포지션 규칙
+| Rule | 내용 |
+|------|------|
+| Position Sizing | ETF: 종목당 최대 10%, 개별주: 최대 50% |
+| Stop Loss | 진입가 -15~20% 하회 시 전량 매도 |
+| Take Profit | 목표가 도달 시 50% 분할 매도, 나머지 트레일링 |
+| Cash Buffer | 항상 최소 10% 현금 유지 |
+| Rebalancing | 주 1회 가격체크, 월 1회 포지션 재검토 |
+
+## 리스크 관리
+| Rule | 내용 |
+|------|------|
+| Portfolio Stop | 전체 -10% 시 전 포지션 50% 축소 |
+| Sector Limit | 단일 섹터 30% 초과 금지 |
+| Earnings Guard | 실적 발표 전 포지션 축소 검토 |
+| Correlation | 상관관계 높은 ETF 중복 투자 주의 |
+| New Entry | Alpha Hunter 시그널 발생 시만 신규 진입 |
+
+## 주요 일정
+| 날짜 | 이벤트 | 영향 |
+|------|--------|------|
+| 2026-04-10 | CPI 발표 | 인플레이션 방향성 |
+| 2026-04-25 | Fed 회의 | 금리 결정 |
+| 2026-05-14 | HPSP FY2025 실적 | 개별주 핵심 |
+| 2026-05 | Fed 의장 교체 | Kevin Warsh 취임 |
+:::
+
+# Disclaimer
+
+::: {.callout-important}
+## 면책 조항
+이 보고서는 **가상 투자 시뮬레이션** 목적으로 작성되었습니다.
+실제 투자 권유가 아니며, 모든 투자 결정은 개인의 판단과 책임 하에 이루어져야 합니다.
+**Alpha Hunter AI** — Powered by Claude Code
+:::
+```
+
