@@ -1,0 +1,298 @@
+---
+title: "ALPHA HUNTER Weekly Report"
+subtitle: "2026년 4월 1주차 (4/2~4/5)"
+author: "Alpha Hunter AI"
+date: "2026-04-05"
+format:
+  html:
+    theme: darkly
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    fig-width: 10
+    fig-height: 6
+    self-contained: true
+lang: ko
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("/usr/lib/R/library", .libPaths()))
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(DT)
+
+theme_alpha <- function() {
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.background = element_rect(fill = "#1a1a2e", color = NA),
+    panel.background = element_rect(fill = "#16213e", color = NA),
+    panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+    panel.grid.minor = element_blank(),
+    text = element_text(color = "#e0e0e0"),
+    plot.title = element_text(face = "bold", size = 16, color = "#64b5f6"),
+    plot.subtitle = element_text(size = 11, color = "#90a4ae"),
+    axis.text = element_text(color = "#b0b0b0"),
+    legend.background = element_rect(fill = "#1a1a2e", color = NA),
+    legend.text = element_text(color = "#e0e0e0")
+  )
+}
+theme_set(theme_alpha())
+```
+
+# 시장 현황 {.tabset}
+
+## 주요 지수
+
+```{r}
+indices <- data.frame(
+  Index = c("S&P 500", "Nasdaq", "KOSPI", "KOSDAQ", "VIX", "Brent Oil", "USD/KRW", "10Y UST"),
+  Level = c(5528, 21796, 5377, 1042, 24.5, 105.4, 1398, 4.25),
+  Q1_Return = c(-4.6, -7.0, 20.0, -3.0, 45.0, 96.7, -2.1, -3.2),
+  Week_Change = c(-0.42, 0.31, 2.74, -1.23, -2.85, 3.24, -0.15, 0.05),
+  Category = c("US", "US", "KR", "KR", "Vol", "Commodity", "FX", "Bond")
+)
+
+p <- ggplot(indices, aes(x = reorder(Index, Q1_Return), y = Q1_Return, fill = Category)) +
+  geom_col(width = 0.7, alpha = 0.85) +
+  geom_text(aes(label = paste0(ifelse(Q1_Return > 0, "+", ""), Q1_Return, "%")),
+            hjust = ifelse(indices$Q1_Return > 0, -0.1, 1.1),
+            color = "white", size = 4, fontface = "bold") +
+  coord_flip() +
+  scale_fill_manual(values = c("US"="#4fc3f7", "KR"="#81c784", "Vol"="#ff8a65",
+                                "Commodity"="#ffd54f", "FX"="#ce93d8", "Bond"="#90a4ae")) +
+  labs(title = "Q1 2026 + 이번주 시장 성과", subtitle = "KOSPI +2.74% 반등, 브렌트유 $105 재상승", x = NULL, y = "Q1 Return (%)")
+ggplotly(p)
+```
+
+::: {.callout-important}
+## 이번주 핵심 이벤트
+- **골디락스 고용 (4/3):** NFP 178K (예상 2.7x), 임금 +0.2% (예상↓), 실업률 4.3%
+- **트럼프 이란 연설 (4/1):** 2-3주 내 전쟁 종료 시사, 브렌트유 +4%
+- **아르테미스 II (4/2):** 53년만에 인간 달 비행 출발
+- **KOSPI 5,377 (4/4):** +2.74% 반등, 5,300선 회복
+:::
+
+## 섹터 로테이션
+
+```{r}
+sectors <- data.frame(
+  Sector = c("Energy", "Materials", "Utilities", "Staples", "Healthcare",
+             "Industrials", "Financials", "Real Estate", "Comm Svc", "Discretionary", "Tech"),
+  Q1_Return = c(37.9, 15.2, 10.0, 5.5, 2.1, -2.5, -4.0, -5.2, -6.8, -8.5, -12.3),
+  Theme = c("이란전쟁", "원자재", "AI전력", "방어주", "방어주",
+            "혼조", "금리", "금리", "광고둔화", "소비약화", "AI의심")
+)
+
+p2 <- ggplot(sectors, aes(x = reorder(Sector, Q1_Return), y = Q1_Return, fill = Q1_Return)) +
+  geom_col(width = 0.75) +
+  geom_text(aes(label = paste0(ifelse(Q1_Return > 0, "+", ""), Q1_Return, "%")),
+            hjust = ifelse(sectors$Q1_Return > 0, -0.15, 1.15),
+            color = "white", size = 3.8, fontface = "bold") +
+  coord_flip() +
+  scale_fill_gradient2(low = "#e53935", mid = "#37474f", high = "#43a047", midpoint = 0) +
+  labs(title = "Q1 2026 섹터 성과", subtitle = "Energy +38% vs Tech -12% — Great Defensive Pivot", x = NULL, y = "Return (%)") +
+  theme(legend.position = "none")
+ggplotly(p2)
+```
+
+## 골디락스 고용 분석
+
+```{r}
+employ <- data.frame(
+  Indicator = c("NFP (비농업고용)", "평균 시간당 임금 MoM", "실업률"),
+  Actual = c("178K", "+0.2%", "4.3%"),
+  Expected = c("65K", "+0.3%", "4.4%"),
+  Signal = c("경제 견조 (2.7x beat)", "인플레 압력 감소", "고용시장 안정"),
+  Impact = c("성장주 호재", "Fed 인하 기대↑", "경기침체 배제")
+)
+
+datatable(employ, options = list(dom = 't', scrollX = TRUE),
+          class = 'cell-border stripe',
+          caption = "3월 고용 지표 — 골디락스 시나리오")
+```
+
+# Wall Street TOP 10
+
+```{r}
+ws <- data.frame(
+  Rank = 1:10,
+  Ticker = c("AVGO", "CEG", "AMZN", "GOOGL", "C", "GEV", "GLNG", "NOW", "SPOT", "MRK"),
+  Company = c("Broadcom", "Constellation Energy", "Amazon", "Alphabet",
+              "Citigroup", "GE Vernova", "Golar LNG", "ServiceNow", "Spotify", "Merck"),
+  Firm = c("Goldman/JPM", "BofA", "BofA/MS", "JPMorgan",
+           "Morgan Stanley", "JPMorgan", "Goldman", "Goldman", "BofA", "BofA"),
+  Sector = c("Semiconductor", "AI Power", "Cloud", "AI/Search",
+             "Financials", "AI Power", "Energy/LNG", "Enterprise SW", "Media", "Pharma"),
+  Upside = c("40-100%", "+35%", "+25%", "+30%", "+38.6%", "+50%", "+41%", "+40%", "+20%", "+18%")
+)
+
+datatable(ws, options = list(dom = 'tip', scrollX = TRUE, pageLength = 10),
+          class = 'cell-border stripe', caption = "Wall Street 주요 증권사 Top Picks")
+```
+
+::: {.callout-note}
+## 투자 테마 전환
+**2023-25:** GPU를 사라 (NVDA) → **2026:** 전력을 사라 (GEV, CEG) + 네트워크를 사라 (AVGO)
+:::
+
+# Alpha Hunter 포트폴리오
+
+## 개별종목 ($100K)
+
+```{r}
+stocks <- data.frame(
+  Ticker = c("AROC", "HPSP (403870)"),
+  Sector = c("Energy/Gas Compression", "Semiconductor Equipment"),
+  Entry = c("$35.70", "50,400 KRW"),
+  Target = c("$39.00 (+9.2%)", "70,000 (+38.9%)"),
+  StopLoss = c("$30.00 (-16%)", "40,000 (-20.6%)"),
+  Invested = c("$49,980", "$36,000"),
+  Consensus = c("Strong Buy 8/0/0", "Strong Buy 8/1/0"),
+  Catalyst = c("LNG수출확대, 배당+16%, Q4 EPS 77%beat", "GAA램프, HBM채택, 5/14실적, HPO신제품")
+)
+
+datatable(stocks, options = list(dom = 't', scrollX = TRUE),
+          class = 'cell-border stripe', caption = "개별종목 포트폴리오 ($100K 가상투자)")
+```
+
+## ETF 포트폴리오 (1억원)
+
+```{r}
+etf <- data.frame(
+  Type = c(rep("Core", 6), rep("Satellite", 4), "Cash"),
+  Ticker = c("VOO", "SOXX", "SCHD", "TIGER반도체TOP10", "KODEX200", "XLE",
+             "BOTZ", "GEV", "CEG", "TIGER 2차전지", "CASH"),
+  Allocation = c(10, 10, 10, 10, 10, 10, 7, 3.5, 3.5, 6, 10),
+  YTD = c(-4.4, 9.2, 12.1, 27, 15, 37.9, 14.8, 22, 18, 13.2, 0),
+  Thesis = c("S&P500 코어, 골디락스 반등기대", "반도체 AI/HBM 구조적성장", "배당3.4% 방어주",
+             "삼성+SK하이닉스 75%", "코리아밸류업 KOSPI5000", "에너지 Q1최강",
+             "글로벌 로보틱스AI", "AI데이터센터 전력", "원자력 AI인프라",
+             "2차전지 ESS수요 회복", "저점매수 실탄")
+)
+
+# ETF 성과 바 차트
+etf_bar <- etf %>% filter(Ticker != "CASH") %>% arrange(desc(YTD))
+etf_bar$Ticker <- factor(etf_bar$Ticker, levels = etf_bar$Ticker)
+
+p3 <- ggplot(etf_bar, aes(x = Ticker, y = YTD, fill = Type)) +
+  geom_col(width = 0.7, alpha = 0.85) +
+  geom_text(aes(label = paste0("+", YTD, "%")), vjust = -0.5, color = "white", size = 3.5) +
+  scale_fill_manual(values = c("Core" = "#4fc3f7", "Satellite" = "#ff7043")) +
+  labs(title = "ETF Portfolio YTD Performance", x = NULL, y = "YTD (%)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggplotly(p3)
+```
+
+```{r}
+datatable(etf, options = list(dom = 'tip', scrollX = TRUE, pageLength = 11),
+          class = 'cell-border stripe', caption = "ETF 포트폴리오 상세")
+```
+
+## 실제 연금 적립식 투자 (신규!)
+
+```{r}
+pension_dc <- data.frame(
+  Account = rep("퇴직연금 DC", 5),
+  Day = rep("목요일 15:00", 5),
+  ETF = c("TIGER 반도체TOP10", "ACE KRX금현물", "TIGER 코리아원자력", "KoAct 코스닥액티브", "KODEX 200"),
+  Weekly = c("50만", "20만", "50만", "20만", "100만"),
+  Comment = c("AI/HBM 핵심", "위기 헤지", "AI전력 한국판(CEG)", "중소형 성장", "코어 DCA")
+)
+
+pension_ira <- data.frame(
+  Account = rep("연금저축 CMA", 4),
+  Day = rep("화요일", 4),
+  ETF = c("KODEX 미국S&P500", "KODEX 증권", "KODEX 미국AI전력핵심인프라", "ACE 구글밸류체인액티브"),
+  Weekly = c("100만", "50만", "50만", "50만"),
+  Comment = c("미국 코어", "금리인하 베팅 (주의)", "GEV/CEG 계열", "빅테크 역발상")
+)
+
+pension_all <- rbind(pension_dc, pension_ira)
+
+datatable(pension_all, options = list(dom = 'tip', scrollX = TRUE, pageLength = 9),
+          class = 'cell-border stripe',
+          caption = "실제 연금 적립식 투자 — 월 약 2,000만원 (4월 둘째주 시작)")
+```
+
+::: {.callout-warning}
+## 주의 포지션
+**KODEX 증권 (50만/주)** — 금리 인하 전제. 이란전쟁 지속 시 인하 지연 가능. 가장 먼저 재검토 대상.
+:::
+
+# Pending Strategy
+
+```{r}
+strategy <- data.frame(
+  Item = c("Trigger", "Timeframe", "Action", "Risk", "Watch"),
+  Content = c("이란전쟁 휴전/종료 시그널",
+              "2-3주 내 (4월 중순~말)",
+              "현금 966만원 + $14,020 → VOO/SOXX 추가 매수",
+              "트럼프 발언 신뢰도 낮음. 전쟁 장기화 시 현금 유지",
+              "XLE 부분 익절 (전쟁 종료 시 에너지 조정)")
+)
+
+datatable(strategy, options = list(dom = 't'), colnames = c("항목", "내용"),
+          class = 'cell-border stripe', caption = "대기 전략 — 더블 촉매 (골디락스 + 이란 휴전)")
+```
+
+# 역발상 투자 기회
+
+```{r}
+contrarian <- data.frame(
+  Priority = c("1순위", "2순위", "3순위", "4순위"),
+  Target = c("Microsoft (MSFT)", "부동산 ETF (VNQ)", "BDC (BIZD)", "Campbell's (CPB)"),
+  Q1_Drop = c("-23.3%", "-5.2%", "NAV 이하", "FV대비 -61%"),
+  Upside = c("+20%+", "Fed인하시 급반등", "배당 10%+", "+46.6%"),
+  Thesis = c("2008 이후 최악분기. Azure/Office 건재. 반등 시 최강 후보",
+             "금리 민감 최대 하락. Fed 인하 = 가장 직접적 수혜 섹터",
+             "NAV 이하 거래, 고배당 받으며 대기. 과매도 극심",
+             "Morningstar 최고 저평가 1위. 식품 경기방어주")
+)
+
+datatable(contrarian, options = list(dom = 't', scrollX = TRUE),
+          class = 'cell-border stripe', caption = "붕괴 수준별 역발상 기회")
+```
+
+# 주요 일정
+
+```{r}
+calendar <- data.frame(
+  Date = c("4/10", "4/21", "4/24", "4/25", "5/14", "5월", "5월말", "6/4", "11/19"),
+  Event = c("CPI 발표", "Palisades 방화 재판 시작", "운전면허 갱신 (용인 서부경찰서)",
+            "Fed 회의", "HPSP FY2025 실적 발표", "Fed 의장 교체 (Warsh)",
+            "렛유인 강의 녹화 제출", "6월 모의평가 (태림)", "2027 수능"),
+  Impact = c("인플레 방향성", "캘리포니아 산불 관련", "18시 전 방문",
+             "금리 결정", "개별주 핵심 촉매", "통화정책 방향",
+             "이희근 프로와 공동", "재수 결정 기준점", "태림 진로 관련")
+)
+
+datatable(calendar, options = list(dom = 't', scrollX = TRUE, pageLength = 10),
+          class = 'cell-border stripe', caption = "향후 주요 일정")
+```
+
+# Knowledge Base 현황
+
+```{r}
+kb <- data.frame(
+  Category = c("Raw Documents", "Wiki Pages", "Skills", "Search Index", "Total Words"),
+  Count = c(16, 4, 3, 24, 3233),
+  Description = c("원본 리서치 자료", "LLM 자동 유지 위키", "자동 워크플로우", "SQLite FTS5 문서", "누적 단어 수")
+)
+
+datatable(kb, options = list(dom = 't'),
+          class = 'cell-border stripe', caption = "Karpathy식 Knowledge Base (24개 인덱싱)")
+```
+
+::: {.callout-tip}
+## 이번주 하이라이트
+"입자설에서 파동설로" 한 줄의 직관 → 사설 → 영어 학술논문 → PhilSci-Archive 투고. 2시간 만에.
+[브런치 글: 클로드 어디까지 써 봤니?](https://brunch.co.kr/@waterfirst/198)
+:::
+
+---
+
+*ALPHA HUNTER | Powered by Claude Code AI | Virtual Portfolio — Not Financial Advice*
+
+*2026-04-05*
