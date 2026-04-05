@@ -1,0 +1,413 @@
+---
+title: "ALPHA HUNTER 주간 종합 보고서"
+subtitle: "미국 · 한국 · 유럽 | 2026년 4월 1주차"
+author: "Alpha Hunter AI"
+date: "2026-04-05"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    fig-width: 10
+    fig-height: 6
+    self-contained: true
+    mainfont: "Pretendard, system-ui, sans-serif"
+lang: ko
+---
+
+```{r setup, include=FALSE}
+.libPaths(c("/usr/lib/R/library", .libPaths()))
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo = FALSE)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(DT)
+
+theme_alpha <- function() {
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, color = "#2c3e50"),
+    plot.subtitle = element_text(size = 11, color = "#7f8c8d"),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom"
+  )
+}
+theme_set(theme_alpha())
+```
+
+# Executive Summary {.unnumbered}
+
+::: {.callout-important}
+## 이번주 핵심 판단: 현금 유지
+
+- **이란전쟁 Day 37**: 에스컬레이션 지속. F-15 2대, C-130 2대 격추. 휴전 협상 결렬.
+- **호르무즈 해협**: 일 2~12대 통과 (정상 대비 극소). 정상화 시그널 없음.
+- **골디락스 고용**: NFP 178K (예상 2.7x), 임금 +0.2% ↓. 경제는 건조하나 전쟁이 상쇄.
+- **적립식 투자**: 보류. 재개 조건 — 호르무즈 50척+/일, 유가 $90↓, VIX 20↓.
+:::
+
+# 글로벌 시장 현황
+
+## 주요 지수 비교
+
+```{r}
+#| label: fig-global-indices
+#| fig-cap: "글로벌 지수 Q1 2026 성과 비교"
+
+indices <- data.frame(
+  Index = c("S&P 500", "Nasdaq", "KOSPI", "KOSDAQ", "STOXX 600", "DAX", "FTSE 100",
+            "Brent Oil", "Gold", "VIX"),
+  Region = c("US", "US", "KR", "KR", "EU", "EU", "EU", "Commodity", "Commodity", "Vol"),
+  Q1_Return = c(-4.6, -7.0, 20.0, -3.0, 10.8, 12.5, 8.2, 96.7, 18.5, 45.0),
+  Current = c(6583, 21796, 5377, 1042, 597, 22500, 8600, 109, 2280, 26.8)
+)
+
+p <- ggplot(indices, aes(x = reorder(Index, Q1_Return), y = Q1_Return, fill = Region)) +
+  geom_col(width = 0.7, alpha = 0.85) +
+  geom_text(aes(label = paste0(ifelse(Q1_Return > 0, "+", ""), Q1_Return, "%")),
+            hjust = ifelse(indices$Q1_Return > 0, -0.1, 1.1), size = 3.8, fontface = "bold") +
+  coord_flip() +
+  scale_fill_manual(values = c("US"="#3498db", "KR"="#2ecc71", "EU"="#9b59b6",
+                                "Commodity"="#f39c12", "Vol"="#e74c3c")) +
+  labs(title = "Q1 2026 글로벌 지수 성과", x = NULL, y = "Return (%)") +
+  scale_y_continuous(limits = c(-15, 110))
+ggplotly(p)
+```
+
+## 호르무즈 해협 모니터링 (핵심 선행지표)
+
+```{r}
+#| label: fig-hormuz
+#| fig-cap: "호르무즈 해협 일일 선박 통과량"
+
+hormuz <- data.frame(
+  Date = as.Date(c("2026-02-28", "2026-03-07", "2026-03-14", "2026-03-21",
+                   "2026-03-28", "2026-04-02", "2026-04-03")),
+  Ships = c(0, 3, 5, 8, 6, 10, 2),
+  Status = c("봉쇄", "극소", "극소", "극소", "극소", "일시증가", "재감소")
+)
+
+p_h <- ggplot(hormuz, aes(x = Date, y = Ships)) +
+  geom_area(fill = "#3498db", alpha = 0.2) +
+  geom_line(color = "#3498db", linewidth = 1.5) +
+  geom_point(color = "#2c3e50", size = 3) +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "#e74c3c", linewidth = 0.8) +
+  annotate("text", x = as.Date("2026-03-10"), y = 55, label = "적립 재개 기준선 (50척)",
+           color = "#e74c3c", size = 3.5) +
+  geom_hline(yintercept = 100, linetype = "dashed", color = "#27ae60", linewidth = 0.8) +
+  annotate("text", x = as.Date("2026-03-10"), y = 105, label = "정상화 (100척)",
+           color = "#27ae60", size = 3.5) +
+  labs(title = "호르무즈 해협 일일 선박 통과량",
+       subtitle = "말이 아니라 배를 봐라 — 실제 흐름이 진실을 말한다",
+       x = NULL, y = "일일 통과 선박 수") +
+  scale_y_continuous(limits = c(0, 120))
+ggplotly(p_h)
+```
+
+::: {.callout-warning}
+## 투자 재개 시그널 현황
+
+| 시그널 | 현재 | 기준 | 상태 |
+|--------|------|------|------|
+| 호르무즈 선박 | 2~12대/일 | 50대+/일 | **미달** |
+| 브렌트유 | $109 | $90 이하 | **미달** |
+| VIX | 26.8 | 20 이하 | **미달** |
+| 휴전 협상 | 결렬 상태 | 실제 진전 | **미달** |
+:::
+
+# 미국 시장
+
+## Wall Street TOP 10 — 선정 근거
+
+```{r}
+#| label: tbl-us-picks
+
+us <- data.frame(
+  Rank = 1:10,
+  Ticker = c("AVGO", "CEG", "AMZN", "GOOGL", "C", "GEV", "GLNG", "NOW", "MSFT", "MRK"),
+  Company = c("Broadcom", "Constellation Energy", "Amazon", "Alphabet",
+              "Citigroup", "GE Vernova", "Golar LNG", "ServiceNow", "Microsoft", "Merck"),
+  Price = c("$168", "$240", "$195", "$170", "$97", "$320", "$202", "$850", "$370", "$95"),
+  Upside = c("40-100%", "+35%", "+25%", "+30%", "+38.6%", "+50%", "+41%", "+40%", "+20%", "+18%"),
+  Source = c("Goldman/JPM", "BofA", "BofA/MS", "JPMorgan", "Morgan Stanley",
+             "JPMorgan", "Goldman", "Goldman", "역발상", "BofA"),
+  Rationale = c(
+    "AI반도체 네트워크 백본. $55-60B AI매출. GPU→네트워크 전환 핵심",
+    "원자력 AI데이터센터 전력. BofA Top10. 규제 완화 수혜",
+    "AWS 29/32% 성장. 클라우드+리테일 양축. 전쟁 불확실성에도 견조",
+    "AI/검색 지배력. 광고 회복. Gemini 모델 경쟁력 확인",
+    "MS Top Pick. 구조조정 효과 가시화. 은행 중 가장 저평가",
+    "AI인프라 전력 핵심. 데이터센터 전력수요 폭증. 장기 구조적 성장",
+    "LNG 운송 수요 폭증. 호르무즈 봉쇄 직접 수혜. Goldman Conviction",
+    "엔터프라이즈 AI 자동화 선두. Goldman Conviction List",
+    "Q1 -23.3% (2008이후 최악). AI투자 부담 우려 과잉. 역발상 1순위",
+    "종양학 파이프라인. 방어적 밸류. 전쟁장기화 시 헤지"
+  )
+)
+
+datatable(us, options = list(dom = 'tip', scrollX = TRUE, pageLength = 10,
+                              columnDefs = list(list(width = '250px', targets = 7))),
+          class = 'cell-border stripe',
+          caption = "미국 TOP 10 — 증권사 추천 + Alpha Hunter 역발상 포함")
+```
+
+### 미국 선정 근거 요약
+
+::: {.panel-tabset}
+
+#### 핵심 테마
+**2026 투자 패러다임 전환:**
+
+- **2023-25:** GPU를 사라 (NVDA, AMD)
+- **2026:** **전력을 사라** (GEV, CEG) + **네트워크를 사라** (AVGO)
+- AI 인프라의 병목이 칩에서 전력/네트워크로 이동
+
+#### 역발상 기회
+**Q1 붕괴 수준별:**
+
+- MSFT -23.3% → Morningstar 공정가치 대비 저평가. Azure/Office 건재
+- S&P 500 전체 → 공정가치 대비 **14% 저평가** (Morningstar)
+- BDC (BIZD) → NAV 이하 거래, 배당 10%+
+
+#### 리스크
+- 이란전쟁 장기화 → 유가 $130+ 가능
+- Fed 의장 교체 (5월, Warsh) → 매파 전환 리스크
+- AI ROI 의심 → SaaS/소프트웨어 추가 하락 가능
+:::
+
+# 한국 시장
+
+## 한국 TOP 10 — 선정 근거
+
+```{r}
+#| label: tbl-kr-picks
+
+kr <- data.frame(
+  Rank = 1:10,
+  Ticker = c("005930", "000660", "403870", "329180", "012450",
+             "373220", "069500", "396500", "305540", "033780"),
+  Company = c("삼성전자", "SK하이닉스", "HPSP", "HD현대중공업", "한화에어로스페이스",
+              "LG에너지솔루션", "KODEX 200", "TIGER 반도체TOP10", "TIGER 2차전지", "KT&G"),
+  Sector = c("반도체", "반도체/HBM", "반도체장비", "조선/방산", "방산",
+             "2차전지", "KOSPI ETF", "반도체 ETF", "2차전지 ETF", "경기방어"),
+  Signal = c("BUY", "BUY", "STRONG BUY", "BUY", "BUY",
+             "HOLD", "DCA대기", "DCA대기", "HOLD", "방어"),
+  Rationale = c(
+    "파운드리 회복 + DRAM/HBM 수요. 밸류업 정책 핵심 수혜",
+    "HBM3E/HBM4 독보적. AI 데이터센터 메모리 수요 구조적",
+    "글로벌 유일 HPA 장비 독점. GAA/HBM 필수공정. 5/14 실적",
+    "조선 슈퍼사이클 + 방산. 이란전쟁 수혜 (해군 수요)",
+    "K-방산 수출 호조. 독일/NATO 재무장 수혜",
+    "ESS 수요 회복. 테슬라 유럽 반등. 밸류에이션 부담 존재",
+    "KOSPI 코어. 밸류업 정책. 적립재개 시 최우선",
+    "삼성+SK하이닉스 75%. AI/HBM 직접 노출",
+    "2차전지 회복 초입. 1M +13.2%. 변동성 주의",
+    "배당 4%+. 전쟁장기화 방어주. 담배/건강기능식품 안정"
+  )
+)
+
+datatable(kr, options = list(dom = 'tip', scrollX = TRUE, pageLength = 10,
+                              columnDefs = list(list(width = '200px', targets = 6))),
+          class = 'cell-border stripe',
+          caption = "한국 TOP 10 — 반도체/방산/방어 중심")
+```
+
+### 한국 선정 근거 요약
+
+::: {.panel-tabset}
+
+#### 핵심 테마
+- **반도체:** SOXX +9.2%, TIGER반도체 강세. AI/HBM 구조적 수요
+- **방산/조선:** 이란전쟁 + NATO 재무장. 한화에어로, HD현대중공업
+- **밸류업:** KOSPI 코리아 디스카운트 해소 정책. 1Y +137%
+
+#### HPSP (403870) — 핵심 개별주
+- 글로벌 유일 양산급 HPA 장비 독점
+- Samsung 3nm GAA, TSMC 2nm 램프에 필수
+- **5/14 FY2025 실적 발표** — 매출 +30% 확인 예상
+- P/E 48x 고밸류이나 PEG 0.65 (성장 감안 합리적)
+- 순현금 170B KRW, 부채 거의 0
+
+#### 리스크
+- KOSPI 이란전쟁 충격 (3/4 -12%, 4/2 -4.5%)
+- 외국인 자금 이탈 가능
+- 반도체 업황 피크아웃 우려 (하반기)
+:::
+
+# 유럽 시장
+
+## 유럽 TOP 10 — 선정 근거
+
+```{r}
+#| label: tbl-eu-picks
+
+eu <- data.frame(
+  Rank = 1:10,
+  Ticker = c("RHM.DE", "BA.L", "LDO.MI", "BARC.L", "BBVA.MC",
+             "ENR.DE", "ABBN.SW", "RMS.PA", "BAYN.DE", "IEUR"),
+  Company = c("Rheinmetall", "BAE Systems", "Leonardo", "Barclays", "BBVA",
+              "Siemens Energy", "ABB", "Hermès", "Bayer", "iShares MSCI Europe"),
+  Sector = c("방산", "방산", "방산", "금융", "금융",
+             "에너지전환", "산업/로봇", "럭셔리", "헬스케어", "광범위 ETF"),
+  Signal = c("STRONG BUY", "BUY", "BUY", "BUY", "BUY",
+             "BUY", "BUY", "역발상", "역발상", "DCA대기"),
+  Rationale = c(
+    "2026 매출 +40~45%. 15/15 분석가 Buy. NATO 재무장 최대수혜. 독일 방산예산 GDP5%+",
+    "연 매출 +7% 안정성장. 영국 방산 대장주. Forward PER 21",
+    "2030 이익 2배 목표. 이탈리아 방산. 9% 급등 최근",
+    "JPM Top Pick. PER ~7x 최저평가. 배당 2.16%. 영국 금리인하 수혜",
+    "Goldman Conviction. 목표 €24.50 (+20%). 배당 5%. 남미/터키 익스포져",
+    "풍력+EU보조금. 에너지전환 정책 수혜. 탈탄소 장기 테마",
+    "로봇공학/전기화. 에너지효율 기술. 2026초 다수 업그레이드",
+    "Q1 매출 +7%. LVMH에서 시총1위 탈환. 럭셔리 중 가장 견조. 역발상 관점",
+    "Goldman 목표 €42.50 (+12%). 소송 불확실성 H1 해소 기대. 딥밸류",
+    "유럽 광범위 분산. 보수 0.10%. 배당 2.77%. 정상화시 DCA 후보"
+  )
+)
+
+datatable(eu, options = list(dom = 'tip', scrollX = TRUE, pageLength = 10,
+                              columnDefs = list(list(width = '220px', targets = 6))),
+          class = 'cell-border stripe',
+          caption = "유럽 TOP 10 — 방산/금융/에너지전환 중심")
+```
+
+### 유럽 선정 근거 요약
+
+::: {.panel-tabset}
+
+#### 핵심 테마: 방산 (최우선)
+- **독일 GDP 2% → 5%+ 방산 예산 확대** — 역사적 전환
+- NATO 재무장 트렌드 = 유럽 방산 10년 슈퍼사이클
+- Rheinmetall 2026 매출 +40~45% 가이던스 — 전 분석가 Buy
+- 이란전쟁이 촉매: 유럽 자체 방위력 강화 긴급성 ↑
+
+#### 유럽 은행: 여전히 저평가
+- 2025년 유럽 은행 +65% 상승했으나 아직 PER 7~10x
+- JPMorgan: Barclays, UBS, NatWest 추천
+- 리스크: 밸류에이션 부담 증가 + 경기둔화 시 부실채권
+
+#### 럭셔리: LVMH 쇼크 후 역발상
+- LVMH Q1 2026 -28% 급락 (역대 최악)
+- Hermès만 선방 (매출 +7%)
+- Morningstar: "두 종목 모두 매력적 밸류"
+- 재개 조건: 중국 소비 회복 + 달러 약세
+:::
+
+# 포트폴리오 현황
+
+## 3개 시장 종합 배분
+
+```{r}
+#| label: fig-allocation
+#| fig-cap: "Alpha Hunter 글로벌 배분 전략"
+
+alloc <- data.frame(
+  Category = c("미국 Core", "미국 Satellite", "한국 Core", "한국 Satellite",
+               "유럽 (미실행)", "현금"),
+  Pct = c(30, 10, 30, 10, 0, 20),
+  Status = c("가상투자중", "가상투자중", "가상투자중", "가상투자중",
+             "리서치완료", "유지")
+)
+
+p_alloc <- ggplot(alloc, aes(x = "", y = Pct, fill = Category)) +
+  geom_col(width = 1) +
+  coord_polar("y") +
+  scale_fill_manual(values = c("#3498db", "#85c1e9", "#2ecc71", "#82e0aa", "#9b59b6", "#95a5a6")) +
+  labs(title = "Alpha Hunter 글로벌 배분") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 14, hjust = 0.5))
+p_alloc
+```
+
+## 실제 연금 적립식 — 현재 보류
+
+```{r}
+#| label: tbl-pension-status
+
+pension <- data.frame(
+  Account = c("퇴직연금 DC", "퇴직연금 DC", "퇴직연금 DC", "퇴직연금 DC", "퇴직연금 DC",
+              "연금저축 CMA", "연금저축 CMA", "연금저축 CMA", "연금저축 CMA"),
+  ETF = c("TIGER 반도체TOP10", "ACE KRX금현물", "TIGER 코리아원자력", "KoAct 코스닥액티브", "KODEX 200",
+          "KODEX 미국S&P500", "KODEX 증권", "KODEX 미국AI전력핵심인프라", "ACE 구글밸류체인"),
+  Weekly = c("50만", "20만", "50만", "20만", "100만",
+             "100만", "50만", "50만", "50만"),
+  Status = c("보류", "유일 실행 권장", "보류", "보류", "보류",
+             "보류", "보류 (최고 불확실)", "보류", "보류"),
+  Reason = c("전쟁 불확실성", "어떤 시나리오에서도 안전", "전쟁 불확실성",
+             "전쟁 불확실성", "전쟁 불확실성",
+             "전쟁 불확실성", "금리인하 지연 가능", "전쟁 불확실성", "빅테크 추가 하락 가능")
+)
+
+datatable(pension, options = list(dom = 't', scrollX = TRUE, pageLength = 9),
+          class = 'cell-border stripe',
+          caption = "실제 연금 적립식 — 전쟁 상황으로 전체 보류 (금 제외)")
+```
+
+# 시나리오별 전략
+
+```{r}
+#| label: tbl-scenarios
+
+scenarios <- data.frame(
+  Scenario = c("A: 4-6월 휴전", "B: 전쟁 장기화 (연말)", "C: 확전/에스컬레이션"),
+  Probability = c("46% (Polymarket)", "24%", "30%"),
+  Oil = c("$109→$70-80", "$100-120 유지", "$130+"),
+  Action_US = c("VOO/SOXX 추가매수, MSFT역발상", "XLE유지, SCHD강화", "현금극대화"),
+  Action_KR = c("KODEX200 적립재개, TIGER반도체", "방산유지, 금비중확대", "전포지션 50%축소"),
+  Action_EU = c("IEUR DCA시작, Rheinmetall", "방산만 유지", "전체보류")
+)
+
+datatable(scenarios, options = list(dom = 't', scrollX = TRUE),
+          class = 'cell-border stripe',
+          caption = "시나리오별 행동 계획 — 호르무즈 선박량이 핵심 시그널")
+```
+
+# 주요 일정
+
+```{r}
+#| label: tbl-calendar
+
+cal <- data.frame(
+  Date = c("4/10", "4/21", "4/24", "4/25", "5/14", "5월", "5월말", "6/4"),
+  Event = c("미국 CPI 발표", "Palisades 방화 재판", "운전면허 갱신",
+            "Fed 회의", "HPSP FY2025 실적", "Fed 의장 교체 (Warsh)",
+            "렛유인 강의 제출", "6월 모의평가 (태림)"),
+  Impact = c("인플레 방향 → Fed 정책", "캘리포니아 산불 관련",
+             "용인 서부경찰서 18시 전", "금리 결정",
+             "개별주 핵심 촉매", "통화정책 방향 변화",
+             "이희근 프로와 공동", "재수 결정 기준점"),
+  Category = c("투자", "기타", "개인", "투자", "투자", "투자", "업무", "가족")
+)
+
+datatable(cal, options = list(dom = 't', scrollX = TRUE, pageLength = 10),
+          class = 'cell-border stripe', caption = "향후 주요 일정")
+```
+
+# Knowledge Base 현황
+
+```{r}
+kb <- data.frame(
+  Item = c("Raw Documents", "Wiki Pages", "Skills", "Search Index (SQLite FTS5)",
+           "Rust CLI (kb-search)", "Total Words"),
+  Count = c("18개", "5개", "3개", "26개 인덱싱", "1.9MB 바이너리, 0.4ms 검색", "~3,500"),
+  Growth = c("+11 이번주", "+4 이번주", "+3 이번주", "+26 이번주", "신규 구축", "+3,500 이번주")
+)
+
+datatable(kb, options = list(dom = 't'), class = 'cell-border stripe',
+          caption = "Karpathy식 Knowledge Base — 이번주 신규 구축")
+```
+
+::: {.callout-tip}
+## 이번주 하이라이트
+1. "입자설→파동설" 직관 → 2시간 만에 학술논문 → PhilSci-Archive 투고
+2. Rust kb-search 구축 (Python 대비 73x 빠른 검색)
+3. FinViz 스타일 퇴직/개인연금 대시보드
+4. 감정 벡터 연구 카드뉴스 5장 + 음성 에세이 2편
+:::
+
+---
+
+*ALPHA HUNTER Weekly Comprehensive Report*
+*미국·한국·유럽 | Powered by Claude Code AI*
+*2026-04-05 | Not Financial Advice*
