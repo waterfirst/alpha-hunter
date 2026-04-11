@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALPHA HUNTER Daily Intelligence — 2026-04-07</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #0a0e1a; color: #e0e0e0;
+    font-family: 'Noto Sans KR', 'NanumSquare', sans-serif;
+    line-height: 1.6;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.header {
+    background: linear-gradient(135deg, #0d1b3e 0%, #1a0d3e 50%, #0d3e1a 100%);
+    border: 1px solid #1e3a5f;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(100,181,246,0.05) 0%, transparent 50%);
+    animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+.header h1 {
+    font-size: 2.2em; font-weight: 900;
+    background: linear-gradient(90deg, #64b5f6, #81c784, #ffd54f);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    position: relative;
+}
+.header .subtitle { color: #90a4ae; margin-top: 8px; font-size: 1em; position: relative; }
+.header .date { color: #ffd54f; font-weight: 700; font-size: 1.1em; margin-top: 6px; position: relative; }
+.section {
+    background: #111827; border: 1px solid #1e3a5f;
+    border-radius: 12px; padding: 20px; margin-bottom: 20px;
+}
+.section h2 {
+    color: #64b5f6; font-size: 1.4em; font-weight: 700;
+    border-bottom: 2px solid #1e3a5f; padding-bottom: 10px; margin-bottom: 16px;
+}
+table { width: 100%; border-collapse: collapse; }
+th {
+    background: #1e293b; color: #90a4ae; font-size: 0.85em;
+    padding: 10px 8px; text-align: left; border-bottom: 2px solid #334155;
+}
+td { padding: 10px 8px; border-bottom: 1px solid #1e293b; font-size: 0.92em; }
+tr:hover { background: #1a2744; }
+.metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.metric-card {
+    background: #1a2744; border-radius: 10px; padding: 16px; text-align: center;
+    border: 1px solid #1e3a5f;
+}
+.metric-card .label { color: #90a4ae; font-size: 0.85em; }
+.metric-card .value { font-size: 1.5em; font-weight: 700; margin: 4px 0; }
+.metric-card .sub { font-size: 0.85em; }
+.alert {
+    background: #1a1a2e; border-left: 4px solid #ff9800;
+    border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 12px 0;
+}
+.alert-title { color: #ffd54f; font-weight: 700; margin-bottom: 4px; }
+.positive { color: #4caf50; }
+.negative { color: #f44336; }
+.footer {
+    text-align: center; color: #546e7a; font-size: 0.85em;
+    padding: 20px; border-top: 1px solid #1e3a5f; margin-top: 20px;
+}
+.strategy-box {
+    background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
+    border-radius: 10px; padding: 18px; margin: 16px 0;
+    border: 1px solid #3f51b5;
+}
+.tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 2px;
+}
+.tag-buy { background: #1b5e20; color: #a5d6a7; }
+.tag-hold { background: #4e342e; color: #bcaaa4; }
+.tag-watch { background: #e65100; color: #ffcc80; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+    <h1>ALPHA HUNTER</h1>
+    <div class="subtitle">Daily Intelligence Report</div>
+    <div class="date">2026-04-07 (Mon) | Market Open</div>
+</div>
+
+<!-- MARKET OVERVIEW -->
+<div class="section">
+    <h2>1. 시장 현황</h2>
+    <table>
+        <thead><tr>
+            <th>지수</th><th>현재</th><th>주간 변동</th><th>YTD</th>
+        </tr></thead>
+        <tbody><tr>
+            <td style="font-weight:bold;color:#e0e0e0">S&P 500</td>
+            <td style="color:#64b5f6;font-weight:bold;font-size:1.1em">6,602</td>
+            <td style="color:#4caf50;font-weight:bold">+3.40%</td>
+            <td style="color:#f44336">-3.50%</td>
+        </tr><tr>
+            <td style="font-weight:bold;color:#e0e0e0">Nasdaq</td>
+            <td style="color:#64b5f6;font-weight:bold;font-size:1.1em">22,800</td>
+            <td style="color:#4caf50;font-weight:bold">+4.40%</td>
+            <td style="color:#f44336">-2.80%</td>
+        </tr><tr>
+            <td style="font-weight:bold;color:#e0e0e0">KOSPI</td>
+            <td style="color:#64b5f6;font-weight:bold;font-size:1.1em">5,552</td>
+            <td style="color:#4caf50;font-weight:bold">+2.70%</td>
+            <td style="color:#4caf50">+14.20%</td>
+        </tr><tr>
+            <td style="font-weight:bold;color:#e0e0e0">VIX</td>
+            <td style="color:#64b5f6;font-weight:bold;font-size:1.1em">24.3</td>
+            <td style="color:#f44336;font-weight:bold">-3.20%</td>
+            <td style="color:#999">N/A</td>
+        </tr><tr>
+            <td style="font-weight:bold;color:#e0e0e0">Brent Oil</td>
+            <td style="color:#64b5f6;font-weight:bold;font-size:1.1em">$112.42</td>
+            <td style="color:#4caf50;font-weight:bold">+1.50%</td>
+            <td style="color:#4caf50">+87.50%</td>
+        </tr><tr>
+            <td style="font-weight:bold;color:#e0e0e0">10Y Treasury</td>
+            <td style="color:#64b5f6;font-weight:bold;font-size:1.1em">4.34%</td>
+            <td style="color:#999;font-weight:bold">N/A</td>
+            <td style="color:#999">N/A</td>
+        </tr></tbody>
+    </table>
+
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+        <div style="background:#1b3a2a;border:1px solid #2e7d32;border-radius:8px;padding:14px">
+            <div style="color:#66bb6a;font-weight:bold;margin-bottom:6px">📈 이란 휴전 기대감</div>
+            <div style="color:#a5d6a7;font-size:0.9em">S&P +3.4% 주간 반등. 5주 연속 하락 끊음. 기술주 주도 랠리. 중동 긴장 완화 시그널에 리스크온</div>
+        </div>
+        <div style="background:#3a2a1b;border:1px solid #e65100;border-radius:8px;padding:14px">
+            <div style="color:#ffb74d;font-weight:bold;margin-bottom:6px">⚠️ 관세 리스크 지속</div>
+            <div style="color:#ffe0b2;font-size:0.9em">트럼프 관세 불확실성 여전. S&P YTD -3.5%. JPM S&P 목표 7,200→하향 검토. 인플레 재점화 우려</div>
+        </div>
+        <div style="background:#1b2a3a;border:1px solid #1565c0;border-radius:8px;padding:14px">
+            <div style="color:#64b5f6;font-weight:bold;margin-bottom:6px">⚡ AI 전력 테마 부상</div>
+            <div style="color:#bbdefb;font-size:0.9em">2026 핵심 테마: "GPU를 사라"→"전력을 사라". GEV $868(+171%), CEG 강세. 데이터센터 전력 수요 폭증</div>
+        </div>
+        <div style="background:#2a1b3a;border:1px solid #7b1fa2;border-radius:8px;padding:14px">
+            <div style="color:#ce93d8;font-weight:bold;margin-bottom:6px">🇰🇷 KOSPI 5,500 돌파</div>
+            <div style="color:#e1bee7;font-size:0.9em">코리아 밸류업 효과 + 반도체 강세. YTD +14.2%. 외국인 순매수 전환. HBM/AI 수혜 지속</div>
+        </div>
+    </div>
+    
+</div>
+
+<!-- WALL STREET TOP 10 -->
+<div class="section">
+    <h2>2. Wall Street TOP 10 Picks</h2>
+    
+    <div style="background:linear-gradient(135deg,#1a237e,#0d47a1);border-radius:10px;padding:16px;margin:16px 0;border-left:4px solid #ffd54f">
+        <div style="color:#ffd54f;font-weight:bold;font-size:1.1em;margin-bottom:8px">🏦 Goldman Sachs Conviction List 업데이트 (4/6)</div>
+        <div style="color:#e3f2fd;line-height:1.6">
+            <b>신규 추가:</b> Installed Building Products (IBP) — 목표 $442 (+32%)<br>
+            <b>신규 추가:</b> Citizens Financial Group (CFG) — 배당 2.87%, 금리 수혜<br>
+            <b>유지:</b> ServiceNow (NOW), Broadcom (AVGO) 등 핵심 AI/성장주<br>
+            <b>JPM 주목:</b> GE Vernova $1,000 목표가 (+15%), Alphabet $385 (+30%)
+        </div>
+    </div>
+    
+    <div style="overflow-x:auto">
+    <table>
+        <thead><tr>
+            <th>#</th><th>Ticker</th><th>Company</th><th>Firm</th><th>Sector</th><th>Upside</th><th>Thesis</th>
+        </tr></thead>
+        <tbody><tr>
+            <td style="color:#ffd54f;font-weight:bold">#1</td>
+            <td style="color:#64b5f6;font-weight:bold">AVGO</td>
+            <td>Broadcom</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">Goldman/JPM</span></td>
+            <td>Semiconductor</td>
+            <td style="color:#4caf50;font-weight:bold">+55%</td>
+            <td style="font-size:0.85em;color:#b0bec5">AI 네트워킹 ASIC 핵심, VMware 시너지 본격화. $55-60B AI 매출 전망</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#2</td>
+            <td style="color:#64b5f6;font-weight:bold">CEG</td>
+            <td>Constellation Energy</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">BofA/MS</span></td>
+            <td>AI Power</td>
+            <td style="color:#4caf50;font-weight:bold">+35%</td>
+            <td style="font-size:0.85em;color:#b0bec5">원자력 기반 AI 데이터센터 전력 공급. 탄소제로 프리미엄</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#3</td>
+            <td style="color:#64b5f6;font-weight:bold">AMZN</td>
+            <td>Amazon</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">BofA/MS</span></td>
+            <td>Cloud/E-comm</td>
+            <td style="color:#4caf50;font-weight:bold">+25%</td>
+            <td style="font-size:0.85em;color:#b0bec5">AWS 29-32% 성장 지속, AI 클라우드 + 리테일 마진 확대</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#4</td>
+            <td style="color:#64b5f6;font-weight:bold">GOOGL</td>
+            <td>Alphabet</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">JPMorgan</span></td>
+            <td>AI/Search</td>
+            <td style="color:#4caf50;font-weight:bold">+30%</td>
+            <td style="font-size:0.85em;color:#b0bec5">Gemini AI 검색 지배력, 광고 회복. $385 목표가</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#5</td>
+            <td style="color:#64b5f6;font-weight:bold">GEV</td>
+            <td>GE Vernova</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">JPMorgan</span></td>
+            <td>AI Power Infra</td>
+            <td style="color:#4caf50;font-weight:bold">+15%</td>
+            <td style="font-size:0.85em;color:#b0bec5">AI 데이터센터 전력 수요 핵심. $1,000 목표가(JPM)</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#6</td>
+            <td style="color:#64b5f6;font-weight:bold">C</td>
+            <td>Citigroup</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">Goldman/MS</span></td>
+            <td>Financials</td>
+            <td style="color:#4caf50;font-weight:bold">+38%</td>
+            <td style="font-size:0.85em;color:#b0bec5">구조조정 효과 본격화, GS $137 목표가 상향</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#7</td>
+            <td style="color:#64b5f6;font-weight:bold">IBP</td>
+            <td>Installed Building Products</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">Goldman</span></td>
+            <td>Industrials</td>
+            <td style="color:#4caf50;font-weight:bold">+32%</td>
+            <td style="font-size:0.85em;color:#b0bec5">신규 Conviction List 추가. 주택 인프라 수혜</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#8</td>
+            <td style="color:#64b5f6;font-weight:bold">NOW</td>
+            <td>ServiceNow</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">Goldman</span></td>
+            <td>Enterprise SW</td>
+            <td style="color:#4caf50;font-weight:bold">+40%</td>
+            <td style="font-size:0.85em;color:#b0bec5">엔터프라이즈 AI 자동화 선두. 구독 성장 가속</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#9</td>
+            <td style="color:#64b5f6;font-weight:bold">MRK</td>
+            <td>Merck</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">JPMorgan</span></td>
+            <td>Pharma</td>
+            <td style="color:#4caf50;font-weight:bold">+18%</td>
+            <td style="font-size:0.85em;color:#b0bec5">종양학 파이프라인 + 방어적 밸류. 목표 $135 상향</td>
+        </tr><tr>
+            <td style="color:#ffd54f;font-weight:bold">#10</td>
+            <td style="color:#64b5f6;font-weight:bold">CFG</td>
+            <td>Citizens Financial</td>
+            <td><span style="background:#1e3a5f;padding:2px 8px;border-radius:4px;font-size:0.85em">Goldman</span></td>
+            <td>Financials</td>
+            <td style="color:#4caf50;font-weight:bold">+25%</td>
+            <td style="font-size:0.85em;color:#b0bec5">신규 Conviction List 추가. 배당 2.87%. 금리 수혜</td>
+        </tr></tbody>
+    </table>
+    </div>
+
+    <div style="background:#1a2744;border-radius:8px;padding:14px;margin-top:16px">
+        <div style="color:#ffd54f;font-weight:bold;margin-bottom:8px">🎯 4월 핵심 투자 테마</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span class="tag tag-buy">AI Power Infra</span>
+            <span class="tag tag-buy">Semiconductor Networks</span>
+            <span class="tag tag-buy">Energy/LNG</span>
+            <span class="tag tag-hold">Cloud Computing</span>
+            <span class="tag tag-hold">Financials 구조조정</span>
+            <span class="tag tag-watch">Tariff Risk</span>
+            <span class="tag tag-watch">Iran Ceasefire</span>
+        </div>
+    </div>
+</div>
+
+<!-- ETF PORTFOLIO -->
+<div class="section">
+    <h2>3. Alpha Hunter ETF Portfolio (1억원)</h2>
+
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="label">총 평가금액</div>
+            <div class="value" style="color:#64b5f6">10,114만원</div>
+            <div class="sub" style="color:#4caf50">+1.14% (시작 1억)</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">투자 중</div>
+            <div class="value" style="color:#81c784">9,034만원</div>
+            <div class="sub">90.3% 투자 비중</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">현금</div>
+            <div class="value" style="color:#ffd54f">966만원</div>
+            <div class="sub">9.7% 현금 보유</div>
+        </div>
+    </div>
+
+    <table>
+        <thead><tr>
+            <th>Ticker</th><th>Name</th><th>진입가</th><th>현재가</th><th>수익률</th><th>비중</th>
+        </tr></thead>
+        <tbody><tr>
+            <td>🔵 <b>VOO</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">Vanguard S&P 500 ETF</td>
+            <td>$510.00</td>
+            <td style="font-weight:bold;color:#64b5f6">$604.00</td>
+            <td style="color:#4caf50;font-weight:bold">+18.43%</td>
+            <td>10%</td>
+        </tr><tr>
+            <td>🔵 <b>SOXX</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">iShares Semiconducto</td>
+            <td>$339.00</td>
+            <td style="font-weight:bold;color:#64b5f6">$340.00</td>
+            <td style="color:#4caf50;font-weight:bold">+0.29%</td>
+            <td>10%</td>
+        </tr><tr>
+            <td>🔵 <b>SCHD</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">Schwab US Dividend E</td>
+            <td>$30.51</td>
+            <td style="font-weight:bold;color:#64b5f6">$31.20</td>
+            <td style="color:#4caf50;font-weight:bold">+2.26%</td>
+            <td>10%</td>
+        </tr><tr>
+            <td>🔵 <b>396500</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">TIGER 반도체TOP10</td>
+            <td>33,210원</td>
+            <td style="font-weight:bold;color:#64b5f6">35,800원</td>
+            <td style="color:#4caf50;font-weight:bold">+7.80%</td>
+            <td>10%</td>
+        </tr><tr>
+            <td>🔵 <b>069500</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">KODEX 200</td>
+            <td>81,225원</td>
+            <td style="font-weight:bold;color:#64b5f6">84,500원</td>
+            <td style="color:#4caf50;font-weight:bold">+4.03%</td>
+            <td>10%</td>
+        </tr><tr>
+            <td>🔵 <b>XLE</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">Energy Select Sector</td>
+            <td>$105.00</td>
+            <td style="font-weight:bold;color:#64b5f6">$112.00</td>
+            <td style="color:#4caf50;font-weight:bold">+6.67%</td>
+            <td>10%</td>
+        </tr><tr>
+            <td>🟠 <b>BOTZ</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">Global X Robotics & </td>
+            <td>$38.00</td>
+            <td style="font-weight:bold;color:#64b5f6">$39.50</td>
+            <td style="color:#4caf50;font-weight:bold">+3.95%</td>
+            <td>7%</td>
+        </tr><tr>
+            <td>🟠 <b>GEV</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">GE Vernova Inc.</td>
+            <td>$320.00</td>
+            <td style="font-weight:bold;color:#64b5f6">$868.00</td>
+            <td style="color:#4caf50;font-weight:bold">+171.25%</td>
+            <td>3.5%</td>
+        </tr><tr>
+            <td>🟠 <b>CEG</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">Constellation Energy</td>
+            <td>$240.00</td>
+            <td style="font-weight:bold;color:#64b5f6">$274.00</td>
+            <td style="color:#4caf50;font-weight:bold">+14.17%</td>
+            <td>3.5%</td>
+        </tr><tr>
+            <td>🟠 <b>305540</b></td>
+            <td style="color:#90a4ae;font-size:0.85em">TIGER 2차전지테마</td>
+            <td>23,950원</td>
+            <td style="font-weight:bold;color:#64b5f6">25,200원</td>
+            <td style="color:#4caf50;font-weight:bold">+5.22%</td>
+            <td>6%</td>
+        </tr></tbody>
+    </table>
+
+    <div class="strategy-box">
+        <div style="color:#ffd54f;font-weight:bold;margin-bottom:8px">📋 대기 전략</div>
+        <div style="color:#e8eaf6;line-height:1.7">
+            <b>트리거:</b> 이란전쟁 휴전/종료 시그널<br>
+            <b>타임프레임:</b> 2-3주 내 (4월 중순~말)<br>
+            <b>액션:</b> 현금 966만원 → VOO/SOXX 추가 매수<br>
+            <b>근거:</b> 유가 하락 → 인플레 완화 → Fed 인하 기대 → 성장주 반등<br>
+            <b>리스크:</b> 트럼프 발언 신뢰도 낮음. 전쟁 장기화 시 현금 유지<br>
+            <b>관전:</b> XLE 부분 익절 검토 (전쟁 종료 시 에너지 조정 예상)
+        </div>
+    </div>
+</div>
+
+<!-- INDIVIDUAL STOCKS -->
+<div class="section">
+    <h2>4. 개별종목 포트폴리오 ($100K)</h2>
+
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="label">AROC (Archrock)</div>
+            <div class="value" style="color:#64b5f6">$34.89</div>
+            <div class="sub" style="color:#f44336">-2.27% | P&L $-1,134</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">HPSP (403870)</div>
+            <div class="value" style="color:#64b5f6">46,150원</div>
+            <div class="sub" style="color:#f44336">-8.43% | P&L -4,250,000원</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">포트폴리오 합계</div>
+            <div class="value" style="color:#f44336">$95,830</div>
+            <div class="sub" style="color:#f44336">-4.17% (시작 $100K)</div>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+        <div style="background:#1a2744;border-radius:10px;padding:16px;border:1px solid #1e3a5f">
+            <div style="color:#4caf50;font-weight:bold;font-size:1.1em;margin-bottom:10px">AROC — Archrock Inc.</div>
+            <div style="color:#b0bec5;font-size:0.9em;line-height:1.7">
+                <b>현재가:</b> $34.89 (진입 $35.70)<br>
+                <b>목표가:</b> $39.00 (중간) / $42.00 (최고)<br>
+                <b>손절:</b> $30.00 (-16%)<br>
+                <b>컨센서스:</b> Strong Buy (8/0/0)<br>
+                <b>실적발표:</b> 2026-05-11<br>
+                <b>촉매:</b> LNG 수출 증가, 배당 인상, 마진 확대<br>
+                <b>리스크:</b> 부채 $2.4B, 천연가스 가격 하락
+            </div>
+        </div>
+        <div style="background:#1a2744;border-radius:10px;padding:16px;border:1px solid #1e3a5f">
+            <div style="color:#7e57c2;font-weight:bold;font-size:1.1em;margin-bottom:10px">HPSP — 403870 (KOSDAQ)</div>
+            <div style="color:#b0bec5;font-size:0.9em;line-height:1.7">
+                <b>현재가:</b> 46,150원 (진입 50,400원)<br>
+                <b>목표가:</b> 44,000원 (평균) / 70,000원 (최고)<br>
+                <b>손절:</b> 40,000원 (-20.6%)<br>
+                <b>컨센서스:</b> Strong Buy (8/1/0)<br>
+                <b>실적발표:</b> 2026-05-14<br>
+                <b>촉매:</b> GAA 노드 램프업, HBM 채택, HPO 매출<br>
+                <b>리스크:</b> 삼성 의존도, 밸류에이션 48x PE
+            </div>
+        </div>
+    </div>
+
+    <div class="alert">
+        <div class="alert-title">⚠️ 주의 사항</div>
+        <div style="color:#e0e0e0;font-size:0.9em">
+            HPSP -8.43% — 손절선 40,000원 대비 여유 15.4%.
+            5/14 실적발표 전까지 모니터링 강화.
+            AROC는 목표가 대비 11.8% 상승여력.
+        </div>
+    </div>
+</div>
+
+<!-- UPCOMING EVENTS -->
+<div class="section">
+    <h2>5. 주요 일정</h2>
+    <table>
+        <thead><tr><th>날짜</th><th>이벤트</th><th>영향</th><th>Action</th></tr></thead>
+        <tbody>
+            <tr><td style="color:#ffd54f">4/10</td><td>CPI 발표</td><td>인플레이션 방향성 → Fed 정책</td><td><span class="tag tag-watch">Watch</span></td></tr>
+            <tr><td style="color:#ffd54f">4/25</td><td>Fed FOMC 회의</td><td>금리 결정 (동결 유력)</td><td><span class="tag tag-watch">Watch</span></td></tr>
+            <tr><td style="color:#64b5f6">5/11</td><td>AROC 실적발표</td><td>Q1 EPS, 가이던스</td><td><span class="tag tag-hold">Monitor</span></td></tr>
+            <tr><td style="color:#64b5f6">5/14</td><td>HPSP FY2025 실적</td><td>GAA/HBM 수주 확인</td><td><span class="tag tag-buy">Key Event</span></td></tr>
+            <tr><td style="color:#ce93d8">5월</td><td>Fed 의장 교체</td><td>Kevin Warsh 취임</td><td><span class="tag tag-watch">Watch</span></td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <div style="color:#64b5f6;font-weight:bold;margin-bottom:8px">ALPHA HUNTER AI — Powered by Claude Code</div>
+    <div>Generated: 2026-04-07 08:06 KST</div>
+    <div style="margin-top:8px;color:#78909c;font-size:0.8em">
+        이 보고서는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+    </div>
+    <div style="margin-top:6px;color:#546e7a;font-size:0.75em">
+        Sources: Yahoo Finance, MarketBeat, CNBC, Seoul Economic Daily, Fortune, Seeking Alpha
+    </div>
+</div>
+
+</div>
+</body>
+</html>
