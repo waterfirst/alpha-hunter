@@ -1,0 +1,365 @@
+---
+title: "🦁 Chimera-AI 주간 증시 분석"
+subtitle: "2026년 4월 16일 (수) | 멀티에이전트 통합 리포트"
+author: "Chimera-AI System"
+date: "2026-04-16"
+format:
+  html:
+    theme: darkly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    self-contained: true
+    page-layout: full
+    fig-align: center
+---
+
+```{python}
+#| echo: false
+#| warning: false
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+# Executive Summary {.unnumbered}
+
+::: {.callout-important}
+## NS Index: 74.8 — STRONG BUY 🟢
+VIX 급락(18.17), 반도체 초강세(+21.7% 주간), 실질금리 안정.
+KOSPI 6,000 돌파 + WGBI 편입 자금 유입 본격화. 호르무즈 해협은 일 11~16척으로 30척 미달 — 투자 본격화 신호 미발동.
+:::
+
+::: {.callout-warning}
+## 호르무즈 해협: 일 11~16척 통과 (⚠️ 30척 미달)
+전쟁 이전 100척/일 대비 85~90% 감소. 30척 이상 회복 시 '⚡투자 본격화 신호' 발동 예정.
+현재 상태: 사실상 봉쇄 지속. 휴전 연장 협상 진행 중.
+:::
+
+# 시장 현황 대시보드
+
+## 주요 지수 주간 성과
+
+```{python}
+#| echo: false
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots(figsize=(12, 5))
+names = ['S&P500\n7,023', 'NASDAQ\n24,016', 'Dow\n48,464', 'KOSPI\n6,226', 'KOSDAQ\n1,163',
+         'Samsung\n217,500₩', 'SK Hynix\n1,155,000₩', 'NVIDIA\n$198.9', 'TSMC\n$375.1', 'BTC\n$75,015']
+changes = [8.43, 12.18, 5.45, 17.98, 5.05, 23.37, 32.30, 16.14, 15.02, 12.08]
+colors = ['#00d2ff' if c > 15 else '#00ff88' if c > 10 else '#88ff00' for c in changes]
+bars = ax.barh(names, changes, color=colors, edgecolor='white', linewidth=0.3, height=0.7)
+for bar, val in zip(bars, changes):
+    ax.text(bar.get_width() + 0.3, bar.get_y() + bar.get_height()/2., f'+{val:.1f}%',
+            va='center', fontsize=10, fontweight='bold', color='white')
+ax.set_xlabel('Weekly Change (%)', fontsize=12)
+ax.set_title('📊 Weekly Performance — All Green', fontsize=14, fontweight='bold', color='white')
+ax.set_facecolor('#1a1a2e')
+fig.patch.set_facecolor('#1a1a2e')
+ax.tick_params(colors='white')
+ax.xaxis.label.set_color('white')
+for spine in ax.spines.values():
+    spine.set_color('#333')
+plt.tight_layout()
+plt.show()
+```
+
+## 핵심 지표 요약
+
+```{python}
+#| echo: false
+data = {
+    "지표": ["S&P 500", "NASDAQ", "KOSPI", "VIX", "USD/KRW", "WTI 원유", "금", "미국 10Y", "Bitcoin"],
+    "현재값": ["7,022.95", "24,016.02", "6,226.05", "18.17", "1,472.35₩", "$91.63", "$4,849.20", "4.28%", "$75,015"],
+    "주간변동": ["+8.43%", "+12.18%", "+17.98%", "-40.64%", "-2.30%", "-9.62%", "+4.34%", "-3.56%", "+12.08%"],
+    "시그널": ["🟢 강세", "🟢 강세", "🟢 강세", "🟢 공포 해소", "🟢 원화 강세", "🟢 유가 하락", "⚠️ 안전자산 수요", "🟢 금리 하락", "🟢 위험선호"]
+}
+import pandas as pd
+df = pd.DataFrame(data)
+# Display as styled HTML
+html = df.to_html(index=False, classes='table table-dark table-striped', border=0)
+from IPython.display import HTML
+HTML(html)
+```
+
+# NS Index 분석
+
+## NS Index = 74.8 (STRONG BUY)
+
+```{python}
+#| echo: false
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Left: Component breakdown
+components = ['VIX\n(40%)', 'Volatility\n(30%)', 'Semi Density\n(20%)', 'Re\n(10%)']
+scores = [63.7, 90.6, 76.6, 68.3]
+weights = [0.4, 0.3, 0.2, 0.1]
+weighted = [s*w for s, w in zip(scores, weights)]
+colors_comp = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff']
+
+bars = axes[0].bar(components, scores, color=colors_comp, edgecolor='white', linewidth=0.5, alpha=0.8)
+for bar, val, wval in zip(bars, scores, weighted):
+    axes[0].text(bar.get_x() + bar.get_width()/2., bar.get_height() + 1,
+                f'{val:.1f}\n(기여: {wval:.1f})', ha='center', fontsize=9, color='white')
+axes[0].set_ylabel('Score (0-100)', color='white')
+axes[0].set_title('NS Index Components', fontsize=13, fontweight='bold', color='white')
+axes[0].set_ylim(0, 105)
+axes[0].set_facecolor('#1a1a2e')
+axes[0].tick_params(colors='white')
+
+# Right: Gauge
+ns_val = 74.8
+zones = [(0, 40, '#e74c3c', 'SELL'), (40, 55, '#f39c12', 'HOLD'),
+         (55, 70, '#3498db', 'BUY'), (70, 100, '#2ecc71', 'STRONG BUY')]
+for start, end, color, label in zones:
+    axes[1].barh(0, end-start, left=start, height=0.6, color=color, alpha=0.7)
+    axes[1].text((start+end)/2, -0.55, label, ha='center', va='top', fontsize=9, color='white', fontweight='bold')
+axes[1].plot(ns_val, 0, marker='v', color='yellow', markersize=20, zorder=5)
+axes[1].text(ns_val, 0.5, f'NS Index\n{ns_val}', ha='center', fontsize=14, fontweight='bold', color='yellow')
+axes[1].set_xlim(0, 100)
+axes[1].set_ylim(-1.2, 1.2)
+axes[1].set_yticks([])
+axes[1].set_title('Signal Gauge', fontsize=13, fontweight='bold', color='white')
+axes[1].set_facecolor('#1a1a2e')
+axes[1].tick_params(colors='white')
+
+for ax in axes:
+    for spine in ax.spines.values():
+        spine.set_color('#333')
+fig.patch.set_facecolor('#1a1a2e')
+plt.tight_layout()
+plt.show()
+```
+
+**NS Index 산출 내역:**
+
+- **VIX (40%)**: 18.17 → 점수 63.7 — 공포 지수 급락, 정상 구간 복귀
+- **변동성 (30%)**: VIX 주간 -40.64% → 점수 90.6 — 변동성 대폭 감소 = 최고 점수
+- **반도체 밀도 (20%)**: 반도체 평균 +21.7% vs S&P +8.4% → 초과수익 13.3%p → 점수 76.6
+- **Re 실질금리 (10%)**: 4.28% - 3.3% = 0.98% → 점수 68.3 — 적정 실질금리
+
+# 뉴스 & 이벤트 분석
+
+## 주간 Top 뉴스 (시장 영향 순)
+
+### 1. 🔴 미-이란 휴전 연장 협상 + 호르무즈 봉쇄 지속
+4월 7일 2주 휴전 합의 후, 현재 연장 협상 진행 중. 호르무즈 해협 통행량 전쟁 전 대비 **85~90% 감소**. 브렌트유 $100 돌파 후 $95로 하락 전환. 4월 21일 휴전 만료가 핵심 변수.
+
+### 2. ⚠️ 트럼프, 파월 연준 의장 해임 위협
+5월 15일 임기 만료 전 자진 사임 요구. 후임 케빈 워시 인준청문회 4/21 예정. 연준 독립성 우려 → 달러 약세 압력.
+
+### 3. 🟢 삼성전자 Q1 실적 서프라이즈
+매출 133조원, 영업이익 **57.2조원**(YoY 8배↑). AI 인프라 메모리 수요 폭증. 외국인 삼성+하이닉스 순매수 **4.83조원**(4월 누적).
+
+### 4. 🟢 KOSPI 6,000선 돌파
+WGBI 편입 자금 7.7조원 유입 + 반도체 호실적 + 외국인 매수 전환. 코스피 7,000 전망 부상.
+
+### 5. 🟢 글로벌 반도체 매출 $1.3T 전망 (가트너)
+2026년 반도체 매출 64% 성장, 메모리 3배 증가 '멤플레이션'. TSMC Q1 매출 YoY +35%.
+
+### 6. ⚠️ ASML: 호실적 but 중국 수출규제 강화
+Q1 매출 88억 유로(예상 상회). MATCH Act 법안으로 DUV까지 수출 금지 가능성 → 한국 반도체 반사이익.
+
+## 금주 핵심 관전 포인트
+
+- **4/21**: 미-이란 휴전 만료일 / 워시 연준 의장 인준청문회
+- **4/23**: SK하이닉스 Q1 잠정실적
+- **4/28~29**: 미국 FOMC 회의
+
+# 투자자 심리 분석
+
+## 종합 센티멘트
+
+```{python}
+#| echo: false
+fig, ax = plt.subplots(figsize=(10, 4))
+
+markets = ['US Market', 'Korea Market', 'Crypto']
+scores_sent = [55, 75, 15]
+colors_sent = ['#f39c12', '#2ecc71', '#e74c3c']
+labels = ['중립\n(공포→탐욕 이동중)', '탐욕\n(WGBI+반도체+외국인)', '극도의 공포\n(회복 지연)']
+
+bars = ax.barh(markets, scores_sent, color=colors_sent, height=0.5, edgecolor='white')
+for bar, label in zip(bars, labels):
+    ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height()/2., label,
+            va='center', fontsize=10, color='white')
+ax.set_xlim(0, 100)
+ax.set_xlabel('Sentiment Score (0=Extreme Fear, 100=Extreme Greed)', color='white')
+ax.set_title('📈 Market Sentiment Dashboard', fontsize=13, fontweight='bold', color='white')
+ax.axvline(x=50, color='white', linestyle='--', alpha=0.3)
+ax.set_facecolor('#1a1a2e')
+fig.patch.set_facecolor('#1a1a2e')
+ax.tick_params(colors='white')
+for spine in ax.spines.values():
+    spine.set_color('#333')
+plt.tight_layout()
+plt.show()
+```
+
+**주요 심리 지표:**
+
+- **CNN 공포-탐욕**: 중립 (극도의 공포에서 빠르게 회복)
+- **AAII 설문**: 약세 43% > 강세 35.7% (비관 잔존하나 후퇴 중)
+- **VIX**: 18.17 — 정상 범위
+- **ETF 자금 유입**: YTD $5,240억 돌파 (대규모 유입 지속)
+- **한국 외국인 순매수**: WGBI 편입 후 7.7조원 국채 + 4.83조원 주식
+
+# 호르무즈 해협 모니터링
+
+```{python}
+#| echo: false
+fig, ax = plt.subplots(figsize=(10, 4))
+
+dates = ['Pre-War\n(~Feb)', 'Mar 2\n(Closure)', 'Mar 26\n(Partial)', 'Apr Mid\n(Current)', 'Target\n(Signal)']
+ships = [100, 0, 8, 14, 30]
+colors_h = ['#2ecc71', '#e74c3c', '#e74c3c', '#f39c12', '#3498db']
+
+bars = ax.bar(dates, ships, color=colors_h, edgecolor='white', linewidth=0.5)
+ax.axhline(y=30, color='#00ff88', linestyle='--', linewidth=2, label='⚡ 투자 본격화 신호선 (30척)')
+for bar, val in zip(bars, ships):
+    ax.text(bar.get_x() + bar.get_width()/2., bar.get_height() + 1, f'{val}척/일',
+            ha='center', fontsize=10, fontweight='bold', color='white')
+ax.set_ylabel('Daily Ship Traffic', color='white')
+ax.set_title('🚢 Hormuz Strait Ship Traffic Monitor', fontsize=13, fontweight='bold', color='white')
+ax.legend(fontsize=11, loc='upper right')
+ax.set_facecolor('#1a1a2e')
+fig.patch.set_facecolor('#1a1a2e')
+ax.tick_params(colors='white')
+for spine in ax.spines.values():
+    spine.set_color('#333')
+plt.tight_layout()
+plt.show()
+```
+
+**현재 상태:** 일 11~16척 (30척 미달 → ⚡신호 미발동)
+
+- 전쟁 이전: 100+척/일 → 현재: ~14척/일 (86% 감소)
+- IRGC 3/2 폐쇄 선언 → 3/26 일부 국가 통행 허용 (중국/러시아/인도)
+- 미 해군 봉쇄 + IRGC 통제 = "이중 봉쇄" 상태
+- 230척+ 유조선 페르시아만 내 대기 중
+
+# 퇴직연금/개인연금 포트폴리오
+
+## 자산 현황
+
+```{python}
+#| echo: false
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# DC Pension
+dc_total = 3.45  # 억원
+dc_labels = ['한국 주식\n(35%)', 'US Stock ETF\n(40%)', '채권\n(15%)', 'MMF\n(10%)']
+dc_sizes = [35, 40, 15, 10]
+dc_amounts = [dc_total * s / 100 for s in dc_sizes]
+dc_colors = ['#e74c3c', '#3498db', '#2ecc71', '#95a5a6']
+wedges, texts, autotexts = axes[0].pie(dc_sizes, labels=dc_labels, colors=dc_colors,
+                                        autopct=lambda p: f'{p:.0f}%\n({dc_total*p/100:.2f}억)',
+                                        startangle=90, textprops={'color': 'white', 'fontsize': 9})
+axes[0].set_title(f'💼 한투 DC 퇴직연금\n총 {dc_total}억원', fontsize=12, fontweight='bold', color='white')
+
+# Personal Pension
+pp_total = 1.24
+pp_labels = ['TDF\n(40%)', 'US Stock\n(30%)', '한국 주식\n(20%)', '채권\n(10%)']
+pp_sizes = [40, 30, 20, 10]
+pp_colors = ['#9b59b6', '#3498db', '#e74c3c', '#2ecc71']
+wedges2, texts2, autotexts2 = axes[1].pie(pp_sizes, labels=pp_labels, colors=pp_colors,
+                                           autopct=lambda p: f'{p:.0f}%\n({pp_total*p/100:.2f}억)',
+                                           startangle=90, textprops={'color': 'white', 'fontsize': 9})
+axes[1].set_title(f'💰 삼성 개인연금\n총 {pp_total}억원', fontsize=12, fontweight='bold', color='white')
+
+fig.patch.set_facecolor('#1a1a2e')
+for ax in axes:
+    ax.set_facecolor('#1a1a2e')
+plt.tight_layout()
+plt.show()
+```
+
+## 포트폴리오 맥락 분석
+
+**총 연금자산: 4.69억원** (DC 3.45억 + 개인 1.24억)
+
+**금주 시장 상황과 포트폴리오 시사점:**
+
+::: {.callout-tip}
+## 긍정 요인
+- **한국 주식 비중(DC 35% + 개인 20%)**: KOSPI +17.98% 주간 상승 → 한국 주식 부분 수익률 극대화 구간
+- **US Stock ETF(DC 40% + 개인 30%)**: S&P +8.4%, NASDAQ +12.2% → 미국 부분도 강세
+- **채권(DC 15% + 개인 10%)**: 미국 10Y 금리 하락(-3.56%) → 채권 가격 상승
+:::
+
+::: {.callout-caution}
+## 리스크 요인
+- **유가 $90+**: 에너지 비용 상승 → 한국 기업 수익성 압박 가능
+- **호르무즈 봉쇄 지속**: 휴전 만료(4/21) 후 재격화 시 시장 급락 리스크
+- **연준 리더십 교체**: 통화정책 불확실성 → 달러/원 변동성
+:::
+
+**권고사항:**
+
+1. 반도체 비중 유지/확대 — 삼성·하이닉스 실적 모멘텀 지속
+2. WGBI 편입 수혜 — 한국 채권/주식 구조적 자금 유입 (11월까지)
+3. 4/21 휴전 만료 전후 변동성 대비 — MMF/현금 비중 10% 유지
+4. TDF 리밸런싱 시점 확인 — 주식 비중 자동 조절 여부 점검
+
+# VIX 추이
+
+```{python}
+#| echo: false
+import yfinance as yf
+
+t = yf.Ticker("^VIX")
+vix_data = t.history(period="1mo")
+
+fig, ax = plt.subplots(figsize=(12, 4))
+ax.plot(vix_data.index, vix_data['Close'], color='#ff6b6b', linewidth=2.5)
+ax.fill_between(vix_data.index, vix_data['Close'], alpha=0.15, color='red')
+ax.axhline(y=20, color='#ffd93d', linestyle='--', alpha=0.7, label='Warning (20)')
+ax.axhline(y=30, color='#ff4444', linestyle='--', alpha=0.7, label='Panic (30)')
+ax.axhline(y=18.17, color='#00ff88', linestyle='-', alpha=0.5, label=f'Current (18.17)')
+ax.set_title('📉 VIX 1-Month Trend — Fear Subsiding', fontsize=13, fontweight='bold', color='white')
+ax.legend(fontsize=10, loc='upper right')
+ax.set_ylabel('VIX', color='white')
+ax.set_facecolor('#1a1a2e')
+fig.patch.set_facecolor('#1a1a2e')
+ax.tick_params(colors='white')
+for spine in ax.spines.values():
+    spine.set_color('#333')
+plt.tight_layout()
+plt.show()
+```
+
+# 거시경제 데이터
+
+```{python}
+#| echo: false
+macro = {
+    "지표": ["미국 CPI (YoY)", "미국 근원 CPI", "미국 실업률", "미국 GDP 성장률",
+             "미연준 기준금리", "한은 기준금리", "10Y-2Y 스프레드", "미국 CPI (MoM)"],
+    "최신값": ["3.3%", "2.6%", "4.3%", "0.5% (연율)",
+              "3.50~3.75%", "2.50%", "+50bp", "+0.9%"],
+    "평가": ["⚠️ 에너지발 상승", "✅ 안정적", "✅ 소폭 개선", "🔴 급격한 둔화",
+             "➡️ 2회 연속 동결", "➡️ 7회 연속 동결", "✅ 수익률곡선 정상화", "⚠️ 에너지 +10.9%"]
+}
+df_macro = pd.DataFrame(macro)
+html_macro = df_macro.to_html(index=False, classes='table table-dark table-striped', border=0)
+HTML(html_macro)
+```
+
+**핵심 포인트:**
+
+- GDP 급격한 둔화 (Q4 4.4% → Q1 0.5%): 이란 전쟁 + 에너지 쇼크 영향
+- CPI MoM +0.9%: 가솔린 +21.2%가 주도 — 근원 물가는 안정
+- 실업률 4.3%: 소폭 개선이나 경제활동참가율 61.9%로 하락
+
+# Disclaimer {.unnumbered}
+
+::: {.callout-note}
+본 리포트는 Chimera-AI 멀티에이전트 시스템이 자동 생성한 것으로, 투자 조언이 아닙니다.
+모든 투자 결정은 본인의 판단과 책임 하에 이루어져야 합니다.
+데이터 출처: yfinance, FRED, Bloomberg, CNBC, 한국경제, 서울경제, Reddit, Naver Finance 등.
+생성일시: 2026-04-16 07:00 UTC
+:::
