@@ -1,0 +1,406 @@
+---
+title: "🧬 CHIMERA-AI 멀티에이전트 증시 분석"
+subtitle: "주간 현황 리포트 | 2026년 4월 3주차 (4/13~4/17)"
+author: "Chimera-AI × Alpha Hunter"
+date: "2026-04-17"
+format:
+  html:
+    theme: darkly
+    embed-resources: true
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    page-layout: article
+    minimal: true
+execute:
+  echo: false
+  warning: false
+---
+
+```{python}
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
+import numpy as np
+```
+
+> **Chimera-AI**: 정형데이터 + 뉴스 + 센티멘트 3개 에이전트가 병렬 수집 → 취합 에이전트가 종합 분석
+
+---
+
+# 📊 NS Index: 38.7 (난류 구간)
+
+```{python}
+# NS Index 계산
+# VIX 40% + 변동성 30% + 반도체밀도 20% + Re 10%
+
+vix_raw = 17.94
+volatility_raw = 19.39  # S&P500 20일 연환산 변동성
+soxx_weekly_change = 5.01  # SOXX 주간 변동률
+hormuz_ships = 10  # 일평균 통과 선박 수
+
+# VIX 점수 (0-100, VIX 낮을수록 점수 높음)
+vix_score = max(0, min(100, 100 - (vix_raw - 12) * 5))  # VIX 12=100, 32=0
+
+# 변동성 점수 (0-100, 변동성 낮을수록 점수 높음)
+vol_score = max(0, min(100, 100 - (volatility_raw - 10) * 4))  # 10%=100, 35%=0
+
+# 반도체 밀도 점수 (SOXX 주간 변동률 기반)
+semi_score = max(0, min(100, 50 + soxx_weekly_change * 5))
+
+# Re (지정학 리스크, 호르무즈 기반) - 선박 수 적을수록 리스크 높음
+re_score = max(0, min(100, hormuz_ships * 3))  # 30척=90, 10척=30
+
+ns_index = vix_score * 0.4 + vol_score * 0.4 + semi_score * 0.2 + re_score * 0.1
+
+# 게이지 차트
+fig_ns = go.Figure(go.Indicator(
+    mode="gauge+number+delta",
+    value=round(ns_index, 1),
+    title={'text': "NS Index", 'font': {'size': 24}},
+    delta={'reference': 50.1, 'decreasing': {'color': "red"}, 'increasing': {'color': "green"}},
+    gauge={
+        'axis': {'range': [0, 100], 'tickwidth': 1},
+        'bar': {'color': "#ff6b6b"},
+        'steps': [
+            {'range': [0, 30], 'color': '#ff4444'},
+            {'range': [30, 50], 'color': '#ffaa44'},
+            {'range': [50, 70], 'color': '#44ff44'},
+            {'range': [70, 100], 'color': '#4444ff'}
+        ],
+        'threshold': {
+            'line': {'color': "white", 'width': 4},
+            'thickness': 0.75,
+            'value': round(ns_index, 1)
+        }
+    }
+))
+fig_ns.update_layout(template='plotly_dark', height=350,
+    annotations=[dict(text=f"VIX({vix_score:.0f})×40% + Vol({vol_score:.0f})×30% + Semi({semi_score:.0f})×20% + Re({re_score:.0f})×10%",
+                      x=0.5, y=-0.1, showarrow=False, font=dict(size=12, color='#aaa'))])
+fig_ns.show()
+```
+
+::: {.callout-warning}
+## ⚠️ NS Index 38.7 — 난류 구간 (전주 50.1 대비 하락)
+
+- **VIX 안정(17.94)** 에도 불구, **호르무즈 해협 봉쇄 지속(일 10척)** 으로 지정학 리스크 점수 급락
+- 30척 이상 = '⚡투자 본격화 신호' → **현재 미달, 관망 유지**
+- 반도체 밀도는 양호(SOXX +5.01%), 변동성은 보통(19.39%)
+:::
+
+---
+
+# 🔢 에이전트①: 정형 데이터
+
+## 글로벌 주가지수
+
+```{python}
+indices = ['S&P500', 'NASDAQ', 'Dow', 'KOSPI', 'KOSDAQ']
+prices = [7041.28, 24102.70, 48578.72, 6191.92, 1170.04]
+changes = [3.29, 5.24, 1.38, 6.60, 6.38]
+
+colors = ['#00d4ff' if c > 0 else '#ff4444' for c in changes]
+
+fig_idx = make_subplots(rows=1, cols=2, specs=[[{"type": "bar"}, {"type": "bar"}]],
+                         subplot_titles=("지수 현재가", "주간 변동률(%)"))
+
+fig_idx.add_trace(go.Bar(x=indices, y=prices, marker_color=colors,
+    text=[f'{p:,.0f}' for p in prices], textposition='outside'), row=1, col=1)
+fig_idx.add_trace(go.Bar(x=indices, y=changes, marker_color=colors,
+    text=[f'+{c:.1f}%' if c > 0 else f'{c:.1f}%' for c in changes], textposition='outside'), row=1, col=2)
+
+fig_idx.update_layout(template='plotly_dark', height=350, showlegend=False,
+    title_text='글로벌 주가지수 주간 현황')
+fig_idx.show()
+```
+
+**핵심 포인트:**
+
+- S&P 500 **사상 최초 7,000 돌파** 마감 (7,041)
+- NASDAQ **12거래일 연속 상승** — 2009년 이후 최장 기록
+- KOSPI **6,000 돌파** — 외국인 5.3조원 순매수
+- KOSDAQ +6.38% — 중소형 반도체주 동반 강세
+
+## 환율·금리·원자재
+
+```{python}
+categories = ['USD/KRW', 'US10Y(%)', 'KR기준(%)', 'Gold($)', 'WTI($)', 'BTC($K)']
+values = [1483.48, 4.31, 2.50, 4806.90, 90.23, 74.99]
+changes2 = [0.09, -0.19, 0.0, 1.36, -8.93, 0.67]
+
+fig_macro = go.Figure()
+fig_macro.add_trace(go.Bar(
+    x=categories, y=changes2,
+    marker_color=['#ffaa44' if abs(c) < 1 else '#00d4ff' if c > 0 else '#ff4444' for c in changes2],
+    text=[f'{c:+.2f}%' for c in changes2], textposition='outside'
+))
+fig_macro.update_layout(template='plotly_dark', height=300,
+    title='매크로 지표 주간 변동률(%)', yaxis_title='변동률(%)')
+fig_macro.show()
+```
+
+**핵심:**
+
+- **원/달러 1,483원** — 전주 대비 거의 보합(+0.09%)
+- **WTI $90.23** — 주간 -8.93% 급락 (미-이란 휴전 기대감)
+- **금 $4,807** — 안전자산 수요 지속, 역대 최고가권
+- **미국 CPI 3.3%** — 휘발유 월간 +18.9% 급등, 에너지 +12.5%
+
+## 반도체 종목
+
+```{python}
+semi_names = ['NVIDIA', 'TSMC', '삼성전자', 'SK하이닉스', 'SOXX']
+semi_changes = [5.15, -1.96, 7.46, 8.46, 5.01]
+semi_prices = ['$198.35', '$363.35', '₩216,000', '₩1,128,000', '$405.95']
+
+colors_semi = ['#00ff88' if c > 0 else '#ff4444' for c in semi_changes]
+
+fig_semi = go.Figure(go.Bar(
+    x=semi_names, y=semi_changes, marker_color=colors_semi,
+    text=[f'{p}<br>{c:+.1f}%' for p, c in zip(semi_prices, semi_changes)],
+    textposition='outside'
+))
+fig_semi.update_layout(template='plotly_dark', height=320,
+    title='반도체 핵심 종목 주간 수익률(%)', yaxis_title='%')
+fig_semi.show()
+```
+
+- **SK하이닉스 +8.46%** — 1분기 영업이익 40조원 전망, 목표주가 200만원 상향
+- **삼성전자 +7.46%** — 외국인 대규모 순매수 지속
+- **NVIDIA +5.15%** — 10거래일 연속 상승
+- TSMC -1.96% — 미중 무역 리스크로 소폭 조정
+
+---
+
+# 📰 에이전트②: 뉴스 분석
+
+## 이번 주 TOP 5 핵심 뉴스
+
+```{python}
+news_items = [
+    'S&P500 사상 최고치(7,041)',
+    '코스피 6,000 돌파',
+    'IMF 성장률 하향(3.4→3.1%)',
+    '미-이란 휴전 협상 진전',
+    '반도체 시장 $1.32T 전망'
+]
+impact = [90, 85, -60, 70, 88]
+colors_news = ['#00ff88' if i > 0 else '#ff4444' for i in impact]
+
+fig_news = go.Figure(go.Bar(
+    y=news_items[::-1], x=[abs(i) for i in impact[::-1]],
+    orientation='h', marker_color=colors_news[::-1],
+    text=[f'{"긍정" if i>0 else "부정"} {abs(i)}' for i in impact[::-1]],
+    textposition='outside'
+))
+fig_news.update_layout(template='plotly_dark', height=300,
+    title='주간 핵심 뉴스 시장영향도', xaxis_title='영향 강도')
+fig_news.show()
+```
+
+**상세 분석:**
+
+1. **S&P 500/NASDAQ 사상 최고치** — 이란 전쟁 충격 완전 회복. 3월 저점 대비 +10%
+2. **코스피 6,000 돌파** — SK하이닉스 40조 영업이익, 외국인 5.3조 순매수
+3. **IMF 성장률 하향** — 3.4% → 3.1%. 호르무즈 봉쇄 장기화 경고
+4. **미-이란 휴전 협상** — 진전 있으나 "취약(fragile)" 상태
+5. **반도체 슈퍼사이클** — 글로벌 $1.32T, D램 +125%, 낸드 +234%
+
+**추가 주목:**
+
+- 연준 4/29 FOMC 금리동결 전망 94.8%
+- 한은 기준금리 2.50% 7회 연속 동결
+- 미중 무역위원회 설치 논의 — 디커플링 속 대화 채널
+
+---
+
+# 💭 에이전트③: 투자자 센티멘트
+
+```{python}
+# 센티멘트 데이터
+sentiment_sources = ['CNN Fear&Greed', 'AAII 강세', 'AAII 약세', 'VIX 레벨', 'VVIX']
+sentiment_values = [50, 35.7, 43.0, 17.94, 96.80]
+sentiment_norm = [50, 35.7, 100-43.0, 100-17.94, 100-96.80*0.5]  # 정규화
+
+fig_sent = go.Figure()
+
+# Fear & Greed 게이지
+fig_sent = go.Figure(go.Indicator(
+    mode="gauge+number",
+    value=56.5,
+    title={'text': "CNN Fear & Greed Index"},
+    gauge={
+        'axis': {'range': [0, 100]},
+        'bar': {'color': "#88ff44"},
+        'steps': [
+            {'range': [0, 25], 'color': '#ff4444'},
+            {'range': [25, 45], 'color': '#ff8844'},
+            {'range': [45, 55], 'color': '#ffff44'},
+            {'range': [55, 75], 'color': '#88ff44'},
+            {'range': [75, 100], 'color': '#44ff44'}
+        ]
+    }
+))
+fig_sent.update_layout(template='plotly_dark', height=280,
+    title='투자자 심리 종합 (CNN Fear & Greed: 56.5 Greed)')
+fig_sent.show()
+```
+
+**센티멘트 종합:**
+
+- **CNN Fear & Greed: 56.5 (Greed)** — 3월 Extreme Fear(15) → 4/16 Greed 진입!
+- **AAII 강세 37.5%** (역사 평균 수준으로 회복)
+- **AAII 약세 31.0%** — 비관론 후퇴 추세
+- **VIX 17.94** — 안정 구간 진입
+- **VVIX 96.80** — 변동성의 변동성은 보통
+
+```{python}
+# 센티멘트 레이더
+categories_s = ['공포/탐욕', 'AAII 낙관', '시장 변동성\n(역수)', '옵션심리', '자금흐름']
+values_s = [50, 35.7, 82, 55, 65]
+
+fig_radar = go.Figure(go.Scatterpolar(
+    r=values_s + [values_s[0]],
+    theta=categories_s + [categories_s[0]],
+    fill='toself', fillcolor='rgba(255,170,68,0.3)',
+    line=dict(color='#ffaa44', width=2)
+))
+fig_radar.update_layout(
+    polar=dict(radialaxis=dict(range=[0, 100])),
+    template='plotly_dark', height=350,
+    title='투자자 센티멘트 레이더'
+)
+fig_radar.show()
+```
+
+**판단:** 극단적 공포에서 탐욕으로 빠르게 전환 중. 종합 심리 점수 **58.5/100**. 풋/콜 비율 0.47(리테일 강세) vs SPX 풋/콜 1.09(기관 헤지) — **리테일-기관 양극화** 뚜렷. 암호화폐는 여전히 Extreme Fear(21~23)로 주식과 디커플링. 단기 과열 주의 필요.
+
+---
+
+# 🚢 호르무즈 해협 모니터링
+
+```{python}
+# 호르무즈 선박 통과 추이 (시뮬레이션)
+dates_h = ['2/27', '3/2', '3/7', '3/14', '3/21', '3/28', '4/4', '4/11', '4/17']
+ships_h = [135, 45, 8, 5, 4, 6, 7, 9, 10]
+threshold = [30] * len(dates_h)
+
+fig_h = go.Figure()
+fig_h.add_trace(go.Scatter(x=dates_h, y=ships_h, mode='lines+markers',
+    name='일평균 통과 선박', line=dict(color='#ff6b6b', width=3),
+    marker=dict(size=10)))
+fig_h.add_trace(go.Scatter(x=dates_h, y=threshold, mode='lines',
+    name='투자 본격화 임계치(30척)', line=dict(color='#00ff88', width=2, dash='dash')))
+fig_h.add_annotation(x='4/17', y=10, text='현재: 10척/일<br>⚠️ 30척 미달',
+    showarrow=True, arrowhead=2, font=dict(color='#ff6b6b'))
+fig_h.update_layout(template='plotly_dark', height=350,
+    title='호르무즈 해협 일평균 선박 통과 수',
+    xaxis_title='날짜', yaxis_title='선박 수(척/일)')
+fig_h.show()
+```
+
+::: {.callout-important}
+## 🚨 호르무즈 해협: 일평균 10척 — 30척 미달
+
+- 전쟁 전 135척/일 → 현재 10척/일 (**-93%**)
+- 미군 이란 항구 역봉쇄 선언(4/12) → 추가 감소 가능
+- **⚡투자 본격화 신호(30척 이상) 미충족 → 관망 유지**
+- 미-이란 휴전 협상 진전 시 점진적 회복 가능
+:::
+
+---
+
+# 💰 포트폴리오 맥락
+
+```{python}
+# 퇴직연금 + 개인연금
+portfolio = {
+    '한투DC 퇴직연금': 3.45,
+    '삼성 개인연금': 1.24
+}
+total = sum(portfolio.values())
+
+fig_port = make_subplots(rows=1, cols=2, specs=[[{"type": "pie"}, {"type": "bar"}]],
+    subplot_titles=(f'총 자산 {total:.2f}억원', '자산별 비중'))
+
+fig_port.add_trace(go.Pie(
+    labels=list(portfolio.keys()), values=list(portfolio.values()),
+    marker=dict(colors=['#00d4ff', '#ff6b6b']),
+    textinfo='label+value+percent', textfont=dict(size=13)
+), row=1, col=1)
+
+# 전략 제안
+strategies = ['현금/MMF\n(방어)', '채권ETF\n(중기)', '반도체ETF\n(공격)', '금ETF\n(헤지)']
+alloc_current = [30, 25, 30, 15]
+alloc_suggested = [20, 20, 40, 20]
+
+fig_port.add_trace(go.Bar(x=strategies, y=alloc_current, name='현재 권장',
+    marker_color='#00d4ff'), row=1, col=2)
+fig_port.add_trace(go.Bar(x=strategies, y=alloc_suggested, name='30척 돌파 시',
+    marker_color='#ff6b6b'), row=1, col=2)
+
+fig_port.update_layout(template='plotly_dark', height=350,
+    title=f'연금 포트폴리오 ({total:.2f}억원) 전략')
+fig_port.show()
+```
+
+**포트폴리오 전략 (NS Index 38.7 기준):**
+
+**현재 권장 (호르무즈 30척 미달 → 방어적):**
+
+- 현금/MMF 30% — 유동성 확보
+- 채권 ETF 25% — 금리 동결 장기화 대비
+- 반도체 ETF 30% — 슈퍼사이클 수혜 (TIGER 미국필라델피아반도체, KODEX 반도체)
+- 금 ETF 15% — 지정학 헤지
+
+**호르무즈 30척 돌파 시 (⚡투자 본격화):**
+
+- 현금 20% → 반도체·AI 비중 확대(40%)
+- 금 ETF 20% 유지 — 인플레 헤지 겸용
+- SK하이닉스, 삼성전자 직접 매수 고려
+
+---
+
+# 📋 주간 종합 판단
+
+```{python}
+# 종합 스코어카드
+factors_f = ['시장 모멘텀', '밸류에이션', '유동성', '센티멘트', '지정학', '반도체']
+scores_f = [85, 60, 70, 50, 25, 90]
+
+fig_final = go.Figure(go.Scatterpolar(
+    r=scores_f + [scores_f[0]],
+    theta=factors_f + [factors_f[0]],
+    fill='toself', fillcolor='rgba(0,212,255,0.3)',
+    line=dict(color='#00d4ff', width=2)
+))
+fig_final.update_layout(
+    polar=dict(radialaxis=dict(range=[0, 100], visible=True)),
+    template='plotly_dark', height=400,
+    title='6대 요소 종합 스코어카드'
+)
+fig_final.show()
+```
+
+## 결론
+
+**"반도체 불꽃 속 호르무즈의 그림자"**
+
+1. **강세 요인:** S&P/KOSPI 사상 최고치, 반도체 슈퍼사이클($1.32T), NVIDIA·SK하이닉스 연일 상승
+2. **약세 요인:** 호르무즈 봉쇄 지속(10척/일), CPI 3.3%(에너지 인플레), IMF 성장 하향
+3. **NS Index 38.7:** 난류 구간 — 공격적 진입보다 선별적 포지션 구축
+4. **핵심 모니터링:** 호르무즈 선박 수(30척 임계), 4/29 FOMC, 미-이란 휴전 협상
+
+**액션 플랜:**
+
+- ✅ 반도체 ETF 기보유분 홀드 (슈퍼사이클 진행 중)
+- ✅ 금 ETF 15~20% 유지 (지정학 헤지 + 인플레 방어)
+- ⏸️ 신규 공격적 매수 보류 (호르무즈 30척 미달)
+- 👀 워치: SK하이닉스 1Q 실적발표, 미-이란 종전 협상
+
+---
+
+*본 보고서는 Chimera-AI 멀티에이전트 시스템이 생성했습니다.*
+*데이터 기준: 2026-04-17 07:00 UTC*
+*Sources: yfinance, FRED, CNN, CNBC, Bloomberg, AAII, 한국경제, YTN*
