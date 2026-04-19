@@ -1,0 +1,301 @@
+---
+title: "Chimera-AI 주간 증시 분석 리포트"
+subtitle: "2026년 4월 14일 ~ 20일 | NS Index: 67.0"
+author: "Chimera-AI Multi-Agent System"
+date: "2026-04-20"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    self-contained: true
+    fig-width: 8
+    fig-height: 5
+lang: ko
+---
+
+```{=html}
+<style>
+  .callout-important { border-left: 4px solid #e74c3c; }
+  .callout-tip { border-left: 4px solid #27ae60; }
+  .ns-index { font-size: 3em; font-weight: bold; text-align: center; color: #2980b9; }
+  .signal-box { padding: 15px; border-radius: 8px; margin: 10px 0; }
+  .bullish { background: #d4edda; border: 1px solid #28a745; }
+  .bearish { background: #f8d7da; border: 1px solid #dc3545; }
+  .neutral { background: #fff3cd; border: 1px solid #ffc107; }
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  th, td { border: 1px solid #dee2e6; padding: 8px 12px; text-align: left; }
+  th { background: #f8f9fa; font-weight: bold; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  .metric-card { display: inline-block; padding: 15px; margin: 5px; border-radius: 8px; background: #f0f4f8; text-align: center; min-width: 150px; }
+  .metric-value { font-size: 1.5em; font-weight: bold; }
+  .metric-label { font-size: 0.85em; color: #666; }
+  .up { color: #e74c3c; }
+  .down { color: #2980b9; }
+</style>
+```
+
+# Executive Summary
+
+::: {.callout-note}
+## 주간 핵심
+미-이란 휴전(4/8) 이후 글로벌 위험자산 강세. S&P 500 사상 첫 7,000 돌파, KOSPI 6,000 회복. 삼성전자 Q1 영업이익 57.2조원 서프라이즈. 그러나 **4/21 휴전 만료**와 **이란 재폐쇄 선언(4/18)**이 최대 리스크.
+:::
+
+```{=html}
+<div style="text-align: center; margin: 30px 0;">
+  <div class="metric-card">
+    <div class="metric-value up">S&P 500</div>
+    <div class="metric-label">7,126 (+4.5%)</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value up">KOSPI</div>
+    <div class="metric-label">6,192 (+5.68%)</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value down">VIX</div>
+    <div class="metric-label">17.94 (대폭 하락)</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value down">WTI</div>
+    <div class="metric-label">$83.85 (-11%)</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-value up">SOX</div>
+    <div class="metric-label">9,556 (+8.97%)</div>
+  </div>
+</div>
+```
+
+# NS Index
+
+## 산출 결과
+
+```{=html}
+<div style="text-align: center; margin: 30px 0; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+  <div style="font-size: 1.2em; margin-bottom: 10px;">CHIMERA NS INDEX</div>
+  <div class="ns-index" style="color: white;">67.0</div>
+  <div style="font-size: 1.1em; margin-top: 10px;">&#x1F7E1; 중립~약간 낙관 (Cautiously Optimistic)</div>
+</div>
+```
+
+## 구성 요소
+
+| 구성요소 | 가중치 | 원시값 | 스코어(0-100) | 가중 기여 |
+|----------|--------|--------|---------------|-----------|
+| **VIX** | 40% | 17.94 (전쟁 전 수준 회복) | 75 | 30.0 |
+| **변동성** | 30% | SOX +8.97%w, KOSPI +5.68%w | 55 | 16.5 |
+| **반도체밀도** | 20% | SOX 9,556 (+143% YoY) | 85 | 17.0 |
+| **Re (호르무즈)** | 10% | 일일 19~20척 (임계 30척 미달) | 35 | 3.5 |
+| **합계** | **100%** | | | **67.0** |
+
+**해석**: NS Index 67은 시장이 공포 국면을 벗어나 회복 중이나, 호르무즈 리스크(Re)가 완전히 해소되지 않아 본격적 강세장 진입(75+)에는 미달. VIX 정상화와 반도체 슈퍼사이클이 상방 지지. 4/21 휴전 만료 결과에 따라 ±10pt 변동 가능.
+
+## 스코어링 기준
+
+- **VIX**: 12 이하=100, 15=85, 20=65, 25=45, 30=25, 35+=10
+- **변동성**: 주간 주요지수 변동폭 기반. 안정적 상승=70+, 급등락=30-50
+- **반도체밀도**: SOX YoY 증가율 + 주요 반도체 실적 기반
+- **Re (호르무즈)**: 일일 30척 이상=80+, 20-30척=40-60, 20척 미만=20-40
+
+# 호르무즈 해협 현황
+
+```{=html}
+<div class="signal-box neutral">
+  <h3>&#x26A0; 호르무즈 해협: 일일 19~20척 통과 (임계치 30척 미달)</h3>
+  <p><strong>투자 본격화 신호 미발동</strong> | 30척 이상 시 &#x26A1; 신호 발동 예정</p>
+</div>
+```
+
+**타임라인:**
+
+- **2/28**: 미-이스라엘 이란 공습 개시, IRGC 해협 통과 금지 경고
+- **3월**: 상선 21건 공격, 기뢰 부설 → 일일 4~10척 급감
+- **4/7**: 미-이란 2주 휴전 합의
+- **4/14**: 일일 19척 통과 (제한적 회복)
+- **4/17**: 이란 "완전 개방" 선언 → 트럼프 "미 해군 봉쇄 유지" 반박
+- **4/18**: **이란, 해협 재폐쇄 선언** (휴전 만료 임박)
+- **4/21**: **휴전 만료일** — 최대 변수
+
+**모니터링 포인트**: 걸프 내 230척 유조선 적체 대기 중. 해협 정상화 시 폭발적 통행량 증가 및 유가 하방 압력 예상.
+
+# 글로벌 시장 데이터
+
+## 주요 지수
+
+| 지수 | 종가 | 주간 변동 | 비고 |
+|------|------|----------|------|
+| S&P 500 | 7,126.06 | +4.5% | 사상 최고치, 7,000 최초 돌파 |
+| NASDAQ 100 | 24,468.48 | +5.0% | 12거래일 연속 상승 |
+| Dow Jones | 49,447.43 | +3.5% | 사상 최고치 |
+| KOSPI | 6,191.92 | +5.68% | 6,000 재탈환 |
+| KOSDAQ | 1,170.04 | +6.99% | IT/반도체 주도 |
+| SOX | 9,555.9 | +8.97% | YoY +143% |
+
+## 금리
+
+| 항목 | 수치 | 비고 |
+|------|------|------|
+| 미국 10년물 | 4.31% | 전월 대비 +11bp |
+| 미국 2년물 | 3.81% | |
+| 한국 3년 국고채 | 3.418% | 주간 +3.58bp |
+| Fed Funds Rate | 3.50~3.75% | 2회 연속 동결 |
+| 한국 기준금리 | 2.50% | 7회 연속 동결 |
+
+## 환율
+
+| 통화쌍 | 수치 | 비고 |
+|--------|------|------|
+| USD/KRW | 1,466.11 | 주중 1,497→1,466 원화 강세 |
+| EUR/USD | 1.178 | 달러 약세 |
+| USD/JPY | 158.58 | 엔화 약세 |
+| DXY | 98.23 | 3주 연속 하락 |
+
+## 원자재
+
+| 품목 | 가격 | 주간 변동 | 비고 |
+|------|------|----------|------|
+| WTI 원유 | $83.85 | -11%+ | 호르무즈 개방 기대 |
+| 금(Gold) | $4,867/oz | +1.65% | YoY +41.7%, 사상 최고 |
+| 구리(Copper) | $6.07/lb | 월간 +4.91% | |
+
+## 경제지표 (FRED)
+
+| 지표 | 수치 | 기준 | 비고 |
+|------|------|------|------|
+| 실업률 | 4.3% | 3월 | 전월 4.4%에서 하락 |
+| CPI YoY | 3.3% | 3월 | 에너지발 인플레 |
+| ISM 제조업 PMI | 52.7 | 3월 | 3개월 연속 확장 |
+
+# 주요 뉴스 & 이벤트
+
+## 이번 주 핵심 뉴스
+
+**미-이란 & 지정학**
+
+- 4/8: 미-이란 2주 휴전 합의 → WTI -16.4% 일일 급락
+- 4/18: 이란, 호르무즈 해협 비이란 상선 통과 허용 → 증시 추가 상승
+- 4/18: 이란 재폐쇄 선언 → 4/21 휴전 만료가 최대 불확실성
+
+**반도체 슈퍼사이클**
+
+- 삼성전자 Q1 영업이익 57.2조원 (YoY 8배↑, 컨센서스 대폭 상회)
+- SK하이닉스 +15% 급등, 목표주가 190만원 (KB증권)
+- 엔비디아 'Rubin' R100 차세대 AI칩 공개 (Blackwell 대비 2.5배 성능)
+- BofA: 2026년 글로벌 반도체 시장 $1.3조 전망 상향
+- 외국인, 4월 삼성-하이닉스 '쌍끌이' 순매수 전환
+
+**글로벌 매크로**
+
+- 중국 Q1 GDP +5.0% (예상 상회)
+- IMF 2026 세계경제전망: 3.1%로 하향 (기존 3.3%)
+- 넷플릭스 Q1 매출 $122.5억 (+16.2%), 리드 헤이스팅스 퇴임
+
+## 다음 주 주요 일정 (4/21~25)
+
+| 날짜 | 이벤트 | 중요도 |
+|------|--------|--------|
+| 4/20(월) | 인텔(INTC) Q1 실적 | ★★ |
+| **4/21(화)** | **미-이란 휴전 만료일** | **★★★★★** |
+| 4/21(화) | 유나이티드헬스, 아메리칸익스프레스 실적 | ★★ |
+| **4/22(수)** | **테슬라(TSLA) Q1 실적** | **★★★★** |
+| 4/22(수) | 보잉, IBM, ServiceNow 실적 | ★★★ |
+| **4/23(목)** | **SK하이닉스 Q1 잠정실적** | **★★★★** |
+| 4/23(목) | Lam Research 등 165개사 실적 | ★★★ |
+
+# 투자자 심리
+
+## 미국 투자자
+
+| 지표 | 수치 | 해석 |
+|------|------|------|
+| AAII 강세 | 31.7% (평균 37.5%) | 9주 연속 평균 이하 |
+| AAII 약세 | 42.8% (평균 31.0%) | 10주 연속 평균 초과 |
+| CNN Fear & Greed | ~30-40 (공포 구간) | 극단 공포에서 회복 중 |
+| CBOE 풋/콜 | 0.45 (주식) | 낙관적 |
+| 주간 펀드 유입 | +$312.6억 | 4주 연속 유입, 대규모 |
+
+**역발상 신호**: AAII 약세 42.8%가 10주 연속 평균 초과 → 역사적으로 이 패턴 후 6개월 평균 수익률 +12%. 기관은 이미 매수 전환 (주간 $312억 유입).
+
+## 한국 투자자
+
+| 주체 | 수급 | 비고 |
+|------|------|------|
+| 개인 | +4,200억원 순매수 | 적극 매수 |
+| 외국인 | -2,800억원 순매도 | 반도체 차익실현 |
+| 기관 | -1,300억원 순매도 | |
+
+## 공매도 & 레버리지
+
+- 나스닥 전체 공매도 잔고: 203.96억주 (+4.2억주 증가)
+- 마진 부채: $1.25조 (10개월 만에 첫 하락, -2%)
+- 공매도 커버 일수: 2.73일 (전기 2.42일에서 증가)
+
+# 퇴직연금 포트폴리오 전략
+
+## 운용 현황
+
+| 구분 | 금액 | 비중 |
+|------|------|------|
+| 한투DC (퇴직연금) | 3.45억원 | 73.6% |
+| 삼성 (개인연금) | 1.24억원 | 26.4% |
+| **합계** | **4.69억원** | **100%** |
+
+## 주간 전략 시사점
+
+```{=html}
+<div class="signal-box bullish">
+  <h3>&#x2705; 긍정 요인</h3>
+  <ul>
+    <li>반도체 슈퍼사이클 가속 (삼성 57.2조, Rubin칩, BofA $1.3조)</li>
+    <li>VIX 17.94로 공포 해소, S&P 7,000 돌파</li>
+    <li>AAII 약세 42.8% → 역발상 매수 신호</li>
+    <li>기관 자금 4주 연속 유입 전환 ($312억/주)</li>
+    <li>KOSPI 6,000 회복, 외국인 반도체 매수 전환</li>
+  </ul>
+</div>
+
+<div class="signal-box bearish">
+  <h3>&#x26A0; 리스크 요인</h3>
+  <ul>
+    <li><strong>4/21 휴전 만료 — 연장 실패 시 유가 급등 + 글로벌 조정</strong></li>
+    <li>이란 4/18 해협 재폐쇄 선언 → 호르무즈 불확실성 재부상</li>
+    <li>CPI 3.3%로 에너지발 인플레 지속 → 연준 인하 지연</li>
+    <li>마진 부채 $1.25조 고수준 (레버리지 리스크)</li>
+    <li>공매도 잔고 증가 (약세 베팅 확대)</li>
+  </ul>
+</div>
+```
+
+## 포트폴리오 권고
+
+**NS Index 67 = 중립~약간 낙관 → 비중 유지, 선별적 확대**
+
+1. **한투DC (3.45억)**: 반도체/AI 테마 펀드 비중 유지 권장. 삼성전자·SK하이닉스 실적 모멘텀 강력. 다만 4/21 휴전 만료 전 신규 진입은 자제.
+
+2. **삼성연금 (1.24억)**: 글로벌 주식형 + 안전자산(금·채권) 밸런스 유지. 금 $4,867 사상 최고치로 헤지 기능 유효.
+
+3. **호르무즈 시그널**: 일일 통과 19~20척으로 30척 임계치 미달. **투자 본격화 신호 미발동**. 해협 정상화(30척+) 확인 시 위험자산 비중 확대 트리거.
+
+4. **다음 주 대응**: 4/21 휴전 결과 확인 → 연장 시 리스크온, 결렬 시 방어 모드. 4/23 SK하이닉스 잠정실적이 반도체 투자 판단의 핵심.
+
+# 종합 판단
+
+```{=html}
+<div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 25px; border-radius: 12px; margin: 20px 0;">
+  <h3 style="margin-top: 0;">&#x1F4CA; Chimera-AI 종합 의견</h3>
+  <p><strong>시장 국면:</strong> 전쟁 공포 해소 → 리스크온 전환 중 (그러나 완결되지 않음)</p>
+  <p><strong>NS Index:</strong> 67.0 — 중립~약간 낙관. 호르무즈 정상화(Re↑) 시 75+ 진입 예상</p>
+  <p><strong>최대 변수:</strong> 4/21(화) 미-이란 휴전 만료. 연장/항구적 합의 vs 재개전</p>
+  <p><strong>포지션:</strong> 현 비중 유지. 4/21 결과 확인 후 방향성 결정. 반도체는 장기 보유.</p>
+  <p><strong>호르무즈 신호:</strong> 19~20척/일 → <strong>30척 미달, 투자 본격화 신호 미발동</strong></p>
+</div>
+```
+
+---
+
+*본 리포트는 Chimera-AI 멀티에이전트 시스템이 자동 생성했습니다.*
+*데이터 기준: 2026년 4월 17일(미국), 4월 18일(한국) 종가*
+*다음 리포트: 2026년 4월 27일*
