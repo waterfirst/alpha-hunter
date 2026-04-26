@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alpha Hunter — AI 히든젬 발굴 시스템</title>
+<meta name="description" content="한국·미국·중국 시장에서 데이터 기반으로 숨은 보물 종목을 발굴하는 AI 주간 리서치">
+<meta property="og:title" content="Alpha Hunter — AI 히든젬 발굴">
+<meta property="og:description" content="매주 한국/미국/중국 시장에서 데이터 기반 히든젬을 찾는 AI 투자 리서치 시스템">
+<meta property="og:image" content="https://waterfirst.github.io/alpha-hunter/hero.png">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080f;--sf:#111122;--bd:#1e1e3a;--ac:#f59e0b;--tx:#e4e4ec;--mt:#888;--rd:#ef4444;--gn:#22c55e;--bl:#6366f1;--cy:#06b6d4;--kr:#c7254e;--us:#3b82f6;--cn:#dc2626}
+[data-theme=light]{--bg:#f8f8fa;--sf:#fff;--bd:#e0e0e8;--ac:#d97706;--tx:#1a1a2e;--mt:#666}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s;overflow:hidden}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#splash img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.35)}
+.sp-overlay{position:relative;z-index:2;text-align:center;padding:20px}
+.sp-title{font-size:3em;font-weight:900;color:#f59e0b;text-shadow:0 4px 30px rgba(0,0,0,.5);margin-bottom:4px;opacity:0;animation:fadeUp .8s .3s forwards}
+.sp-sub{font-size:15px;color:rgba(255,255,255,.6);letter-spacing:3px;text-transform:uppercase;opacity:0;animation:fadeUp .6s .7s forwards}
+.sp-flags{font-size:24px;margin-top:12px;opacity:0;animation:fadeUp .5s 1s forwards;letter-spacing:8px}
+.sp-bar{width:220px;height:3px;background:rgba(255,255,255,.1);border-radius:3px;margin:20px auto 0;overflow:hidden;opacity:0;animation:fadeUp .4s 1.2s forwards}
+.sp-fill{width:0;height:100%;background:linear-gradient(90deg,#c7254e,#f59e0b,#3b82f6,#dc2626);border-radius:3px;animation:load 2s 1.4s ease-in-out forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes load{0%{width:0}60%{width:75%}100%{width:100%}}
+
+.main{display:flex;flex-direction:column;align-items:center;padding:0 16px 30px}
+.theme-btn{position:fixed;top:14px;right:14px;background:var(--sf);border:1px solid var(--bd);color:var(--tx);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;z-index:100;display:flex;align-items:center;justify-content:center}
+.hero-banner{width:100%;max-height:200px;overflow:hidden;position:relative}
+.hero-banner img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.5)}
+.hero-banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent)}
+
+header{text-align:center;margin:20px 0 24px;max-width:700px}
+.badge{display:inline-block;background:rgba(245,158,11,.15);color:var(--ac);font-size:11px;font-weight:700;padding:3px 12px;border-radius:12px;margin-bottom:8px}
+.desc{color:var(--mt);font-size:13px;line-height:1.6;margin-bottom:6px}
+.author{color:var(--ac);font-size:12px;margin-bottom:14px}
+
+.schedule{max-width:700px;width:100%;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:24px}
+.sch{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 6px;text-align:center;font-size:11px}
+.sch .day{font-weight:700;font-size:13px;margin-bottom:4px}
+.sch .flag{font-size:18px}
+.sch .label{color:var(--mt);font-size:10px;margin-top:3px}
+.sch-kr{border-color:var(--kr)}
+.sch-us{border-color:var(--us)}
+.sch-cn{border-color:var(--cn)}
+.sch-all{border-color:var(--ac);background:rgba(245,158,11,.08)}
+
+.sec{font-size:12px;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:2px;margin:24px 0 12px;max-width:700px;width:100%;padding-left:4px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;margin-bottom:10px;max-width:700px;width:100%;transition:border-color .2s,transform .1s}
+.card:hover{border-color:var(--ac);transform:translateY(-1px)}
+.card a{color:var(--tx);text-decoration:none;display:block;padding:16px 20px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:700;white-space:nowrap}
+.t-gem{background:rgba(245,158,11,.2);color:var(--ac)}
+.t-kr{background:rgba(199,37,78,.15);color:var(--kr)}
+.t-us{background:rgba(59,130,246,.15);color:var(--us)}
+.t-cn{background:rgba(220,38,38,.15);color:var(--cn)}
+.t-wk{background:rgba(99,102,241,.15);color:var(--bl)}
+.t-new{background:rgba(239,68,68,.2);color:var(--rd);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+.date{font-size:11px;color:var(--mt);margin-left:auto}
+.card h3{font-size:14px;margin:6px 0 3px}
+.card .sub{font-size:12px;color:var(--mt);line-height:1.5}
+.perf{font-size:12px;font-weight:700;margin-top:4px}
+.perf-up{color:var(--gn)}
+.perf-dn{color:var(--rd)}
+
+.method{max-width:700px;width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:16px}
+.method h3{font-size:14px;margin-bottom:10px;color:var(--ac)}
+.method-step{display:flex;gap:10px;margin-bottom:8px;font-size:12.5px;line-height:1.6}
+.step-num{background:var(--ac);color:#000;font-weight:800;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.step-text{color:var(--mt)}
+.step-text b{color:var(--tx)}
+
+footer{margin-top:36px;color:var(--mt);font-size:11px;text-align:center;line-height:1.8}
+footer a{color:var(--ac);text-decoration:none}
+.disclaimer{max-width:700px;width:100%;font-size:10px;color:#555;text-align:center;margin-top:16px;padding:10px;border-top:1px solid var(--bd)}
+</style>
+</head>
+<body>
+
+<div id="splash">
+<img src="hero.png" alt="">
+<div class="sp-overlay">
+<div class="sp-title">ALPHA HUNTER</div>
+<div class="sp-sub">AI-Powered Hidden Gem Discovery</div>
+<div class="sp-flags">🇰🇷 🇺🇸 🇨🇳</div>
+<div class="sp-bar"><div class="sp-fill"></div></div>
+</div>
+</div>
+
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+<div class="main">
+
+<div class="hero-banner"><img src="hero.png" alt=""></div>
+
+<header>
+<div class="badge">Data-Driven Hidden Gem Discovery</div>
+<div class="desc">한국·미국·중국 시장에서 데이터 기반으로 숨은 보물을 찾는 AI 주간 리서치.<br>매주 나라별 1~2개 종목을 정량 스크리닝 + 정성 딥 리서치로 발굴합니다.</div>
+<div class="author">Nakcho Choi | Chimera AI × Alpha Hunter</div>
+</header>
+
+<!-- Weekly Schedule -->
+<div class="schedule">
+<div class="sch sch-kr"><div class="day">월</div><div class="flag">🇰🇷</div><div class="label">한국<br>스크리닝</div></div>
+<div class="sch sch-kr"><div class="day">화</div><div class="flag">🇰🇷</div><div class="label">한국<br>딥 리서치</div></div>
+<div class="sch sch-us"><div class="day">수</div><div class="flag">🇺🇸</div><div class="label">미국<br>스크리닝</div></div>
+<div class="sch sch-us"><div class="day">목</div><div class="flag">🇺🇸</div><div class="label">미국<br>딥 리서치</div></div>
+<div class="sch sch-cn"><div class="day">금</div><div class="flag">🇨🇳</div><div class="label">중국<br>스크리닝+리서치</div></div>
+<div class="sch sch-all"><div class="day">토</div><div class="flag">💎</div><div class="label">주간 종합<br>Hidden Gem</div></div>
+</div>
+
+<!-- Methodology -->
+<div class="method">
+<h3>💎 발굴 방법론 (HPSP 성공 패턴 기반)</h3>
+<div class="method-step"><div class="step-num">1</div><div class="step-text"><b>정량 스크리닝</b> — 매출성장 >20%, 영업이익률 >15%, Strong Buy 컨센서스, 순현금, 시총 $1B~$20B</div></div>
+<div class="method-step"><div class="step-num">2</div><div class="step-text"><b>경쟁 우위 분석</b> — 독점기술? 해자(moat)? 산업 트렌드(AI/방산/에너지)와 연결?</div></div>
+<div class="method-step"><div class="step-num">3</div><div class="step-text"><b>카탈리스트 확인</b> — 실적발표, 신제품, M&A, 정책 수혜 임박?</div></div>
+<div class="method-step"><div class="step-num">4</div><div class="step-text"><b>리스크 정량화</b> — 부채비율, 오버행, 밸류에이션 감당 가능?</div></div>
+<div class="method-step"><div class="step-num">5</div><div class="step-text"><b>매수/목표/손절가 제시</b> — 진입가, 목표가(+20%~50%), 손절가(-15%) 명시</div></div>
+</div>
+
+<!-- Hidden Gems (Proven) -->
+<div class="sec">검증된 히든젬 Proven Gems</div>
+
+<div class="card"><a href="#">
+<div class="row"><span class="tag t-gem">💎 GEM</span><span class="tag t-kr">KR</span><span class="date">2026.04.02 매수</span></div>
+<h3>HPSP (403870) — 반도체 HPA 장비 글로벌 독점</h3>
+<div class="sub">삼성 3nm GAA · TSMC 2nm 필수 장비 · HBM DRAM 채택 시작 · imec 공동개발<br>매수 50,400원 → 현재 53,400원</div>
+<div class="perf perf-up">+5.95% 수익 중 ✓</div>
+</a></div>
+
+<div class="card"><a href="#">
+<div class="row"><span class="tag t-gem">💎 GEM</span><span class="tag t-us">US</span><span class="date">2026.04.02 매수</span></div>
+<h3>AROC (Archrock) — 천연가스 압축 인프라 독점</h3>
+<div class="sub">LNG 수출 16.7Bcf/day 확대 수혜 · Q4 EPS 컨센서스 77% 상회 · Strong Buy 8/0/0<br>매수 $35.70 → 현재 $37.33</div>
+<div class="perf perf-up">+4.56% 수익 중 ✓</div>
+</a></div>
+
+<!-- Weekly Reports -->
+<div class="sec">주간 종합 보고서 Weekly Report</div>
+
+<div class="card"><a href="chimera-weekly-report-0424.html">
+<div class="row"><span class="tag t-new">NEW</span><span class="tag t-wk">W4</span><span class="date">2026.04.24</span></div>
+<h3>주간 증시 분석 — 4월 4주차 (04.17~04.24)</h3>
+<div class="sub">이란 전쟁 영향 · 유가/방산 섹터 · TACO 모델 적용 · Phase별 투자전략</div>
+</a></div>
+
+<div class="card"><a href="alpha_hunter_week4.html">
+<div class="row"><span class="tag t-wk">W4</span><span class="date">2026.04.23</span></div>
+<h3>Alpha Hunter 멀티에이전트 분석 — 4월 4주차</h3>
+<div class="sub">섹터별 모멘텀 · ETF 전략 · 히든젬 발굴 · 연금 포트폴리오 제안</div>
+</a></div>
+
+<div class="card"><a href="weekly_report.html">
+<div class="row"><span class="tag t-wk">W3</span><span class="date">2026.04.22</span></div>
+<h3>주간 증시 분석 — 4월 3주차 (04.14~04.20)</h3>
+<div class="sub">NS Index 67.0 · 호르무즈 리스크 · 반도체/방산 모멘텀</div>
+</a></div>
+
+<!-- Special Analysis -->
+<div class="sec">특별 분석 Special</div>
+
+<div class="card"><a href="https://waterfirst.github.io/insight-lab/report.html">
+<div class="row"><span class="tag t-gem">TACO-GIBBS</span><span class="date">2026.04.26</span></div>
+<h3>TACO-GIBBS MODEL — 깁스 자유에너지 × 트럼프 정치경제학</h3>
+<div class="sub">ΔG = ΔH − TΔS | 만찬장 총격 후 시장 영향 · Phase별 투자전략</div>
+</a></div>
+
+<!-- Related Projects -->
+<div class="sec">관련 프로젝트</div>
+
+<div class="card"><a href="https://waterfirst.github.io/chimera-ai/">
+<div class="row"><span class="tag t-wk">Chimera AI</span></div>
+<h3>🐉 경제분석 보고서</h3>
+<div class="sub">Claude+GPT+Gemini 키메라 멀티에이전트 증시 분석</div>
+</a></div>
+
+<div class="card"><a href="https://waterfirst.github.io/insight-lab/">
+<div class="row"><span class="tag t-wk">Insight Lab</span></div>
+<h3>🔬 인문학 × 과학 크로스오버</h3>
+<div class="sub">양자역학×민주주의, 엔트로피×제국, 카오스×금융</div>
+</a></div>
+
+<div class="disclaimer">
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다.<br>
+실제 투자 권유가 아니며, 모든 투자 결정은 개인의 판단과 책임 하에 이루어져야 합니다.
+</div>
+
+<footer>
+<div>💎 Data-Driven Hidden Gem Discovery</div>
+<div><a href="https://github.com/waterfirst/alpha-hunter">GitHub</a> · © 2026 Alpha Hunter</div>
+</footer>
+</div>
+
+<script>
+setTimeout(()=>{const s=document.getElementById('splash');s.classList.add('hide');setTimeout(()=>s.remove(),800)},3800);
+function toggleTheme(){const b=document.body,t=b.getAttribute('data-theme');b.setAttribute('data-theme',t==='light'?'':'light');document.getElementById('themeBtn').textContent=t==='light'?'🌙':'☀️';localStorage.setItem('ah-theme',t==='light'?'dark':'light')}
+const sv=localStorage.getItem('ah-theme');if(sv==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='☀️'}
+</script>
+</body>
+</html>
