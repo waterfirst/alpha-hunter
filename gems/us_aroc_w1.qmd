@@ -1,0 +1,309 @@
+---
+title: "AROC (Archrock) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 1 — 미국 천연가스 압축 인프라 독점"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-04-26"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+th <- theme_minimal(base_family = "Noto Sans CJK KR", base_size = 11) +
+  theme(plot.background = element_rect(fill = "grey10", color = NA),
+        panel.background = element_rect(fill = "grey10", color = NA),
+        panel.grid.major = element_line(color = "grey25", linewidth = 0.3),
+        panel.grid.minor = element_blank(),
+        text = element_text(color = "grey85"),
+        axis.text = element_text(color = "grey60"),
+        axis.title = element_text(color = "grey70"),
+        plot.title = element_text(face = "bold", size = 14, color = "goldenrod2"),
+        plot.subtitle = element_text(size = 9, color = "grey55"),
+        legend.background = element_rect(fill = "grey10", color = NA),
+        legend.text = element_text(color = "grey85"),
+        legend.key = element_rect(fill = "grey10", color = NA),
+        legend.position = "top",
+        plot.margin = margin(10, 12, 10, 12))
+c_blue <- "slateblue3"; c_amber <- "goldenrod2"; c_green <- "seagreen3"
+c_red <- "indianred2"; c_gray <- "grey60"; c_text <- "grey85"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | Archrock Inc. (AROC, NYSE) |
+| **업종** | Energy / 천연가스 압축 서비스 |
+| **핵심 사업** | 천연가스 생산·수송용 압축 장비 임대 및 운영 |
+| **시총** | $6.5B (약 9.1조원) |
+| **현재가** | $37.33 |
+| **PER (TTM/Fwd)** | 20.4x / 16.3x |
+| **PBR** | 4.4x |
+| **배당수익률** | 2.2% |
+| **컨센서스** | Strong Buy (매수 8 / 중립 0 / 매도 0) |
+| **목표가** | $38.0 ~ $42.0 (평균 $39.7) |
+
+::: {.callout-tip}
+## 핵심 투자 포인트
+미국 천연가스 압축 시장 1위. LNG 수출 16.7 Bcf/day 확대 직접 수혜. 가동률 85%+ 유지. 매출 +29% YoY 성장에도 영업이익 +57% 레버리지 효과. **애널리스트 8명 전원 Strong Buy.**
+:::
+
+## 사업 요약
+
+Archrock은 **미국 최대 천연가스 압축 서비스 기업**이다. 셰일가스 생산 현장에서 가스를 파이프라인으로 보내기 위한 압축 장비를 **임대·운영·유지보수**하는 비즈니스 모델.
+
+- **미국 천연가스 압축 시장 점유율 1위** — 경쟁사 대비 압도적 장비 규모
+- **LNG 수출 확대** 16.7 Bcf/day → 압축 수요 구조적 증가
+- **장기 계약 기반** — 고객 전환비용 높음 (해자)
+- **Q4 2025 EPS $0.69** — 컨센서스 대비 77% 상회
+- **2026 EBITDA 가이던스** $890M — 시장 기대 초과
+
+# 실적 분석
+
+```{r}
+#| label: fig-financial
+#| fig-cap: "AROC 매출·영업이익·순이익 추이"
+#| fig-width: 8
+#| fig-height: 4.5
+
+df <- data.frame(
+  Year = rep(c("2022","2023","2024","2025"), 3),
+  Metric = rep(c("매출","영업이익","순이익"), each = 4),
+  Value = c(846,990,1158,1490, 145,258,367,576, 44,105,172,322))
+df$Year <- factor(df$Year, levels = c("2022","2023","2024","2025"))
+df$Metric <- factor(df$Metric, levels = c("매출","영업이익","순이익"))
+
+ggplot(df, aes(x = Year, y = Value, fill = Metric)) +
+  geom_col(position = position_dodge(0.8), width = 0.7, alpha = 0.9) +
+  geom_text(aes(label = paste0("$",Value,"M")), position = position_dodge(0.8),
+            vjust = -0.5, color = c_text, size = 3) +
+  scale_fill_manual(values = c(c_blue, c_amber, c_green)) +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "AROC 실적 추이", subtitle = "단위: $M | 4년 연속 성장",
+       y = "$M", x = NULL, fill = NULL) + th
+```
+
+## 핵심 재무 지표
+
+| 지표 | 2022 | 2023 | 2024 | 2025 |
+|:---|---:|---:|---:|---:|
+| 매출 | $846M | $990M | $1,158M | **$1,490M** |
+| 영업이익 | $145M | $258M | $367M | **$576M** |
+| 영업이익률 | 17.1% | 26.1% | 31.7% | **38.7%** |
+| 순이익 | $44M | $105M | $172M | **$322M** |
+| EBITDA | - | - | - | **$833M** |
+| 매출 성장 | - | +17% | +17% | **+29%** |
+
+## 성장성 분석
+
+```{r}
+#| label: fig-growth
+#| fig-cap: "매출 성장률 vs 영업이익률 추이"
+#| fig-width: 7
+#| fig-height: 3.5
+
+growth <- data.frame(
+  Year = c("2022","2023","2024","2025"),
+  Revenue_Growth = c(15, 17, 17, 29),
+  OPM = c(17.1, 26.1, 31.7, 38.7))
+growth$Year <- factor(growth$Year, levels = growth$Year)
+
+ggplot(growth) +
+  geom_col(aes(x = Year, y = Revenue_Growth, fill = "매출 성장률"),
+           width = 0.5, alpha = 0.8) +
+  geom_line(aes(x = Year, y = OPM, group = 1, color = "영업이익률"),
+            linewidth = 1.2) +
+  geom_point(aes(x = Year, y = OPM, color = "영업이익률"), size = 3) +
+  geom_text(aes(x = Year, y = OPM, label = paste0(OPM,"%")),
+            vjust = -1, color = c_amber, size = 3.2) +
+  scale_fill_manual(values = c_green) +
+  scale_color_manual(values = c_amber) +
+  labs(title = "성장 + 마진 확대 동시 달성",
+       subtitle = "매출 성장률 (막대) + 영업이익률 (선)",
+       y = "%", x = NULL, fill = NULL, color = NULL) + th
+```
+
+::: {.callout-note}
+## 인사이트
+매출이 29% 성장하는 동안 영업이익률은 17% → 39%로 **2배 이상 확대**. 고정비 레버리지가 극대화되는 구간. 장비 가동률 85%를 넘기면 추가 매출이 거의 순이익으로 전환.
+:::
+
+# 리스크 분석
+
+## 부채 구조
+
+```{r}
+#| label: fig-debt
+#| fig-cap: "AROC 자산/부채 구조"
+#| fig-width: 6
+#| fig-height: 4.5
+
+bs <- data.frame(
+  Item = c("장비 자산\n(압축기)","부채\n$2.4B","현금\n$1.6M","순부채\n$2.4B"),
+  Value = c(65, 25, 1, 9),
+  Label = c("장비 자산\n65%","부채\n25%","현금\n<1%","기타\n10%"))
+
+ggplot(bs, aes(x = "", y = Value, fill = Item)) +
+  geom_col(width = 1, color = "grey15", linewidth = 0.8) +
+  coord_polar("y") +
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5),
+            color = "white", size = 3.2, lineheight = 0.9) +
+  scale_fill_manual(values = c(c_blue, c_red, c_green, c_gray)) +
+  labs(title = "자산/부채 구조 — 레버리지 주의") + th +
+  theme(axis.text = element_blank(), axis.title = element_blank(), legend.position = "none")
+```
+
+## 주요 리스크
+
+- **부채 $2.4B** — 레버리지 비율 2.7x (업종 평균 대비 높은 편)
+- **천연가스 가격 하락** — 가스 가격 장기 하락 시 시추 활동 감소 → 압축 수요 감소
+- **금리 민감** — 변동금리 부채 비중 → 금리 상승 시 이자비용 증가
+- **에너지 전환 리스크** — 장기적으로 화석연료 수요 감소 가능성
+- **FCF 대비 배당** — 배당 커버리지 모니터링 필요
+
+# 투자자 렌즈 분석
+
+## 워런 버핏 — "경제적 해자 + 가치"
+
+```{r}
+#| label: fig-buffett
+#| fig-cap: "워런 버핏 렌즈 평가"
+#| fig-width: 7
+#| fig-height: 3.5
+
+bf <- data.frame(
+  Metric = c("경제적 해자","경영진","ROE","사업 이해도","안전마진"),
+  Score = c(8.0, 7.5, 8.5, 8.0, 7.5))
+bf$Metric <- factor(bf$Metric, levels = rev(bf$Metric))
+
+ggplot(bf, aes(x = Metric, y = Score)) +
+  geom_col(aes(fill = Score), width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = Score), hjust = -0.3, color = c_amber,
+            fontface = "bold", size = 5) +
+  scale_fill_gradient(low = c_blue, high = c_amber, guide = "none") +
+  scale_y_continuous(limits = c(0, 11)) +
+  coord_flip() +
+  labs(title = "워런 버핏 렌즈",
+       subtitle = "고른 점수 분포 — 밸류에이션 매력적",
+       y = NULL, x = NULL) + th
+```
+
+| 항목 | 점수 | 평가 |
+|:---|:---:|:---|
+| 경제적 해자 | 8.0 | 시장 1위 + 고객 전환비용 높음 + 장기계약 |
+| 경영진 | 7.5 | 가동률 85%+ 유지, 자본 배분 양호 |
+| ROE | **8.5** | 순이익 급증 + Forward PE 16x로 매력적 |
+| 사업 이해도 | 8.0 | 단순 명료한 BM (장비 임대) |
+| 안전마진 | **7.5** | Forward PE 16x — HPSP(48x) 대비 훨씬 저평가 |
+
+> 버핏 총평: "이해하기 쉽고, 해자가 있고, 저렴하다. 부채만 관리되면 장기 보유 적합."
+
+## 아이칸 렌즈 — "행동주의 관점"
+
+| 항목 | 평가 |
+|:---|:---|
+| 자산 재배치 | 압축기 자산 가치 높음 → 분사/매각 가치 존재 |
+| 배당 정책 | 2.2% 배당 + 자사주 매입 → 주주 환원 양호 |
+| 경영 효율 | 영업이익률 39% → 이미 효율적 운영 |
+| 행동주의 매력 | 낮음 — 이미 잘 경영되고 있음 |
+
+## 피터 린치 — "10배 주식 가능성"
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "피터 린치 렌즈 — 10배 주식 점검"
+#| fig-width: 7
+#| fig-height: 3.5
+
+lf <- data.frame(
+  Metric = c("PEG 비율","매출 성장","스토리 명확성","인사이더","시총 여력"),
+  Score = c(8.5, 8, 9, 7, 4),
+  Color = c(c_blue, c_green, c_amber, c_gray, c_red))
+lf$Metric <- factor(lf$Metric, levels = rev(lf$Metric))
+
+ggplot(lf, aes(x = Metric, y = Score, fill = Color)) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = Score), hjust = -0.3, color = c_text,
+            fontface = "bold", size = 4.5) +
+  scale_fill_identity() +
+  scale_y_continuous(limits = c(0, 11)) +
+  coord_flip() +
+  labs(title = "피터 린치 렌즈",
+       subtitle = "PEG 0.6 — 성장 대비 매우 저평가",
+       y = NULL, x = NULL) + th
+```
+
+| 항목 | 수치 | 평가 |
+|:---|:---|:---|
+| PEG 비율 | **~0.6** | 매우 매력적 (1 미만) |
+| 매출 성장 | +29% YoY | 강력한 성장세 |
+| 스토리 | 명확 | "LNG 수출 → 압축 수요 폭증" |
+| 10배 가능성 | 낮음 | 시총 $6.5B → $65B은 어려움. **2배($75) 가능** |
+
+# 종합 판정
+
+```{r}
+#| label: fig-verdict
+#| fig-cap: "투자 비중 배분"
+#| fig-width: 6
+#| fig-height: 4.5
+
+vd <- data.frame(
+  Action = c("보유 유지","추가 매수\n검토","현금"),
+  Pct = c(65, 25, 10))
+
+ggplot(vd, aes(x = "", y = Pct, fill = Action)) +
+  geom_col(width = 1, color = "grey15", linewidth = 0.8) +
+  coord_polar("y") +
+  geom_text(aes(label = paste0(Action,"\n",Pct,"%")),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 3.8, fontface = "bold", lineheight = 0.9) +
+  scale_fill_manual(values = c(c_amber, c_green, c_blue)) +
+  labs(title = "종합: 보유 유지 + 추가 매수 검토 (7.5/10)") + th +
+  theme(axis.text = element_blank(), axis.title = element_blank(), legend.position = "none")
+```
+
+## 최종 판정: 보유 유지 + 추가 매수 검토
+
+| 항목 | 가격 | 비고 |
+|:---|---:|:---|
+| 매수가 | $35.70 | 현재 $37.33 (**+4.56%**) |
+| 추가 매수 | $34.00 이하 | 조정 시 분할 매수 |
+| 목표가 | $42.00 | 애널리스트 상단 |
+| 손절가 | $30.00 | -16% 하방 |
+
+::: {.callout-warning}
+## 액션 플랜
+1. **보유 유지** — 실적 모멘텀 강력, LNG 수출 확대 구조적 수혜
+2. $34 이하 조정 시 **추가 매수** 검토
+3. **부채 레버리지** 모니터링 — 금리 환경 변화 주시
+4. 목표가 $42 도달 시 **20% 부분 매도**
+5. 배당(2.2%) 재투자 전략 유지
+:::
+
+---
+
+*이 보고서는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.*
+
+*Alpha Hunter × Chimera AI | Vibe Investing Framework*
