@@ -1,0 +1,237 @@
+---
+title: "HPSP (403870) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 1 — 반도체 HPA 장비 글로벌 독점"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-04-26"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+th <- theme_minimal(base_family = "Noto Sans CJK KR", base_size = 11) +
+  theme(plot.background = element_rect(fill = "grey10", color = NA),
+        panel.background = element_rect(fill = "grey10", color = NA),
+        panel.grid.major = element_line(color = "grey25", linewidth = 0.3),
+        panel.grid.minor = element_blank(),
+        text = element_text(color = "grey85"),
+        axis.text = element_text(color = "grey60"),
+        axis.title = element_text(color = "grey70"),
+        plot.title = element_text(face = "bold", size = 14, color = "goldenrod2"),
+        plot.subtitle = element_text(size = 9, color = "grey55"),
+        legend.background = element_rect(fill = "grey10", color = NA),
+        legend.text = element_text(color = "grey85"),
+        legend.key = element_rect(fill = "grey10", color = NA),
+        legend.position = "top",
+        plot.margin = margin(10, 12, 10, 12))
+c_blue <- "slateblue3"; c_amber <- "goldenrod2"; c_green <- "seagreen3"
+c_red <- "indianred2"; c_gray <- "grey60"; c_text <- "grey85"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | HPSP (403870.KQ) |
+| **업종** | 반도체 장비 (HPA/HPO) |
+| **핵심 기술** | HPA (High Pressure Annealing), 고압수소 어닐링 |
+| **시총** | 약 4.4조원 |
+| **현재가** | 53,400원 |
+| **PER / PBR** | 48x / 12.4x |
+| **컨센서스** | Strong Buy (매수 8 / 중립 1 / 매도 0) |
+| **목표가** | 44,000 ~ 70,000원 |
+
+::: {.callout-tip}
+## 핵심 투자 포인트
+글로벌 유일 HPA 장비 양산업체. 삼성 3nm GAA + TSMC 2nm 필수 장비. HBM DRAM 채택 시작. 영업이익률 50%+. 순현금 1,700억원.
+:::
+
+## 사업 요약
+
+HPSP는 **글로벌 유일의 HPA 장비 양산업체**다. 삼성전자 3nm GAA, TSMC 2nm 공정에 필수적인 고압수소 어닐링 장비를 독점 공급.
+
+- **삼성전자** 3nm GAA 공정 필수
+- **TSMC** 2nm 공정 채택 진행
+- **HBM DRAM** 신규 채택
+- **imec** 공동개발 HPO 차세대 시장 개척
+
+# 실적 분석
+
+```{r}
+#| label: fig-financial
+#| fig-cap: "HPSP 매출·영업이익·순이익 추이"
+#| fig-width: 8
+#| fig-height: 4.5
+df <- data.frame(
+  Year = rep(c("2022","2023","2024","2025E"), 3),
+  Metric = rep(c("매출","영업이익","순이익"), each = 4),
+  Value = c(1380,1270,1814,2370, 840,510,940,1240, 700,780,780,990))
+df$Year <- factor(df$Year, levels = c("2022","2023","2024","2025E"))
+df$Metric <- factor(df$Metric, levels = c("매출","영업이익","순이익"))
+ggplot(df, aes(x = Year, y = Value, fill = Metric)) +
+  geom_col(position = position_dodge(0.8), width = 0.7, alpha = 0.9) +
+  geom_text(aes(label = comma(Value)), position = position_dodge(0.8),
+            vjust = -0.5, color = c_text, size = 3.2) +
+  scale_fill_manual(values = c(c_blue, c_amber, c_green)) +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "HPSP 실적 추이", subtitle = "단위: 억원 | 2025E는 컨센서스",
+       y = "억원", x = NULL, fill = NULL) + th
+```
+
+| 지표 | 2022 | 2023 | 2024 | 비고 |
+|:---|---:|---:|---:|:---|
+| 매출 | 1,380억 | 1,270억 | 1,814억 | **+43% YoY** |
+| 영업이익 | 840억 | 510억 | 940억 | **+84% YoY** |
+| 영업이익률 | 53.0% | 51.7% | 51.8% | 고정비 레버리지 |
+| 순이익 | 700억 | 780억 | 780억 | |
+
+```{r}
+#| label: fig-growth
+#| fig-cap: "매출 성장률 vs 영업이익률"
+#| fig-width: 7
+#| fig-height: 3.5
+growth <- data.frame(Year = c("2022","2023","2024","2025E"),
+  Revenue_Growth = c(45, -8, 43, 30), OPM = c(53.0, 51.7, 51.8, 52.3))
+growth$Year <- factor(growth$Year, levels = growth$Year)
+ggplot(growth) +
+  geom_col(aes(x = Year, y = Revenue_Growth, fill = "매출 성장률"), width = 0.5, alpha = 0.8) +
+  geom_line(aes(x = Year, y = OPM, group = 1, color = "영업이익률"), linewidth = 1.2) +
+  geom_point(aes(x = Year, y = OPM, color = "영업이익률"), size = 3) +
+  geom_text(aes(x = Year, y = OPM, label = paste0(OPM,"%")), vjust = -1, color = c_amber, size = 3.2) +
+  scale_fill_manual(values = c_green) + scale_color_manual(values = c_amber) +
+  labs(title = "성장성 vs 수익성", y = "%", x = NULL, fill = NULL, color = NULL) + th
+```
+
+::: {.callout-note}
+영업이익률 50%대 유지는 독점적 시장 지위를 반영. 매출 변동에도 마진 안정적.
+:::
+
+# 리스크 분석
+
+```{r}
+#| label: fig-ownership
+#| fig-cap: "HPSP 주주 구성"
+#| fig-width: 6
+#| fig-height: 4.5
+ow <- data.frame(Holder = c("Crescendo PE","기관투자자","외국인","개인","기타"),
+  Share = c(31,25,20,15,9),
+  Label = c("Crescendo PE\n31%","기관투자자\n25%","외국인\n20%","개인\n15%","기타\n9%"))
+ggplot(ow, aes(x = "", y = Share, fill = Holder)) +
+  geom_col(width = 1, color = "grey15", linewidth = 0.8) + coord_polar("y") +
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5),
+            color = "white", size = 3.2, lineheight = 0.9) +
+  scale_fill_manual(values = c(c_red, c_blue, c_amber, c_green, c_gray)) +
+  labs(title = "주주 구성 — 블록딜 오버행 주의") + th +
+  theme(axis.text = element_blank(), axis.title = element_blank(), legend.position = "none")
+```
+
+- **Crescendo PE 31%** — 블록딜 오버행
+- **삼성 의존도** ~70%
+- **주문 불규칙성** — 분기별 변동
+- **밸류에이션** — PER 48x
+
+# 투자자 렌즈
+
+## 워런 버핏 — "경제적 해자 + 가치"
+
+```{r}
+#| label: fig-buffett
+#| fig-cap: "워런 버핏 렌즈 평가"
+#| fig-width: 7
+#| fig-height: 3.5
+bf <- data.frame(Metric = c("경제적 해자","경영진","ROE","사업 이해도","안전마진"),
+  Score = c(9.5, 7.0, 8.0, 7.0, 6.0))
+bf$Metric <- factor(bf$Metric, levels = rev(bf$Metric))
+ggplot(bf, aes(x = Metric, y = Score)) +
+  geom_col(aes(fill = Score), width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = Score), hjust = -0.3, color = c_amber, fontface = "bold", size = 5) +
+  scale_fill_gradient(low = c_blue, high = c_amber, guide = "none") +
+  scale_y_continuous(limits = c(0, 11)) + coord_flip() +
+  labs(title = "워런 버핏 렌즈", subtitle = "경제적 해자 9.5 — 글로벌 독점", y = NULL, x = NULL) + th
+```
+
+| 항목 | 점수 | 평가 |
+|:---|:---:|:---|
+| 경제적 해자 | **9.5** | 글로벌 독점, 진입장벽 극높음 |
+| 경영진 | 7.0 | 삼성/TSMC/imec 파트너 |
+| ROE | 8.0 | 순현금 + 고마진 |
+| 사업 이해도 | 7.0 | 기술 난이도 높음 |
+| 안전마진 | 6.0 | PER 48x |
+
+## 피터 린치 — "10배 주식 가능성"
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "피터 린치 렌즈"
+#| fig-width: 7
+#| fig-height: 3.5
+lf <- data.frame(Metric = c("PEG 비율","매출 성장","스토리 명확성","인사이더","시총 여력"),
+  Score = c(7, 9, 9.5, 6, 5),
+  Color = c(c_blue, c_green, c_amber, c_gray, c_red))
+lf$Metric <- factor(lf$Metric, levels = rev(lf$Metric))
+ggplot(lf, aes(x = Metric, y = Score, fill = Color)) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = Score), hjust = -0.3, color = c_text, fontface = "bold", size = 4.5) +
+  scale_fill_identity() + scale_y_continuous(limits = c(0, 11)) + coord_flip() +
+  labs(title = "피터 린치 렌즈", subtitle = "스토리 9.5 — GAA/HBM 필수 장비", y = NULL, x = NULL) + th
+```
+
+# 종합 판정
+
+```{r}
+#| label: fig-verdict
+#| fig-cap: "투자 비중 배분"
+#| fig-width: 6
+#| fig-height: 4.5
+vd <- data.frame(Action = c("보유 유지","추가 매수 대기","현금"),
+  Pct = c(70, 20, 10),
+  Label = c("보유 유지\n70%","추가 매수\n대기 20%","현금\n10%"))
+ggplot(vd, aes(x = "", y = Pct, fill = Action)) +
+  geom_col(width = 1, color = "grey15", linewidth = 0.8) + coord_polar("y") +
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5),
+            color = "white", size = 4, fontface = "bold", lineheight = 0.9) +
+  scale_fill_manual(values = c(c_amber, c_green, c_blue)) +
+  labs(title = "종합: 보유 유지 (7/10)") + th +
+  theme(axis.text = element_blank(), axis.title = element_blank(), legend.position = "none")
+```
+
+| 항목 | 가격 | 비고 |
+|:---|---:|:---|
+| 매수가 | 50,400원 | 현재 **+5.95%** |
+| 목표가 | 60,000원 | Forward PE |
+| 손절가 | 40,000원 | -20% 하방 |
+
+::: {.callout-warning}
+## 액션 플랜
+1. **보유 유지** — 실적 양호, 독점 건재
+2. 5/14 실적발표 전후 변동성 주의
+3. Crescendo PE 블록딜 시 저점 매수
+4. 목표가 시 30% 부분 매도
+:::
+
+---
+
+*가상 투자 시뮬레이션 목적. 실제 투자 권유가 아닙니다.*
+
+*Alpha Hunter × Chimera AI | Vibe Investing Framework*
