@@ -1,38 +1,53 @@
-# Alpha Hunter — 프로젝트 규칙
+# Alpha Hunter — AI 히든젬 발굴 시스템
 
-## Project Overview
-- **AI 히든젬 발굴 시스템** — 한국·미국·중국 시장에서 데이터 기반 숨은 보물 종목 발굴
-- GitHub Pages: https://waterfirst.github.io/alpha-hunter/
-- 저자: Nakcho Choi | Chimera AI x Alpha Hunter
+<context>
+한국·미국·중국 시장에서 데이터 기반으로 숨은 보물 종목을 발굴하는 AI 주간 리서치 시스템.
+GitHub Pages: https://waterfirst.github.io/alpha-hunter/
+저자: Nakcho Choi | Chimera AI x Alpha Hunter
 
-## Important Rules
+발행 스케줄:
+- 화요일 19:00: 한국 히든젬
+- 목요일 19:00: 미국 히든젬
+- 금요일 19:00: 중국 히든젬
+- 토요일 19:00: 주간 종합
+</context>
 
-### 1. 개인 연금 콘텐츠 금지
-- **개인 연금(pension) 관련 콘텐츠는 이 프로젝트에 포함하지 않는다.**
-- pension_dashboard.py 등 연금 관련 파일은 생성·커밋하지 않는다.
-- 연금 포트폴리오 제안, 퇴직연금/개인연금 잔고 등 개인 재정 정보 금지.
+<instructions>
 
-### 2. Chimera-AI 주간 보고서는 별도 저장소
-- Chimera-AI 주간 증시 보고서는 이 저장소에 넣지 않는다.
-- chimera-weekly-*.html / chimera-weekly-*.qmd 파일은 chimera-ai 저장소에서 관리.
-- Chimera-AI 저장소: https://github.com/waterfirst/chimera-ai
+## 콘텐츠 범위
+
+이 저장소는 종목 발굴 리서치 보고서만 포함한다.
+
+개인 재정(연금, 퇴직금, 재무설계 등) 콘텐츠는 이 프로젝트의 범위 밖이다.
+pension 관련 파일이 발견되면 삭제한다.
+
+Chimera-AI 주간 증시 보고서는 별도 저장소(https://github.com/waterfirst/chimera-ai)에서 관리한다.
+chimera-weekly-*.html/qmd 파일은 이 저장소에 넣지 않는다.
+
+모든 보고서에 면책 문구를 포함한다:
+"이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다."
+
+</instructions>
+
+<technical_stack>
 
 ## 기술 스택
 
-### 필수 사항
-- **R + ggplot2** — 차트 생성 (Plotly 사용 금지, 파일 용량 문제)
-- **Quarto (.qmd)** — 보고서 렌더링
-- `lightbox: true` — 차트 클릭 시 줌인
-- `embed-resources: true` — 단일 HTML 배포
-- `dev: ragg_png` — CJK 폰트 렌더링
-- 폰트: `"Noto Sans CJK KR"` (시스템 폰트 직접 사용, showtext 사용 금지)
+R + ggplot2로 차트를 생성한다. Plotly는 파일 용량이 비대해지므로 사용하지 않는다.
+Quarto (.qmd)로 보고서를 렌더링하며, 아래 설정을 따른다:
 
-### 금지 사항
-- **3자리 hex 색상 금지** — `"#aaa"` 사용 금지, 반드시 `"#aaaaaa"` 6자리 (Quarto+ragg 호환 문제)
-- **showtext 사용 금지** — Quarto knitr 환경에서 충돌
-- **Plotly 사용 금지** — 파일 용량 비대
+- `lightbox: true` — 차트를 클릭하면 줌인할 수 있어서 독자의 데이터 탐색 경험이 향상된다
+- `embed-resources: true` — 단일 HTML로 배포
+- `dev: ragg_png` — ragg 디바이스가 CJK 폰트를 정상 렌더링한다
+- 폰트: `"Noto Sans CJK KR"` 시스템 폰트를 직접 사용한다. showtext는 Quarto knitr에서 grid.Call 충돌을 일으킨다.
+- 색상: 6자리 hex만 사용한다 (`"#aaaaaa"`). 3자리(`"#aaa"`)는 에러를 발생시킨다.
 
-### Quarto YAML 헤더 템플릿
+</technical_stack>
+
+<quarto_template>
+
+## Quarto YAML 헤더 템플릿
+
 ```yaml
 ---
 title: "종목명 (코드) 기업 분석 보고서"
@@ -62,7 +77,14 @@ execute:
 ---
 ```
 
-### ggplot2 다크 테마 함수
+</quarto_template>
+
+<chart_theme>
+
+## ggplot2 다크 테마
+
+각 차트 청크에 `#| lightbox: true`를 추가한다.
+
 ```r
 kfont <- "Noto Sans CJK KR"
 
@@ -87,16 +109,15 @@ theme_hunter <- function(base_size = 13) {
 }
 ```
 
-### 파일 명명 규칙
-```
-gems/kr_종목명_wN.qmd / .html   # 한국 히든젬
-gems/us_종목명_wN.qmd / .html   # 미국 히든젬
-gems/cn_종목명_wN.qmd / .html   # 중국 히든젬
-gems/sp_주제_날짜.qmd / .html   # 특별판
-```
+</chart_theme>
 
-### 보고서 필수 차트 (최소 7개, lightbox 활성화)
-각 차트 청크에 반드시 `#| lightbox: true` 추가:
+<report_structure>
+
+## 보고서 구조
+
+파일명: `gems/XX_종목명_wN.qmd` (XX = kr/us/cn, N = 주차)
+
+### 필수 차트 (최소 7개, 모두 `#| lightbox: true`)
 1. 주가 추이 (52주)
 2. 실적 추이 (매출/영업이익)
 3. 밸류에이션 비교 (동종업종)
@@ -105,43 +126,72 @@ gems/sp_주제_날짜.qmd / .html   # 특별판
 6. 리스크 팩터 대시보드
 7. 매수/목표/손절가 시나리오
 
-### 발행 절차
+### 스크리닝 기준
+- 매출성장 >20%, 영업이익률 >15%, Strong Buy 컨센서스
+- 한국: 시총 5000억~10조 | 미국: $1B~$20B | 중국: $2B~$30B
+- 독점기술, 해자(moat), 산업 트렌드 연결
+- 카탈리스트(실적발표, 신제품, M&A, 정책 수혜) 확인
+
+</report_structure>
+
+<publishing_workflow>
+
+## 발행 절차
+
 ```bash
-# 1. alpha-hunter 레포 클론
+# 1. 레포 클론
 cd /tmp && git clone https://github.com/waterfirst/alpha-hunter.git
 
 # 2. yfinance + 웹 검색으로 종목 데이터 수집
 
-# 3. gems/XX_종목명_wN.qmd 작성 (위 YAML 헤더 사용)
+# 3. gems/XX_종목명_wN.qmd 작성 (위 YAML 헤더 + theme_hunter() 사용)
 
-# 4. Quarto 렌더링
-cd /tmp/alpha-hunter/gems
-quarto render XX_종목명_wN.qmd
+# 4. 렌더링
+cd /tmp/alpha-hunter/gems && quarto render XX_종목명_wN.qmd
 
-# 5. index.html 목차 업데이트 (NEW 태그)
+# 5. index.html 목차 업데이트, portfolio.json 갱신
 
-# 6. portfolio.json 업데이트
+# 6. 커밋 & 푸시
+git add gems/ index.html portfolio.json
+git commit -m "feat: XX_종목명 Week N 히든젬 보고서"
+git push origin main
 
-# 7. git commit & push origin main
-
-# 8. cokacdir --sendfile로 텔레그램 전송
+# 7. 텔레그램 전송
 ```
+
+</publishing_workflow>
+
+<investigate_before_answering>
+코드를 수정하기 전에 반드시 해당 파일을 읽어라.
+열지 않은 파일의 내용을 추측하지 말고, 실제 코드를 확인한 뒤 답변한다.
+기존 gems/ 폴더의 보고서 스타일을 확인한 뒤 새 보고서를 작성한다.
+yfinance에서 데이터를 가져올 수 없으면, 가져올 수 없다고 알리고 웹 검색 데이터로 대체한다. 데이터를 지어내지 않는다.
+</investigate_before_answering>
+
+<avoid_overengineering>
+요청된 변경만 수행한다.
+종목 분석에 집중하고, 불필요한 매크로 분석이나 포트폴리오 이론을 추가하지 않는다.
+스크리닝 조건을 충족하는 종목이 없으면 "이번 주 조건 충족 종목 없음"으로 보고한다. 조건을 완화하여 억지로 종목을 선정하지 않는다.
+</avoid_overengineering>
+
+<frontend_aesthetics>
+index.html을 수정할 때, 기존 매거진의 다크 테마(#08080f 배경, #f59e0b 액센트)와 카드 레이아웃을 유지한다.
+나라별 태그 색상(t-kr: #c7254e, t-us: #3b82f6, t-cn: #dc2626)을 일관되게 사용한다.
+</frontend_aesthetics>
 
 ## Repository Structure
+
 ```
 alpha-hunter/
-├── index.html          # 매거진 메인 페이지 (목차)
+├── index.html          # 매거진 메인 페이지
 ├── hero.png            # 스플래시 이미지
 ├── CLAUDE.md           # 프로젝트 규칙 (이 파일)
 ├── portfolio.json      # 포트폴리오 추적
-├── gems/               # 히든젬 보고서
-│   ├── kr_종목명_wN.qmd / .html
-│   ├── us_종목명_wN.qmd / .html
-│   └── sp_주제.qmd / .html
+├── gems/               # 히든젬 보고서 (.qmd + .html)
 └── reports/            # 기타 보고서
 ```
 
 ## Related Projects
-- Chimera AI: https://github.com/waterfirst/chimera-ai (매크로 분석 기반)
+- Chimera AI: https://github.com/waterfirst/chimera-ai
 - Insight Lab: https://github.com/waterfirst/insight-lab
 - OLED Viewing Angle: https://github.com/waterfirst/oled-viewing-angle
