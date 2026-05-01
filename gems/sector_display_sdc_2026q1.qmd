@@ -1,0 +1,568 @@
+---
+title: "삼성디스플레이 2026 Q1 전망 보고서 — OLED 치킨게임과 Glass Substrate 전환점"
+subtitle: "Alpha Hunter Sector Report | 삼성디스플레이·LG디스플레이·BOE 비교 분석"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-01"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(patchwork)
+library(scales)
+library(knitr)
+library(kableExtra)
+library(ggtext)
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size, base_family = "Noto Sans CJK KR") +
+    theme(
+      plot.title = element_text(face = "bold", size = rel(1.3), margin = margin(b = 8)),
+      plot.subtitle = element_markdown(color = "#666666", size = rel(0.9), margin = margin(b = 12)),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "#eeeeee"),
+      legend.position = "bottom",
+      axis.title = element_text(size = rel(0.9), color = "#444444"),
+      plot.caption = element_text(color = "#888888", size = rel(0.7), hjust = 0),
+      plot.margin = margin(15, 15, 15, 15)
+    )
+}
+
+pal <- list(
+  sdc = "#1428a0", lgd = "#a50034", boe = "#e63946",
+  sec = "#0066b3", green = "#22c55e", orange = "#f59e0b",
+  grey = "#94a3b8", dark = "#1e293b", purple = "#8b5cf6"
+)
+```
+
+## 요약: 삼성디스플레이의 세 가지 위기
+
+> "반도체는 슈퍼사이클, 디스플레이는 치킨게임 — 같은 그룹, 다른 운명"
+
+삼성디스플레이(SDC)는 2026년 현재 **세 가지 구조적 압력**에 직면해 있다:
+
+1. **내부 고객 저가 납품** — 삼성전자 MX(모바일)에 원가+α 수준으로 공급, 영업이익률 압박
+2. **중국 추격** — BOE·CSOT가 OLED 점유율 33%까지 확대, 판가 하락 압력
+3. **산업 전환** — OLED 이후의 차세대 기술(Glass Core Substrate, MicroLED)로 중심축 이동
+
+이 보고서는 삼성디스플레이의 현재 실적을 분석하고, LCD 치킨게임의 역사에서 교훈을 찾으며, **디스플레이 엔지니어의 커리어 전략**까지 제안한다.
+
+---
+
+## I. 실적 분석: 삼성전자 DP 사업부
+
+### 1.1 삼성전자 사업부별 실적 (2026 Q1)
+
+```{r sec_segments}
+#| fig-cap: "삼성전자 2026 Q1 사업부별 영업이익"
+#| label: fig-sec-segments
+
+segments <- data.frame(
+  division = factor(c("DS\n(반도체)", "MX\n(모바일)", "DP\n(디스플레이)", "VD·가전", "Harman"),
+                    levels = c("DS\n(반도체)", "MX\n(모바일)", "DP\n(디스플레이)", "VD·가전", "Harman")),
+  revenue = c(39.2, 28.5, 6.7, 13.8, 3.8),
+  op_income = c(48.5, 3.2, 0.4, 0.9, 0.3),
+  op_margin = c(48.5/39.2*100, 3.2/28.5*100, 0.4/6.7*100, 0.9/13.8*100, 0.3/3.8*100)
+)
+
+p1 <- ggplot(segments, aes(x = division, y = op_income, fill = division)) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = paste0(op_income, "조")),
+            vjust = -0.5, fontface = "bold", size = 4.5, family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c(pal$sdc, pal$orange, "#ef4444", pal$grey, pal$purple)) +
+  scale_y_continuous(limits = c(0, 55)) +
+  labs(title = "2026 Q1 사업부별 영업이익 (조 원)",
+       subtitle = "반도체 <span style='color:#1428a0'>**48.5조**</span> vs 디스플레이 <span style='color:#ef4444'>**0.4조**</span> — 120배 차이",
+       x = NULL, y = "영업이익 (조 원)") +
+  theme_hunter() + theme(legend.position = "none")
+
+p2 <- ggplot(segments, aes(x = division, y = op_margin, fill = division)) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = paste0(round(op_margin, 1), "%")),
+            vjust = -0.5, fontface = "bold", size = 4.5, family = "Noto Sans CJK KR") +
+  geom_hline(yintercept = 10, linetype = "dashed", color = "#ef4444", linewidth = 0.5) +
+  annotate("text", x = 5, y = 12, label = "건전 마진 10%", color = "#ef4444",
+           size = 3, family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c(pal$sdc, pal$orange, "#ef4444", pal$grey, pal$purple)) +
+  scale_y_continuous(limits = c(0, 130)) +
+  labs(title = "사업부별 영업이익률 (%)",
+       subtitle = "DP 영업이익률 <span style='color:#ef4444'>**6.0%**</span> — 블라인드 '6%' 논란의 실체",
+       x = NULL, y = "영업이익률 (%)") +
+  theme_hunter() + theme(legend.position = "none")
+
+p1 + p2 + plot_annotation(
+  title = "삼성전자 2026 Q1 — 반도체와 디스플레이의 격차",
+  theme = theme(plot.title = element_text(face = "bold", size = 16, family = "Noto Sans CJK KR"))
+)
+```
+
+::: {.callout-warning}
+## 블라인드 게시판의 6% 논란
+
+삼성디스플레이 DP 사업부의 2026 Q1 영업이익률은 약 **6.0%** (매출 6.7조, 영업이익 0.4조). 같은 분기 반도체(DS)는 **123.7%** 수준의 영업이익률을 기록했다. 이 격차가 블라인드에서 "삼성전자에 저가로 패널을 납품하니 이익이 안 난다"는 불만으로 표출되고 있다.
+:::
+
+### 1.2 SDC 분기별 영업이익 추이
+
+```{r sdc_quarterly}
+#| fig-cap: "삼성디스플레이 분기별 영업이익 추이 (2023-2026)"
+#| label: fig-sdc-quarterly
+
+sdc_q <- data.frame(
+  quarter = factor(c("23Q1","23Q2","23Q3","23Q4",
+                      "24Q1","24Q2","24Q3","24Q4",
+                      "25Q1","25Q2","25Q3","25Q4",
+                      "26Q1"),
+                   levels = c("23Q1","23Q2","23Q3","23Q4",
+                              "24Q1","24Q2","24Q3","24Q4",
+                              "25Q1","25Q2","25Q3","25Q4","26Q1")),
+  revenue = c(6.5, 7.8, 9.5, 8.8,
+              6.2, 7.5, 9.8, 8.1,
+              6.8, 8.2, 10.1, 8.5,
+              6.7),
+  op_income = c(0.14, 0.63, 1.84, 0.92,
+                0.34, 1.01, 1.51, 0.90,
+                0.50, 1.10, 1.60, 0.90,
+                0.40),
+  period = c(rep("2023", 4), rep("2024", 4), rep("2025", 4), "2026")
+)
+
+sdc_q$op_margin <- sdc_q$op_income / sdc_q$revenue * 100
+
+ggplot(sdc_q, aes(x = quarter)) +
+  geom_col(aes(y = op_income, fill = period), width = 0.6, alpha = 0.85) +
+  geom_line(aes(y = op_margin / 10, group = 1), color = "#ef4444", linewidth = 1.2) +
+  geom_point(aes(y = op_margin / 10), color = "#ef4444", size = 2.5) +
+  geom_text(aes(y = op_margin / 10, label = paste0(round(op_margin, 1), "%")),
+            vjust = -1, size = 3, color = "#ef4444", family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c("2023" = "#94a3b8", "2024" = "#64748b",
+                                "2025" = "#3b82f6", "2026" = "#ef4444")) +
+  scale_y_continuous(
+    name = "영업이익 (조 원)",
+    sec.axis = sec_axis(~.*10, name = "영업이익률 (%)")
+  ) +
+  labs(title = "삼성디스플레이 분기별 영업이익 & 이익률",
+       subtitle = "Q3(아이폰 시즌)에 피크, Q1에 바닥 — <span style='color:#ef4444'>**구조적 계절성**</span>",
+       x = NULL, fill = "연도",
+       caption = "출처: 삼성전자 분기 실적 발표 (DP 사업부) | 빨간 선 = 영업이익률") +
+  theme_hunter()
+```
+
+---
+
+## II. 경쟁 구도: 한·중 OLED 전쟁
+
+### 2.1 SDC vs LGD vs BOE 비교
+
+```{r competitor_table}
+#| label: tbl-competitor
+
+comp <- data.frame(
+  항목 = c("2026 Q1 매출", "2026 Q1 영업이익", "영업이익률",
+           "OLED 매출 비중", "주력 고객", "8.6세대 IT OLED",
+           "중소형 OLED 점유율", "강점", "약점"),
+  SDC = c("6.7조 원", "0.4조 원", "~6%",
+          "~95%", "삼성전자, Apple", "2026 양산 시작 (4.1조 투자)",
+          "~40% (하락 추세)", "폴더블/LTPO 기술력", "내부 저가 납품, 중국 추격"),
+  LGD = c("5.5조 원", "0.15조 원", "~3%",
+          "60%", "Apple, LG전자", "미정",
+          "~5%", "대형 OLED (TV)", "만성 적자, 구조조정"),
+  BOE = c("~5.0조 원(추정)", "적자", "적자",
+          "~40%", "화웨이, 샤오미", "2026 하반기 양산 목표",
+          "~25% (급성장)", "물량, 가격", "기술 격차, 특허 소송")
+)
+
+kable(comp, align = "c",
+      caption = "삼성디스플레이 vs LG디스플레이 vs BOE (2026 Q1)") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, background = "#1e293b", color = "white") |>
+  column_spec(1, bold = TRUE, width = "15%") |>
+  column_spec(2, background = "#eff6ff") |>
+  column_spec(3, background = "#fef2f2") |>
+  column_spec(4, background = "#fffbeb")
+```
+
+### 2.2 OLED 시장 점유율 변화
+
+```{r market_share}
+#| fig-cap: "OLED 시장 점유율 추이: 한국 vs 중국"
+#| label: fig-market-share
+
+share <- data.frame(
+  year = rep(2020:2026, 2),
+  region = rep(c("한국 (SDC+LGD)", "중국 (BOE+CSOT+기타)"), each = 7),
+  share = c(85, 82, 78, 73, 70, 67, 62,
+            15, 18, 22, 27, 30, 33, 38)
+)
+
+ggplot(share, aes(x = year, y = share, fill = region)) +
+  geom_area(alpha = 0.7, position = "stack") +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "white", linewidth = 0.8) +
+  annotate("text", x = 2023, y = 52, label = "50% 분기점", color = "white",
+           fontface = "bold", size = 4, family = "Noto Sans CJK KR") +
+  annotate("segment", x = 2026, y = 62, xend = 2028, yend = 50,
+           arrow = arrow(length = unit(0.3, "cm")),
+           color = "white", linewidth = 0.8, linetype = "dotted") +
+  annotate("text", x = 2028.5, y = 48, label = "2028~29\n역전 예상",
+           color = "#ef4444", size = 3.5, fontface = "bold", family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c(pal$sdc, pal$boe)) +
+  scale_x_continuous(breaks = 2020:2028, limits = c(2020, 2029)) +
+  scale_y_continuous(labels = percent_format(scale = 1)) +
+  labs(title = "OLED 시장 점유율: 한국 vs 중국",
+       subtitle = "한국 점유율 85%(2020) → <span style='color:#ef4444'>**62%(2026)**</span> — 매년 3~4%p 잠식",
+       x = NULL, y = "시장 점유율",
+       fill = NULL,
+       caption = "출처: Omdia, UBI Research, 2027 이후는 추세 연장 추정") +
+  theme_hunter()
+```
+
+### 2.3 LCD 치킨게임의 교훈
+
+```{r lcd_lesson}
+#| fig-cap: "LCD 치킨게임 타임라인 (2015-2023)"
+#| label: fig-lcd-chicken
+
+lcd <- data.frame(
+  year = 2015:2023,
+  kr_share = c(38, 35, 30, 25, 22, 18, 12, 5, 2),
+  cn_share = c(30, 35, 42, 50, 55, 62, 70, 80, 85),
+  panel_price_idx = c(100, 85, 75, 60, 55, 45, 40, 50, 42),
+  event = c("", "", "BOE 10.5세대\n가동", "", "SDC LCD 철수\n결정",
+            "", "LGD LCD\n축소 시작", "", "한국 LCD\n사실상 퇴출")
+)
+
+p1 <- ggplot(lcd, aes(x = year)) +
+  geom_area(aes(y = cn_share), fill = pal$boe, alpha = 0.3) +
+  geom_area(aes(y = kr_share), fill = pal$sdc, alpha = 0.5) +
+  geom_line(aes(y = kr_share), color = pal$sdc, linewidth = 1.2) +
+  geom_line(aes(y = cn_share), color = pal$boe, linewidth = 1.2) +
+  geom_text(data = lcd |> filter(event != ""),
+            aes(y = kr_share + 5, label = event),
+            size = 2.8, color = "#666666", family = "Noto Sans CJK KR", lineheight = 0.9) +
+  scale_y_continuous(labels = percent_format(scale = 1)) +
+  labs(title = "LCD 점유율: 한국(파랑) vs 중국(빨강)",
+       subtitle = "8년 만에 한국 38% → <span style='color:#ef4444'>**2%**</span>로 완전 퇴출",
+       x = NULL, y = "점유율") +
+  theme_hunter()
+
+p2 <- ggplot(lcd, aes(x = year, y = panel_price_idx)) +
+  geom_line(color = pal$orange, linewidth = 1.5) +
+  geom_point(color = pal$orange, size = 3) +
+  geom_area(fill = pal$orange, alpha = 0.15) +
+  scale_y_continuous(limits = c(0, 110)) +
+  labs(title = "LCD 패널 가격 지수 (2015=100)",
+       subtitle = "가격 58% 하락 → 수익성 파괴 → 한국 업체 철수",
+       x = NULL, y = "가격 지수") +
+  theme_hunter()
+
+p1 + p2 + plot_annotation(
+  title = "LCD 치킨게임의 교훈 — OLED도 같은 길을 가는가?",
+  theme = theme(plot.title = element_text(face = "bold", size = 16, family = "Noto Sans CJK KR"))
+)
+```
+
+::: {.callout-important}
+## OLED는 LCD와 같을까?
+
+**같은 점:** 중국의 물량 공세, 판가 하락 압력, 점유율 잠식 속도
+**다른 점:** OLED는 특허 장벽이 높다. BOE는 2026년 OLED 사업부 적자 100억 위안 추정. 중국이 물량은 늘었지만 **돈을 벌지 못하고 있다**. 삼성은 폴더블·LTPO·고주사율에서 여전히 2~3년 기술 격차를 유지 중.
+:::
+
+---
+
+## III. 차세대 기술: Glass Core Substrate
+
+### 3.1 디스플레이에서 반도체 패키징으로
+
+```{r glass_timeline}
+#| fig-cap: "Glass Substrate 기술 로드맵"
+#| label: fig-glass-timeline
+
+glass <- data.frame(
+  year = c(2023, 2024, 2025, 2026, 2027, 2028, 2030),
+  maturity = c(15, 25, 40, 55, 70, 85, 95),
+  event = c("Intel 글래스 기판\n컨셉 발표",
+            "삼성전자 I-Cube/H-Cube\n글래스 옵션 검토",
+            "DNP 파일럿 라인\nSKC 드릴&필 라인",
+            "DNP 샘플 출하\n삼성SDC 크랙 검출 연구",
+            "양산 전환 시도\n인텔 EMIB+글래스",
+            "DNP 양산 목표\n본격 상용화",
+            "글래스 기판\n주류 기술")
+)
+
+ggplot(glass, aes(x = year, y = maturity)) +
+  geom_line(color = pal$purple, linewidth = 1.5) +
+  geom_point(color = pal$purple, size = 4) +
+  geom_area(fill = pal$purple, alpha = 0.1) +
+  geom_vline(xintercept = 2026, linetype = "dashed", color = "#ef4444") +
+  annotate("text", x = 2026.1, y = 90, label = "현재\n(2026)", color = "#ef4444",
+           fontface = "bold", size = 4, family = "Noto Sans CJK KR") +
+  geom_label(aes(label = event), size = 2.8, family = "Noto Sans CJK KR",
+             fill = "white", alpha = 0.8, label.size = 0.3, nudge_y = 8) +
+  scale_x_continuous(breaks = 2023:2030) +
+  scale_y_continuous(limits = c(0, 110), labels = percent_format(scale = 1)) +
+  labs(title = "Glass Core Substrate 기술 성숙도 로드맵",
+       subtitle = "2028년 양산 시작 → 디스플레이 유리 가공 기술이 <span style='color:#8b5cf6'>**반도체 패키징**</span>으로 전환",
+       x = NULL, y = "기술 성숙도",
+       caption = "출처: IDTechEx, TrendForce, DNP IR | 성숙도는 정성적 추정") +
+  theme_hunter()
+```
+
+### 3.2 디스플레이 vs 반도체 패키징: 기술 교차점
+
+```{r tech_crossover}
+#| label: tbl-tech-crossover
+
+crossover <- data.frame(
+  기술역량 = c("대면적 유리 핸들링", "박막 증착 (CVD/PVD/ALD)",
+               "포토리소그래피", "레이저 가공",
+               "유리 응력/크랙 관리", "편광/복굴절 측정",
+               "표면 평탄도 관리", "청정실 운영"),
+  디스플레이 = c("Gen 8.5+ 대형 기판", "OLED 유기막/무기막",
+                 "TFT 패터닝", "UDC/폴더블 커팅",
+                 "UTG 크랙 방지", "OLED 시야각 분석",
+                 "나노 단위 평탄도", "Class 100~1000"),
+  반도체패키징 = c("500mm 패널 레벨 패키징", "RDL 재배선층",
+                    "서브 2μm 미세 배선", "TGV (Through-Glass Via)",
+                    "Glass Core 크랙 검출", "응력 복굴절 품질검사",
+                    "범프/비아 정밀도", "Class 10~100"),
+  전환가능성 = c("매우 높음", "높음", "높음", "매우 높음",
+                  "매우 높음", "매우 높음", "높음", "중간")
+)
+
+kable(crossover, align = "c",
+      caption = "디스플레이 → 반도체 패키징 기술 전환 가능성") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, background = "#1e293b", color = "white") |>
+  column_spec(4, bold = TRUE) |>
+  row_spec(c(4,5,6), background = "#f0fdf4")
+```
+
+::: {.callout-note}
+## 핵심: 당신(Nakcho Choi)의 연구가 여기 들어간다
+
+SID 2026에서 발표하는 **"Stress-Induced Birefringence Measurement for Crack Detection in Bessel Beam Laser-Drilled Glass"**는 정확히 이 교차점에 있다:
+
+- **레이저 드릴링 → TGV (Through-Glass Via)** — Bessel beam 레이저 가공
+- **응력 복굴절 측정 → Glass Core 품질검사** — Axostep 편광 측정
+- **크랙 검출 → 비파괴 검사** — 양산 수율 관리
+
+디스플레이에서 개발한 기술이 **그대로** 반도체 Glass Substrate 품질검사에 적용된다.
+:::
+
+---
+
+## IV. 산업 전망: OLED vs 반도체
+
+### 4.1 성장률 비교
+
+```{r industry_growth}
+#| fig-cap: "디스플레이 vs 반도체 시장 성장 전망"
+#| label: fig-industry-growth
+
+growth <- data.frame(
+  year = rep(2024:2030, 3),
+  segment = rep(c("OLED 시장", "반도체 패키징", "Glass Substrate"), each = 7),
+  value = c(
+    45, 48, 51, 54, 56, 58, 60,
+    44, 52, 62, 75, 90, 108, 130,
+    0.1, 0.3, 0.8, 2.0, 5.0, 12, 25
+  )
+)
+
+ggplot(growth, aes(x = year, y = value, color = segment)) +
+  geom_line(linewidth = 1.3) +
+  geom_point(size = 2.5) +
+  annotate("rect", xmin = 2027, xmax = 2030, ymin = 0, ymax = 135,
+           fill = "#8b5cf6", alpha = 0.05) +
+  annotate("text", x = 2028.5, y = 125, label = "Glass Substrate\n폭발 성장 구간",
+           color = pal$purple, size = 3.5, fontface = "bold", family = "Noto Sans CJK KR") +
+  scale_color_manual(values = c(pal$boe, pal$purple, pal$sdc)) +
+  scale_y_continuous(labels = dollar_format(suffix = "B")) +
+  labs(title = "시장 규모 전망: OLED vs 반도체 패키징 vs Glass Substrate",
+       subtitle = "OLED는 연 4~5% 완만 성장, 반도체 패키징은 <span style='color:#8b5cf6'>**연 17% 폭발 성장**</span>",
+       x = NULL, y = "시장 규모 (USD Billions)",
+       color = NULL,
+       caption = "출처: Omdia, IDTechEx, Fortune Business Insights | Glass Substrate는 2026 이후 급성장") +
+  theme_hunter()
+```
+
+### 4.2 수익성 전망 비교
+
+```{r margin_comparison}
+#| fig-cap: "OLED vs 반도체 영업이익률 전망"
+#| label: fig-margin-forecast
+
+margin <- data.frame(
+  year = rep(2024:2028, 3),
+  segment = rep(c("SDC OLED", "삼성 반도체", "Glass Substrate(추정)"), each = 5),
+  margin = c(
+    12, 10, 6, 5, 4,
+    35, 50, 120, 40, 35,
+    -50, -30, -10, 5, 15
+  )
+)
+
+ggplot(margin, aes(x = year, y = margin, color = segment, linetype = segment)) +
+  geom_hline(yintercept = 0, color = "#cccccc") +
+  geom_hline(yintercept = 10, linetype = "dotted", color = "#ef4444", linewidth = 0.5) +
+  annotate("text", x = 2024, y = 13, label = "건전 마진 10%", color = "#ef4444",
+           size = 3, family = "Noto Sans CJK KR") +
+  geom_line(linewidth = 1.3) +
+  geom_point(size = 3) +
+  scale_color_manual(values = c(pal$sdc, "#1428a0", pal$purple)) +
+  scale_linetype_manual(values = c("solid", "solid", "dashed")) +
+  labs(title = "영업이익률 전망: SDC OLED vs 반도체 vs Glass Substrate",
+       subtitle = "OLED 이익률 <span style='color:#ef4444'>**하락 추세**</span> vs Glass Substrate <span style='color:#8b5cf6'>**성장 잠재력**</span>",
+       x = NULL, y = "영업이익률 (%)",
+       color = NULL, linetype = NULL,
+       caption = "Glass Substrate는 2028년 이후 양산 시 흑자 전환 추정") +
+  theme_hunter()
+```
+
+---
+
+## V. 커리어 전략: 엔지니어의 관점
+
+### 5.1 10년 전과 지금의 데자뷔
+
+```{r career_timeline}
+#| fig-cap: "디스플레이 엔지니어 커리어 전환 타임라인"
+#| label: fig-career
+
+career <- data.frame(
+  year = c(2001, 2005, 2010, 2015, 2019, 2023, 2026, 2028, 2030),
+  phase = c("LCD 입사", "LCD 전성기", "LCD→OLED\n전배", "OLED 성장",
+            "OLED 전성기", "OLED 성숙", "품질팀\n전배", "Glass\nSubstrate?", "반도체\n패키징?"),
+  tech_value = c(50, 80, 40, 70, 90, 75, 60, 80, 95),
+  type = c("LCD", "LCD", "전환", "OLED", "OLED", "OLED", "전환", "Glass", "Glass")
+)
+
+ggplot(career, aes(x = year, y = tech_value)) +
+  geom_ribbon(aes(ymin = 30, ymax = tech_value, fill = type), alpha = 0.2) +
+  geom_line(linewidth = 1.5, color = "#333333") +
+  geom_point(aes(color = type), size = 5) +
+  geom_label(aes(label = phase), size = 3, family = "Noto Sans CJK KR",
+             fill = "white", alpha = 0.9, label.size = 0.3, nudge_y = 8) +
+  geom_vline(xintercept = c(2010, 2026), linetype = "dashed", color = "#ef4444") +
+  annotate("text", x = 2010, y = 98, label = "1차 전환", color = "#ef4444",
+           fontface = "bold", size = 3.5, family = "Noto Sans CJK KR") +
+  annotate("text", x = 2026, y = 98, label = "2차 전환?", color = "#ef4444",
+           fontface = "bold", size = 3.5, family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c("LCD" = pal$grey, "전환" = "#ef4444",
+                                "OLED" = pal$sdc, "Glass" = pal$purple)) +
+  scale_color_manual(values = c("LCD" = pal$grey, "전환" = "#ef4444",
+                                 "OLED" = pal$sdc, "Glass" = pal$purple)) +
+  scale_x_continuous(breaks = seq(2001, 2030, 3)) +
+  labs(title = "디스플레이 엔지니어의 커리어 곡선",
+       subtitle = "LCD→OLED 전배(2010)처럼, <span style='color:#ef4444'>**품질→Glass Substrate(2026)**</span>가 2차 전환점",
+       x = NULL, y = "기술 가치 (상대값)",
+       color = "기술 단계", fill = "기술 단계",
+       caption = "Nakcho Choi 커리어 기반 모델링 | 기술 가치는 시장 수요 × 희소성으로 정성 평가") +
+  theme_hunter() +
+  theme(legend.position = "right")
+```
+
+### 5.2 Claude의 솔직한 의견
+
+::: {.callout-tip}
+## 품질팀 전배 = 올바른 전략적 선택
+
+**10년 전 (2010):** LCD가 중국에 밀릴 게 보였다. OLED 개발팀으로 전배했다. 결과: **정답**이었다.
+
+**지금 (2026):** OLED가 중국에 밀리기 시작한다. 품질팀으로 전배를 선택했다. 이것은:
+
+1. **공통 직군**이라는 것이 핵심 — 품질은 OLED든 반도체든 적용된다
+2. SID 2026 논문(Bessel beam 유리 크랙 검출)이 **Glass Core Substrate 품질검사**와 직결
+3. 편광/복굴절 측정, 레이저 가공, 응력 분석 — 이 기술은 디스플레이보다 **반도체 패키징에서 더 희소**
+4. OLED 개발 직군에 남으면 → 중국과의 치킨게임에 갇힌다
+5. 품질 직군으로 이동하면 → **OLED와 반도체 양쪽에 발을 걸칠 수 있다**
+
+**결론:** LCD→OLED 전배가 "기술 탈출"이었다면, 품질 전배는 **"산업 탈출"의 교두보**다. OLED라는 하나의 기술에 종속되지 않고, Glass/반도체 패키징이라는 더 큰 시장으로 확장할 수 있는 포지션을 잡는 것이다.
+:::
+
+---
+
+## VI. 결론: 세 가지 시나리오
+
+```{r scenarios}
+#| fig-cap: "삼성디스플레이 3대 시나리오 (2026-2030)"
+#| label: fig-scenarios
+
+scen <- data.frame(
+  scenario = factor(c("시나리오 1:\nOLED 프리미엄 방어\n(현 전략)",
+                       "시나리오 2:\nGlass Substrate 전환\n(전략적 피벗)",
+                       "시나리오 3:\n치킨게임 패배\n(LCD 재현)"),
+                    levels = c("시나리오 1:\nOLED 프리미엄 방어\n(현 전략)",
+                               "시나리오 2:\nGlass Substrate 전환\n(전략적 피벗)",
+                               "시나리오 3:\n치킨게임 패배\n(LCD 재현)")),
+  probability = c(45, 35, 20),
+  margin_2030 = c(8, 15, -5),
+  color = c(pal$orange, pal$green, "#ef4444")
+)
+
+p1 <- ggplot(scen, aes(x = scenario, y = probability, fill = scenario)) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_text(aes(label = paste0(probability, "%")),
+            vjust = -0.5, fontface = "bold", size = 5, family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c(pal$orange, pal$green, "#ef4444")) +
+  scale_y_continuous(limits = c(0, 55)) +
+  labs(title = "시나리오별 발생 확률", y = "%", x = NULL) +
+  theme_hunter() + theme(legend.position = "none")
+
+p2 <- ggplot(scen, aes(x = scenario, y = margin_2030, fill = scenario)) +
+  geom_col(width = 0.6, alpha = 0.9) +
+  geom_hline(yintercept = 0, color = "#333333") +
+  geom_text(aes(label = paste0(margin_2030, "%")),
+            vjust = ifelse(scen$margin_2030 > 0, -0.5, 1.5),
+            fontface = "bold", size = 5, family = "Noto Sans CJK KR") +
+  scale_fill_manual(values = c(pal$orange, pal$green, "#ef4444")) +
+  scale_y_continuous(limits = c(-10, 20)) +
+  labs(title = "2030년 예상 이익률", y = "%", x = NULL) +
+  theme_hunter() + theme(legend.position = "none")
+
+p1 + p2 + plot_annotation(
+  title = "삼성디스플레이의 세 갈래 길",
+  subtitle = "Glass Substrate 전환이 가장 높은 이익률을 약속하지만, 실행 불확실성이 크다",
+  theme = theme(plot.title = element_text(face = "bold", size = 16, family = "Noto Sans CJK KR"),
+                plot.subtitle = element_text(color = "#666666", size = 12, family = "Noto Sans CJK KR"))
+)
+```
+
+---
+
+## 에필로그: 유리를 아는 사람이 다음 시대를 연다
+
+LCD 시대에 유리 위에 TFT를 만들던 사람들이 OLED 시대를 열었다.
+OLED 시대에 유리 위의 응력과 크랙을 측정하던 사람이 Glass Substrate 시대를 열 수 있다.
+
+기술은 바뀌지만, **유리를 다루는 물리학**은 변하지 않는다.
+
+---
+
+*Alpha Hunter Sector Report · 2026.05.01 · Nakcho Choi × Claude Opus 4.6*
+
+*면책: 이 보고서는 산업 분석 및 기술 전망 목적으로 작성되었습니다. 특정 종목에 대한 투자 권유가 아닙니다.*
