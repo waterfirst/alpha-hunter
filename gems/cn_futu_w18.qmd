@@ -1,0 +1,497 @@
+---
+title: "FUTU (富途控股) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 18 — 중국 핀테크 최강 브로커리지, 매출 53% 폭증"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-01"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | Futu Holdings Limited (FUTU, NASDAQ / 8585.HK) |
+| **업종** | Financial Services / Capital Markets (온라인 브로커리지) |
+| **핵심 사업** | 디지털 증권거래 플랫폼 Moomoo, Futubull 운영 |
+| **시총** | $21.7B (약 30조원) |
+| **현재가** | $154.51 |
+| **PER (TTM/Fwd)** | 15.1x / 11.3x |
+| **PBR** | 4.2x |
+| **ROE** | 33.1% |
+| **배당수익률** | 1.2% (특별배당 포함) |
+| **컨센서스** | Strong Buy (20명 애널리스트, 평균 타겟 $232) |
+
+::: {.callout-tip}
+## 핵심 투자 포인트
+중국/홍콩 기반 글로벌 디지털 브로커리지 1위. **매출 +53%, 영업이익률 69%, ROE 33%**의 압도적 수익성. Fwd PE 11.3x로 글로벌 동종업 대비 60% 할인. 홍콩 이중상장으로 ADR 리스크 헤지 완료. 2026년 신규 유료 고객 80만명 유치 전망.
+:::
+
+## 사업 요약
+
+Futu Holdings는 **아시아 최대 디지털 증권거래 플랫폼** 운영사다. 홍콩·미국·싱가포르·일본·호주·말레이시아 등에서 **Moomoo**와 **Futubull** 브랜드로 서비스하며, 주식·옵션·ETF·펀드·채권 거래를 제공한다.
+
+- **브로커리지 수수료** — 전체 매출의 핵심. 거래량 증가에 직접 연동
+- **이자수익** — 고객 증거금 및 마진론 이자. 금리 환경에 민감하나 안정적 수익원
+- **기업 서비스** — IPO 인수·주주서비스. Tencent, NIO 등 주요 고객
+- **자산관리** — Moomoo Financial 통한 자산관리 서비스 확대 중
+- **글로벌 확장** — 2026년 기준 12개국 라이선스 보유, 동남아·일본 급성장
+
+## 왜 히든젬인가?
+
+::: {.callout-note}
+## 5가지 핵심 모트 (경제적 해자)
+1. **네트워크 효과**: 2,200만+ 사용자 기반 → 유동성 집중 → 신규 유입 가속
+2. **규모의 경제**: 영업이익률 69%의 초고효율 플랫폼 (직원 3,540명으로 $21.7B 시총)
+3. **전환비용**: 포트폴리오·거래이력·소셜기능이 묶여 이탈 어려움
+4. **기술적 해자**: 자체 개발 트레이딩 엔진, AI 리서치 툴, 실시간 데이터
+5. **규제 장벽**: 12개국 브로커리지 라이선스 = 신규 진입 차단
+:::
+
+
+# 실적 분석
+
+```{r}
+#| label: fig-financial
+#| fig-cap: "FUTU 매출·영업이익·순이익 추이 (단위: HKD 십억)"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+df_fin <- data.frame(
+  Year = factor(rep(c("2022","2023","2024","2025","2026E"), 3),
+                levels = c("2022","2023","2024","2025","2026E")),
+  Metric = factor(rep(c("매출","영업이익","순이익"), each = 5),
+                  levels = c("매출","영업이익","순이익")),
+  Value = c(
+    7.61, 10.01, 13.59, 22.85, 30.70,
+    3.57,  5.01,  6.62, 14.08, 20.50,
+    2.93,  4.28,  5.44, 11.34, 16.00
+  )
+)
+
+ggplot(df_fin, aes(x = Year, y = Value, fill = Metric)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  geom_text(aes(label = sprintf("%.1f", Value)),
+            position = position_dodge(width = 0.7),
+            vjust = -0.5, size = 3, color = "#e4e4ec", family = kfont) +
+  scale_fill_manual(values = c(c_amber, c_green, c_cyan)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "FUTU 실적 추이 (2022~2026E)",
+       subtitle = "매출 3년 CAGR 44%, 영업이익률 69%의 초고효율 플랫폼",
+       x = NULL, y = "HKD (십억)", fill = NULL,
+       caption = "출처: Futu IR, 애널리스트 컨센서스 | Alpha Hunter") +
+  theme_hunter()
+```
+
+## 분기별 실적 — 가속 성장
+
+```{r}
+#| label: fig-quarterly
+#| fig-cap: "FUTU 분기별 매출·영업이익 추이 (HKD 십억)"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+df_q <- data.frame(
+  Quarter = factor(c("Q1'25","Q2'25","Q3'25","Q4'25"),
+                   levels = c("Q1'25","Q2'25","Q3'25","Q4'25")),
+  Revenue = c(4.70, 5.31, 6.40, 6.44),
+  OI = c(2.69, 3.34, 3.90, 4.15)
+)
+
+df_q2 <- data.frame(
+  Quarter = rep(df_q$Quarter, 2),
+  Metric = rep(c("매출","영업이익"), each = 4),
+  Value = c(df_q$Revenue, df_q$OI)
+)
+
+ggplot(df_q2, aes(x = Quarter, y = Value, color = Metric, group = Metric)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  geom_text(aes(label = sprintf("%.2f", Value)),
+            vjust = -1, size = 3.2, family = kfont) +
+  scale_color_manual(values = c(c_amber, c_green)) +
+  scale_y_continuous(limits = c(0, 8), expand = expansion(mult = c(0, 0.1))) +
+  labs(title = "분기별 성장 가속화",
+       subtitle = "Q4'25 매출 HKD 6.44B, 영업이익 HKD 4.15B — 분기 최대",
+       x = NULL, y = "HKD (십억)", color = NULL,
+       caption = "출처: Futu IR | Alpha Hunter") +
+  theme_hunter()
+```
+
+
+# 주가 추이 (52주)
+
+```{r}
+#| label: fig-price
+#| fig-cap: "FUTU 52주 주가 추이 ($92 → $155, +68%)"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+prices <- read.csv("/tmp/futu_prices.csv")
+prices$Date <- as.Date(prices$Date)
+
+# Moving averages
+prices$MA20  <- stats::filter(prices$Close, rep(1/20, 20), sides = 1)
+prices$MA60  <- stats::filter(prices$Close, rep(1/60, 60), sides = 1)
+
+ggplot(prices, aes(x = Date)) +
+  geom_line(aes(y = Close), color = c_amber, linewidth = 0.8) +
+  geom_line(aes(y = MA20), color = c_cyan, linewidth = 0.5, linetype = "dashed", na.rm = TRUE) +
+  geom_line(aes(y = MA60), color = c_purple, linewidth = 0.5, linetype = "dotted", na.rm = TRUE) +
+  annotate("rect", xmin = as.Date("2025-10-01"), xmax = as.Date("2026-01-15"),
+           ymin = 90, ymax = 200, fill = c_green, alpha = 0.08) +
+  annotate("text", x = as.Date("2025-11-15"), y = 195,
+           label = "글로벌 확장\n모멘텀 구간", color = c_green, size = 3, family = kfont) +
+  scale_x_date(date_labels = "%y/%m", date_breaks = "2 months") +
+  scale_y_continuous(labels = dollar_format()) +
+  labs(title = "FUTU 52주 주가 추이",
+       subtitle = "52주 저점 $92 → 현재 $155 (+68%), 20일/60일 이동평균",
+       x = NULL, y = "주가 (USD)",
+       caption = "출처: Yahoo Finance | Alpha Hunter") +
+  theme_hunter()
+```
+
+
+# 밸류에이션 비교 (동종업종)
+
+```{r}
+#| label: fig-valuation
+#| fig-cap: "글로벌 온라인 브로커리지 밸류에이션 비교"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+peers <- data.frame(
+  Company = c("FUTU\n(富途)", "TIGR\n(UP Fintech)", "IBKR\n(Interactive\nBrokers)", "HOOD\n(Robinhood)", "LPLA\n(LPL\nFinancial)"),
+  FwdPE = c(11.3, 5.7, 27.9, 28.1, 11.8),
+  OpMargin = c(69.1, 34.3, 76.8, 38.5, 10.0),
+  RevGrowth = c(53.1, 45.8, 16.8, 15.1, 35.0),
+  ROE = c(33.1, 22.4, 23.6, 21.5, 20.5)
+)
+
+peers$Company <- factor(peers$Company, levels = peers$Company)
+peers$highlight <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
+
+p1 <- ggplot(peers, aes(x = Company, y = FwdPE, fill = highlight)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%.1fx", FwdPE)), vjust = -0.5,
+            size = 3.2, color = "#e4e4ec", family = kfont) +
+  scale_fill_manual(values = c("#444466", c_amber)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "Forward PE 비교 — FUTU 60% 할인",
+       subtitle = "FUTU 11.3x vs IBKR/HOOD 28x. 성장률 대비 극단적 저평가",
+       x = NULL, y = "Forward PE (x)",
+       caption = "출처: Yahoo Finance, 2026.05.01 기준 | Alpha Hunter") +
+  theme_hunter()
+
+print(p1)
+```
+
+```{r}
+#| label: fig-margin-growth
+#| fig-cap: "영업이익률 vs 매출성장률 — FUTU의 압도적 위치"
+#| fig-width: 9
+#| fig-height: 5.5
+#| lightbox: true
+
+ggplot(peers, aes(x = RevGrowth, y = OpMargin, size = ROE)) +
+  geom_point(aes(color = highlight), alpha = 0.8, show.legend = FALSE) +
+  geom_text(aes(label = gsub("\n", " ", Company)),
+            vjust = -1.2, size = 3, color = "#e4e4ec", family = kfont) +
+  scale_color_manual(values = c("#6366f1", c_amber)) +
+  scale_size_continuous(range = c(5, 12)) +
+  scale_x_continuous(labels = function(x) paste0(x, "%")) +
+  scale_y_continuous(labels = function(x) paste0(x, "%")) +
+  labs(title = "성장성 vs 수익성 매트릭스",
+       subtitle = "FUTU: 매출 53% 성장 + 영업이익률 69% = 이상적 위치 (버블 크기 = ROE)",
+       x = "매출성장률 (%)", y = "영업이익률 (%)",
+       caption = "출처: Yahoo Finance | Alpha Hunter") +
+  theme_hunter()
+```
+
+
+# 워런 버핏 해자 레이더 차트
+
+```{r}
+#| label: fig-moat-radar
+#| fig-cap: "워런 버핏 경제적 해자 평가 (10점 만점)"
+#| fig-width: 8
+#| fig-height: 6
+#| lightbox: true
+
+moat <- data.frame(
+  Factor = c("수익성\n(영업이익률 69%)", "성장성\n(매출 +53%)", "해자 강도\n(네트워크 효과)",
+             "경영진 역량\n(Li Hua CEO)", "재무 건전성\n(ROE 33%)", "밸류에이션\n(Fwd PE 11x)"),
+  Score = c(9.5, 9.0, 8.5, 8.0, 9.0, 9.0)
+)
+
+moat$Factor <- factor(moat$Factor, levels = moat$Factor)
+n <- nrow(moat)
+angles <- seq(0, 2 * pi, length.out = n + 1)[1:n]
+moat$x <- moat$Score * cos(angles - pi/2)
+moat$y <- moat$Score * sin(angles - pi/2)
+
+# Grid circles
+grid_df <- do.call(rbind, lapply(c(2, 4, 6, 8, 10), function(r) {
+  theta <- seq(0, 2*pi, length.out = 100)
+  data.frame(x = r * cos(theta), y = r * sin(theta), r = r)
+}))
+
+# Polygon
+poly_df <- rbind(moat[, c("x","y")], moat[1, c("x","y")])
+
+# Labels
+label_r <- 11
+moat$lx <- label_r * cos(angles - pi/2)
+moat$ly <- label_r * sin(angles - pi/2)
+
+ggplot() +
+  geom_path(data = grid_df, aes(x, y, group = r), color = "#2a2a4a", linewidth = 0.3) +
+  geom_polygon(data = poly_df, aes(x, y), fill = c_amber, alpha = 0.25, color = c_amber, linewidth = 1) +
+  geom_point(data = moat, aes(x, y), color = c_amber, size = 3) +
+  geom_text(data = moat, aes(x = lx, y = ly, label = Factor),
+            color = "#e4e4ec", size = 3, family = kfont, lineheight = 0.9) +
+  geom_text(data = moat, aes(x = x * 0.82, y = y * 0.82, label = Score),
+            color = c_amber, size = 3.5, fontface = "bold", family = kfont) +
+  coord_fixed() +
+  labs(title = "워런 버핏 해자 레이더 — 총점 53.0/60",
+       subtitle = "수익성·밸류에이션·성장성 모두 최상위. 해자와 경영진 역량도 우수",
+       caption = "Alpha Hunter 자체 평가 | 2026.05.01") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid.major = element_blank())
+```
+
+
+# 피터 린치 스토리 점수
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "피터 린치 스토리 분류 — Fast Grower (매출 53% 성장)"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+lynch <- data.frame(
+  Category = c("이해 용이성", "PEG 비율\n(0.21x)", "기관 관심도", "내부자 보유",
+                "부채 수준", "성장 지속성", "경쟁 우위", "총점"),
+  Score = c(8, 10, 7, 8, 7, 9, 8, 57),
+  Max = c(10, 10, 10, 10, 10, 10, 10, 70)
+)
+
+lynch$Category <- factor(lynch$Category, levels = rev(lynch$Category))
+lynch$Pct <- lynch$Score / lynch$Max
+
+ggplot(lynch, aes(x = Category, y = Pct)) +
+  geom_col(fill = c_green, width = 0.6) +
+  geom_text(aes(label = paste0(Score, "/", Max)),
+            hjust = -0.2, size = 3.2, color = "#e4e4ec", family = kfont) +
+  coord_flip(ylim = c(0, 1.15)) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(title = "피터 린치 스토리 점수 — 57/70 (81%)",
+       subtitle = "PEG 0.21x (10/10 만점)! 매출성장 53% ÷ Fwd PE 11.3 = 극단적 저PEG",
+       x = NULL, y = "달성률",
+       caption = "PEG < 1.0 = 저평가, < 0.5 = 극단적 저평가 | Alpha Hunter") +
+  theme_hunter()
+```
+
+
+# 리스크 팩터 대시보드
+
+```{r}
+#| label: fig-risk
+#| fig-cap: "리스크 팩터 대시보드 — 정치 리스크가 최대 변수"
+#| fig-width: 9
+#| fig-height: 5.5
+#| lightbox: true
+
+risks <- data.frame(
+  Risk = c("ADR 상장폐지\n(HFCAA)", "미중 갈등\n심화", "VIE 구조\n무효화",
+           "중국 규제\n강화", "경쟁 심화\n(TIGR 등)", "금리 변동\n이자수익 영향",
+           "거래량\n사이클성", "환율 리스크\n(HKD/USD)"),
+  Impact = c(8, 7, 6, 5, 4, 5, 6, 3),
+  Probability = c(3, 5, 2, 4, 5, 4, 6, 3),
+  Mitigation = c("HK 이중상장\n완료", "관세 완화\n기조", "HK법 적용\n구조",
+                  "핀테크\n지원 정책", "시장점유율\n60%+", "수수료 비중\n확대",
+                  "글로벌 시장\n분산", "자연 헤지\n구조")
+)
+
+risks$Severity <- risks$Impact * risks$Probability
+
+ggplot(risks, aes(x = Probability, y = Impact, size = Severity)) +
+  geom_point(aes(color = Severity), alpha = 0.8) +
+  geom_text(aes(label = Risk), vjust = -1.3, size = 2.6,
+            color = "#e4e4ec", family = kfont, lineheight = 0.85) +
+  scale_color_gradient(low = c_green, high = c_red, guide = "none") +
+  scale_size_continuous(range = c(4, 14), guide = "none") +
+  scale_x_continuous(limits = c(0, 8), breaks = 1:7) +
+  scale_y_continuous(limits = c(0, 10), breaks = 1:9) +
+  geom_hline(yintercept = 5, linetype = "dashed", color = "#444466") +
+  geom_vline(xintercept = 4, linetype = "dashed", color = "#444466") +
+  annotate("text", x = 1, y = 9.5, label = "고영향·저확률", color = "#888888", size = 2.8, family = kfont) +
+  annotate("text", x = 7, y = 9.5, label = "고영향·고확률", color = c_red, size = 2.8, family = kfont) +
+  labs(title = "리스크 팩터 대시보드",
+       subtitle = "ADR 상장폐지 영향은 크나 확률은 낮음 (HK 이중상장). 미중갈등이 가장 주시할 변수",
+       x = "발생 확률 →", y = "영향도 →",
+       caption = "버블 크기 = 영향 × 확률 | Alpha Hunter") +
+  theme_hunter()
+```
+
+
+## 중국 특유 리스크 상세
+
+::: {.callout-warning}
+## VIE 구조 리스크
+FUTU는 **Variable Interest Entity(VIE)** 구조를 사용한다. US 투자자는 중국 본토 운영 법인의 직접 지분이 아닌 케이맨 제도 법인의 지분을 보유한다. 중국 법원이 VIE 계약을 무효화할 경우 자산 접근이 제한될 수 있다. **다만** FUTU는 홍콩 기반이며 홍콩 증권거래소 이중상장(8585.HK)을 완료하여 리스크가 크게 완화되었다.
+:::
+
+::: {.callout-important}
+## ADR 상장폐지 리스크 (HFCAA)
+2025년 "America First Investment Policy" 메모로 중국 ADR 상장폐지 우려가 재부상했다. 286개 중국 기업이 미국에 상장 중이며, 시총 $1.1조 규모다. **FUTU는 홍콩 이중상장으로 상장폐지 시에도 HK 시장 전환이 가능**하다. 실제 ADR 시총의 75%+ 기업이 이미 이중상장을 완료했다.
+:::
+
+### 중국 산업 트렌드 연결
+
+| 트렌드 | FUTU 수혜 |
+|:---|:---|
+| **전기차 (EV)** | NIO, XPeng, Li Auto 등 중국 EV 기업 IPO/거래 → 브로커리지 수수료 |
+| **반도체** | SMIC, 화홍반도체 등 중국 반도체 상장 수요 → 기업서비스 매출 |
+| **바이오** | BeiGene, Legend Bio 등 홍콩 18A 바이오텍 IPO 활황 |
+| **AI/클라우드** | DeepSeek, 바이두 AI 열풍 → 중국 테크주 거래량 폭증 |
+
+
+# 매수/목표/손절 시나리오
+
+```{r}
+#| label: fig-scenario
+#| fig-cap: "Bull/Base/Bear 시나리오별 목표가"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+current <- 154.51
+
+scenarios <- data.frame(
+  Scenario = factor(c("Bear\n(미중갈등 악화)", "Base\n(현 성장 유지)", "Bull\n(글로벌 확장 가속)"),
+                    levels = c("Bear\n(미중갈등 악화)", "Base\n(현 성장 유지)", "Bull\n(글로벌 확장 가속)")),
+  Target = c(120, 200, 280),
+  Return = c(-22, 29, 81),
+  Color = c(c_red, c_amber, c_green)
+)
+
+ggplot(scenarios, aes(x = Scenario, y = Target, fill = Color)) +
+  geom_col(width = 0.5, show.legend = FALSE) +
+  geom_hline(yintercept = current, linetype = "dashed", color = "#ffffff", linewidth = 0.5) +
+  annotate("text", x = 0.5, y = current + 5, label = paste0("현재가 $", current),
+           color = "#ffffff", size = 3.2, hjust = 0, family = kfont) +
+  geom_text(aes(label = paste0("$", Target, "\n(", ifelse(Return > 0, "+", ""), Return, "%)")),
+            vjust = -0.3, size = 3.5, color = "#e4e4ec", family = kfont, lineheight = 0.9) +
+  scale_fill_identity() +
+  scale_y_continuous(limits = c(0, 320), labels = dollar_format()) +
+  labs(title = "시나리오별 목표가",
+       subtitle = "Base 케이스 $200 (+29%), Bull $280 (+81%). 애널리스트 평균 타겟 $232",
+       x = NULL, y = "목표가 (USD)",
+       caption = "손절가: $120 (-22%), 미중갈등 심화 시 | Alpha Hunter") +
+  theme_hunter()
+```
+
+## 투자 시나리오 상세
+
+| 시나리오 | 전제 조건 | 목표가 | 기대수익 |
+|:---|:---|:---|:---|
+| **Bull** | 글로벌 고객 100만+ 신규, 매출 +40% 지속, 미중 관계 안정 | $280 | +81% |
+| **Base** | 고객 80만 신규, 매출 +30%, 현 규제 유지 | $200 | +29% |
+| **Bear** | 미중 갈등 재심화, ADR 유동성 감소, 거래량 급감 | $120 | -22% |
+
+- **매수가**: $145~$155 (현 가격 구간)
+- **목표가**: $200~$232 (애널리스트 평균)
+- **손절가**: $120 (-22%, 52주 저점 재테스트 구간)
+
+
+# 결론
+
+::: {.callout-tip}
+## Alpha Hunter 최종 판단: **매수 (BUY)**
+
+FUTU Holdings는 **성장 + 수익성 + 밸류에이션** 삼박자를 갖춘 드문 중국 핀테크다.
+
+- **PEG 0.21x** — 매출 53% 성장에 Fwd PE 11.3x는 극단적 저평가
+- **영업이익률 69%** — 글로벌 브로커리지 중 최상위 수준
+- **ROE 33%** — 자본 효율성 탁월
+- **홍콩 이중상장** — ADR 상장폐지 리스크 선제 대응 완료
+- **글로벌 확장** — 동남아·일본·호주 등 12개국 라이선스
+
+**최대 리스크는 미중 지정학적 갈등**이다. 관세전쟁 재격화 시 중국 ADR 전반에 매도 압력이 발생할 수 있으나, FUTU의 펀더멘털 대비 밸류에이션 할인이 충분한 안전마진을 제공한다.
+:::
+
+---
+
+::: {.callout-caution}
+## 면책 조항
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+*Alpha Hunter × Chimera AI | Week 18 | 2026-05-01*
