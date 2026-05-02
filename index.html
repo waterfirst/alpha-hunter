@@ -246,21 +246,259 @@ const sv=localStorage.getItem('ah-theme');if(sv==='light'){document.body.setAttr
 
 // Language switcher
 const AH_TRANS={
-  ko:{special:'📊 특별판 Special Edition',gems:'💎 주차별 히든젬 보고서 Weekly Gem Reports',sector:'🔬 섹터 기술 심층분석 Tech Deep Dive',sister:'🐉 형제 사이트 Sister Site',method:'💎 발굴 방법론 (HPSP 성공 패턴 기반)'},
-  en:{special:'📊 Special Edition',gems:'💎 Weekly Hidden Gem Reports',sector:'🔬 Sector Tech Deep Dive',sister:'🐉 Sister Sites',method:'💎 Discovery Methodology (HPSP Pattern)'},
-  ja:{special:'📊 特別版',gems:'💎 週次ヒドゥンジェムレポート',sector:'🔬 セクター技術分析',sister:'🐉 姉妹サイト',method:'💎 発掘方法論'},
-  zh:{special:'📊 特别版',gems:'💎 每周隐藏宝石报告',sector:'🔬 行业技术深度分析',sister:'🐉 姐妹网站',method:'💎 发掘方法论'},
-  es:{special:'📊 Edición Especial',gems:'💎 Informes Semanales de Gemas Ocultas',sector:'🔬 Análisis Técnico Sectorial',sister:'🐉 Sitios Hermanos',method:'💎 Metodología de Descubrimiento'},
-  fr:{special:'📊 Édition Spéciale',gems:'💎 Rapports Hebdomadaires de Gemmes Cachées',sector:'🔬 Analyse Technique Sectorielle',sister:'🐉 Sites Partenaires',method:'💎 Méthodologie de Découverte'},
-  de:{special:'📊 Sonderausgabe',gems:'💎 Wöchentliche Hidden-Gem-Berichte',sector:'🔬 Sektor-Technik-Analyse',sister:'🐉 Schwesterprojekte',method:'💎 Entdeckungsmethodik'}
+  ko:{
+    badge:'Data-Driven Hidden Gem Discovery',
+    desc:'한국·미국·중국 시장에서 데이터 기반으로 숨은 보물을 찾는 AI 주간 리서치.<br>매주 나라별 1~2개 종목을 정량 스크리닝 + 정성 딥 리서치로 발굴합니다.',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 특별판 Special Edition',gems:'💎 주차별 히든젬 보고서 Weekly Gem Reports',sector:'🔬 섹터 기술 심층분석 Tech Deep Dive',sister:'🐉 형제 사이트 Sister Site',
+    method:'💎 발굴 방법론 (HPSP 성공 패턴 기반)',
+    ms1:'<b>정량 스크리닝</b> — 매출성장 >20%, 영업이익률 >15%, Strong Buy 컨센서스, 순현금, 시총 $1B~$20B',
+    ms2:'<b>경쟁 우위 분석</b> — 독점기술? 해자(moat)? 산업 트렌드(AI/방산/에너지)와 연결?',
+    ms3:'<b>카탈리스트 확인</b> — 실적발표, 신제품, M&A, 정책 수혜 임박?',
+    ms4:'<b>리스크 정량화</b> — 부채비율, 오버행, 밸류에이션 감당 가능?',
+    ms5:'<b>매수/목표/손절가 제시</b> — 진입가, 목표가(+20%~50%), 손절가(-15%) 명시',
+    schMon:'월',schTue:'화',schWed:'수',schThu:'목',schFri:'금',schSat:'토',
+    schL1:'한국<br>스크리닝',schL2:'한국<br>딥 리서치',schL3:'미국<br>스크리닝',schL4:'미국<br>딥 리서치',schL5:'중국<br>스크리닝+리서치',schL6:'주간 종합<br>Hidden Gem',
+    sp1h:'미국 예외주의, 민간 달러 플랫폼, 블록화된 세계',sp1s:'2026~2030 종합 매크로 전망 + AI 코멘터리 | 연준 축소 · X Money · 호르무즈 · 5대 블록\n히트맵·시나리오·모니터링 대시보드 · TACO-Gibbs 연결 분석 · ggplot 다크 차트 9개',
+    g1h:'HPSP (403870) — 반도체 HPA 장비 글로벌 독점',g1s:'삼성 3nm GAA · TSMC 2nm 필수 장비 · HBM DRAM 채택 · 영업이익률 52%\n워런 버핏 해자 9.5점 · 피터 린치 스토리 9.5점 · R ggplot 다크 차트 7개',
+    g2h:'AROC (Archrock) — 천연가스 압축 인프라 독점',g2s:'미국 1위 · LNG 수출 수혜 · 영업이익률 39% · PEG 0.6 · Strong Buy 8/0/0',
+    g3h:'주간 종합 — 원텍(WONTECH) · TransMedics(TMDX) · 포트폴리오 업데이트',g3s:'한국: 원텍 PEG 0.4x 극저평가 K-뷰티 레이저 | 미국: TMDX FDA 독점 장기이식 | 중국: 신규 없음\nAROC +9.3% · HPSP +4.4% | 버핏/린치 분석 · ggplot 다크 차트 14개',
+    g4h:'FUTU (富途控股) — 중국 핀테크 최강 브로커리지',g4s:'매출 +53% · 영업이익률 69% · ROE 33% · PEG 0.21x · Fwd PE 11.3x\n글로벌 12개국 디지털 브로커리지 · HK 이중상장 ADR 리스크 헤지 · R ggplot 차트 7개',
+    g5h:'FSS (Federal Signal) — 미국 시정부 인프라 장비 독점',g5s:'환경 솔루션 1위 · Q1 EPS +55% 서프라이즈 · 매출 +35% · PEG 0.6 · Buy 5/1/0\nAROC 패턴 재현: 인프라 독점 + 가동률 극대화 + 배당 + 성장 · R ggplot 차트 7개',
+    g6h:'🔍 다음 주 발굴 예정',g6s:'화: 🇰🇷 한국 | 목: 🇺🇸 미국 | 금: 🇨🇳 중국 | 토: 종합 보고서',
+    sec1h:'삼성디스플레이 2026 Q1 전망 — OLED 치킨게임과 Glass Substrate 전환점',sec1s:'SDC vs LGD vs BOE 비교 | 블라인드 6% 논란 | LCD 치킨게임 교훈 | Glass Core Substrate 로드맵 | 커리어 전략',
+    sec2h:'🔬 다음 편 예정',sec2s:'히든젬 기업의 섹터 핵심 기술을 심층 분석 — HBM, EUV, FMM-free, 천연가스 압축 등',
+    sis1h:'🐉 Chimera AI — 주간 경제분석 보고서',sis1s:'Claude+GPT+Gemini 키메라 멀티에이전트 증시 분석\n매크로 환경 · 섹터 로테이션 · NS Index · TACO 모델 — <b>히든젬 발굴의 매크로 기반</b>',
+    sis2h:'🔬 Insight Lab — 인문학 × 과학 크로스오버',sis2s:'양자역학×민주주의 · 엔트로피×제국 · TACO-Gibbs 모델 — <b>세계 변화의 구조를 읽는 렌즈</b>',
+    disclaimer:'이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다.<br>실제 투자 권유가 아니며, 모든 투자 결정은 개인의 판단과 책임 하에 이루어져야 합니다.',
+    footer1:'💎 Data-Driven Hidden Gem Discovery',footer3:'Alpha Hunter는 Chimera AI의 매크로 분석을 기반으로 히든젬을 발굴합니다',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  },
+  en:{
+    badge:'Data-Driven Hidden Gem Discovery',
+    desc:'AI weekly research discovering hidden gems from Korean, US, and Chinese markets through data-driven analysis.<br>Each week: 1–2 stocks per country via quantitative screening + qualitative deep research.',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 Special Edition',gems:'💎 Weekly Hidden Gem Reports',sector:'🔬 Sector Tech Deep Dive',sister:'🐉 Sister Sites',
+    method:'💎 Discovery Methodology (HPSP Success Pattern)',
+    ms1:'<b>Quantitative Screening</b> — Revenue growth >20%, operating margin >15%, Strong Buy consensus, net cash, market cap $1B–$20B',
+    ms2:'<b>Competitive Advantage Analysis</b> — Proprietary tech? Moat? Connected to industry trends (AI/defense/energy)?',
+    ms3:'<b>Catalyst Verification</b> — Upcoming earnings, new product, M&A, policy benefit imminent?',
+    ms4:'<b>Risk Quantification</b> — Debt ratio, overhang, valuation sustainable?',
+    ms5:'<b>Entry/Target/Stop Price</b> — Entry price, target (+20%–50%), stop-loss (-15%) specified',
+    schMon:'Mon',schTue:'Tue',schWed:'Wed',schThu:'Thu',schFri:'Fri',schSat:'Sat',
+    schL1:'Korea<br>Screening',schL2:'Korea<br>Deep Research',schL3:'US<br>Screening',schL4:'US<br>Deep Research',schL5:'China<br>Screening+Research',schL6:'Weekly Summary<br>Hidden Gem',
+    sp1h:'US Exceptionalism, Private Dollar Platforms, and a Fragmented World',sp1s:'2026–2030 Macro Outlook + AI Commentary | Fed contraction · X Money · Hormuz · 5 blocs\nHeatmap · scenario · monitoring dashboard · TACO-Gibbs analysis · 9 ggplot dark charts',
+    g1h:'HPSP (403870) — Global Monopoly in Semiconductor HPA Equipment',g1s:'Samsung 3nm GAA · TSMC 2nm essential equipment · HBM DRAM adoption · Operating margin 52%\nWarren Buffett moat 9.5 · Peter Lynch story 9.5 · 7 R ggplot dark charts',
+    g2h:'AROC (Archrock) — Natural Gas Compression Infrastructure Monopoly',g2s:'#1 in the US · LNG export beneficiary · Operating margin 39% · PEG 0.6 · Strong Buy 8/0/0',
+    g3h:'Weekly Summary — Wontech · TransMedics (TMDX) · Portfolio Update',g3s:'Korea: Wontech PEG 0.4x deep-value K-beauty laser | US: TMDX FDA-exclusive organ transplant | China: no new pick\nAROC +9.3% · HPSP +4.4% | Buffett/Lynch analysis · 14 ggplot dark charts',
+    g4h:'FUTU (Futu Holdings) — China\'s Premier Fintech Brokerage',g4s:'Revenue +53% · Operating margin 69% · ROE 33% · PEG 0.21x · Fwd PE 11.3x\nDigital brokerage in 12 countries · HK dual-listed ADR risk hedge · 7 R ggplot charts',
+    g5h:'FSS (Federal Signal) — US Municipal Infrastructure Equipment Monopoly',g5s:'#1 Environmental Solutions · Q1 EPS +55% surprise · Revenue +35% · PEG 0.6 · Buy 5/1/0\nAROC pattern repeat: infrastructure monopoly + utilization maximization + dividend + growth · 7 R ggplot charts',
+    g6h:'🔍 Next Week\'s Pick — Coming Soon',g6s:'Tue: 🇰🇷 Korea | Thu: 🇺🇸 US | Fri: 🇨🇳 China | Sat: Summary Report',
+    sec1h:'Samsung Display 2026 Q1 Outlook — OLED Chicken Game & Glass Substrate Inflection',sec1s:'SDC vs LGD vs BOE comparison | Blind 6% controversy | LCD chicken game lessons | Glass Core Substrate roadmap | Career strategy',
+    sec2h:'🔬 Next Edition — Coming Soon',sec2s:'Deep-dive on key sector technologies of hidden gem companies — HBM, EUV, FMM-free, natural gas compression, etc.',
+    sis1h:'🐉 Chimera AI — Weekly Economic Analysis Reports',sis1s:'Claude+GPT+Gemini chimera multi-agent market analysis\nMacro environment · sector rotation · NS Index · TACO model — <b>the macro foundation for hidden gem discovery</b>',
+    sis2h:'🔬 Insight Lab — Humanities × Science Crossover',sis2s:'Quantum mechanics×democracy · Entropy×empire · TACO-Gibbs model — <b>the lens for reading the structure of world change</b>',
+    disclaimer:'This project is created for virtual investment simulation purposes only.<br>It does not constitute actual investment advice. All investment decisions are made at your own discretion and risk.',
+    footer1:'💎 Data-Driven Hidden Gem Discovery',footer3:'Alpha Hunter discovers hidden gems based on Chimera AI\'s macro analysis',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  },
+  ja:{
+    badge:'データ駆動型ヒドゥンジェム発掘',
+    desc:'韓国・米国・中国市場でデータに基づき隠れた宝を探すAI週次リサーチ。<br>毎週、国別1〜2銘柄を定量スクリーニング + 定性ディープリサーチで発掘します。',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 特別版',gems:'💎 週次ヒドゥンジェムレポート',sector:'🔬 セクター技術深層分析',sister:'🐉 姉妹サイト',
+    method:'💎 発掘方法論 (HPSP成功パターン基準)',
+    ms1:'<b>定量スクリーニング</b> — 売上成長>20%、営業利益率>15%、Strong Buyコンセンサス、純現金、時価総額$1B〜$20B',
+    ms2:'<b>競争優位分析</b> — 独占技術？護城河（モート）？産業トレンド（AI/防衛/エネルギー）との接続？',
+    ms3:'<b>カタリスト確認</b> — 決算、新製品、M&A、政策恩恵は近いか？',
+    ms4:'<b>リスク定量化</b> — 負債比率、オーバーハング、バリュエーションは許容できるか？',
+    ms5:'<b>買い/目標/損切り価格提示</b> — 参入価格、目標価格(+20%〜50%)、損切り(-15%)明示',
+    schMon:'月',schTue:'火',schWed:'水',schThu:'木',schFri:'金',schSat:'土',
+    schL1:'韓国<br>スクリーニング',schL2:'韓国<br>ディープリサーチ',schL3:'米国<br>スクリーニング',schL4:'米国<br>ディープリサーチ',schL5:'中国<br>スクリーニング+リサーチ',schL6:'週次総合<br>Hidden Gem',
+    sp1h:'米国例外主義、民間ドルプラットフォーム、ブロック化した世界',sp1s:'2026〜2030総合マクロ見通し + AIコメンタリー | FRB縮小 · X Money · ホルムズ · 5大ブロック\nヒートマップ・シナリオ・監視ダッシュボード · TACO-Gibbs分析 · ggplotダークチャート9個',
+    g1h:'HPSP (403870) — 半導体HPA装置のグローバル独占',g1s:'サムスン3nm GAA · TSMC 2nm必須装置 · HBM DRAM採用 · 営業利益率52%\nウォーレン・バフェット護城河9.5点 · ピーター・リンチストーリー9.5点 · Rggplotダークチャート7個',
+    g2h:'AROC (Archrock) — 天然ガス圧縮インフラ独占',g2s:'米国1位 · LNG輸出受益 · 営業利益率39% · PEG 0.6 · Strong Buy 8/0/0',
+    g3h:'週次総合 — ウォンテック(WONTECH) · TransMedics(TMDX) · ポートフォリオ更新',g3s:'韓国: ウォンテックPEG 0.4x超割安K-ビューティーレーザー | 米国: TMDX FDA独占臓器移植 | 中国: 新規なし\nAROC +9.3% · HPSP +4.4% | バフェット/リンチ分析 · ggplotダークチャート14個',
+    g4h:'FUTU (富途控股) — 中国フィンテック最強ブローカレッジ',g4s:'売上+53% · 営業利益率69% · ROE 33% · PEG 0.21x · 前期PE 11.3x\n世界12カ国デジタルブローカレッジ · HK二重上場ADRリスクヘッジ · Rggplotチャート7個',
+    g5h:'FSS (Federal Signal) — 米国市政府インフラ装置独占',g5s:'環境ソリューション1位 · Q1 EPS +55%サプライズ · 売上+35% · PEG 0.6 · Buy 5/1/0\nAROCパターン再現: インフラ独占+稼働率最大化+配当+成長 · Rggplotチャート7個',
+    g6h:'🔍 来週の発掘予定',g6s:'火: 🇰🇷 韓国 | 木: 🇺🇸 米国 | 金: 🇨🇳 中国 | 土: 総合レポート',
+    sec1h:'サムスンディスプレイ2026 Q1展望 — OLEDチキンゲームとGlass Substrate転換点',sec1s:'SDC vs LGD vs BOE比較 | Blind 6%論争 | LCDチキンゲームの教訓 | Glass Core Substrateロードマップ | キャリア戦略',
+    sec2h:'🔬 次回予定',sec2s:'ヒドゥンジェム企業のセクターコア技術を深層分析 — HBM、EUV、FMM-free、天然ガス圧縮など',
+    sis1h:'🐉 Chimera AI — 週次経済分析レポート',sis1s:'Claude+GPT+Geminiキメラ・マルチエージェント株式分析\nマクロ環境 · セクターローテーション · NS指数 · TACOモデル — <b>ヒドゥンジェム発掘のマクロ基盤</b>',
+    sis2h:'🔬 Insight Lab — 人文学 × 科学クロスオーバー',sis2s:'量子力学×民主主義 · エントロピー×帝国 · TACO-Gibbsモデル — <b>世界変化の構造を読むレンズ</b>',
+    disclaimer:'このプロジェクトは仮想投資シミュレーション目的で作成されました。<br>実際の投資勧誘ではなく、全ての投資判断は個人の責任において行われるべきです。',
+    footer1:'💎 データ駆動型ヒドゥンジェム発掘',footer3:'Alpha HunterはChimera AIのマクロ分析を基にヒドゥンジェムを発掘します',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  },
+  zh:{
+    badge:'数据驱动的隐藏宝石发掘',
+    desc:'在韩国、美国、中国市场通过数据驱动发掘隐藏宝石的AI每周研究。<br>每周按国家筛选1~2只股票，通过定量筛选+定性深度研究进行发掘。',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 特别版',gems:'💎 每周隐藏宝石报告',sector:'🔬 行业技术深度分析',sister:'🐉 姐妹网站',
+    method:'💎 发掘方法论（HPSP成功模式）',
+    ms1:'<b>定量筛选</b> — 营收增长>20%，营业利润率>15%，强力买入共识，净现金，市值$1B~$20B',
+    ms2:'<b>竞争优势分析</b> — 专有技术？护城河？与行业趋势（AI/国防/能源）挂钩？',
+    ms3:'<b>催化剂确认</b> — 即将到来的财报、新产品、并购、政策红利？',
+    ms4:'<b>风险量化</b> — 负债率、筹码压力、估值是否可承受？',
+    ms5:'<b>买入/目标/止损价提示</b> — 进场价、目标价(+20%~50%)、止损(-15%)明确',
+    schMon:'周一',schTue:'周二',schWed:'周三',schThu:'周四',schFri:'周五',schSat:'周六',
+    schL1:'韩国<br>筛选',schL2:'韩国<br>深度研究',schL3:'美国<br>筛选',schL4:'美国<br>深度研究',schL5:'中国<br>筛选+研究',schL6:'每周综合<br>隐藏宝石',
+    sp1h:'美国例外主义、私人美元平台与碎片化世界',sp1s:'2026~2030综合宏观展望+AI点评 | 美联储缩表 · X Money · 霍尔木兹 · 五大阵营\n热力图·情景·监控仪表板 · TACO-Gibbs关联分析 · ggplot暗色图表9个',
+    g1h:'HPSP (403870) — 半导体HPA设备全球垄断',g1s:'三星3nm GAA · 台积电2nm必备设备 · HBM DRAM采用 · 营业利润率52%\n沃伦·巴菲特护城河9.5分 · 彼得·林奇故事9.5分 · R ggplot暗色图表7个',
+    g2h:'AROC (Archrock) — 天然气压缩基础设施垄断',g2s:'美国第一 · LNG出口受益 · 营业利润率39% · PEG 0.6 · 强力买入8/0/0',
+    g3h:'每周综合 — 元泰克(WONTECH) · TransMedics(TMDX) · 投资组合更新',g3s:'韩国: 元泰克PEG 0.4x极低估值K-美容激光 | 美国: TMDX FDA独家器官移植 | 中国: 无新增\nAROC +9.3% · HPSP +4.4% | 巴菲特/林奇分析 · ggplot暗色图表14个',
+    g4h:'FUTU (富途控股) — 中国最强金融科技券商',g4s:'营收+53% · 营业利润率69% · ROE 33% · PEG 0.21x · 预期PE 11.3x\n全球12国数字券商 · HK两地上市ADR风险对冲 · R ggplot图表7个',
+    g5h:'FSS (Federal Signal) — 美国市政基础设施设备垄断',g5s:'环境解决方案第一 · Q1每股收益+55%超预期 · 营收+35% · PEG 0.6 · 买入5/1/0\nAROC模式重现: 基础设施垄断+利用率最大化+分红+增长 · R ggplot图表7个',
+    g6h:'🔍 下周发掘预定',g6s:'周二: 🇰🇷 韩国 | 周四: 🇺🇸 美国 | 周五: 🇨🇳 中国 | 周六: 综合报告',
+    sec1h:'三星显示2026 Q1展望 — OLED价格战与玻璃基板转折点',sec1s:'SDC vs LGD vs BOE对比 | 盲评6%争议 | LCD价格战教训 | Glass Core Substrate路线图 | 职业战略',
+    sec2h:'🔬 下期预告',sec2s:'深入分析隐藏宝石企业的行业核心技术 — HBM、EUV、FMM-free、天然气压缩等',
+    sis1h:'🐉 Chimera AI — 每周经济分析报告',sis1s:'Claude+GPT+Gemini凯美拉多智能体股市分析\n宏观环境 · 行业轮动 · NS指数 · TACO模型 — <b>隐藏宝石发掘的宏观基础</b>',
+    sis2h:'🔬 Insight Lab — 人文学 × 科学跨界',sis2s:'量子力学×民主主义 · 熵×帝国 · TACO-Gibbs模型 — <b>解读世界变化结构的透镜</b>',
+    disclaimer:'本项目仅供虚拟投资模拟目的编写。<br>不构成实际投资建议，所有投资决策应在个人判断和责任下做出。',
+    footer1:'💎 数据驱动的隐藏宝石发掘',footer3:'Alpha Hunter基于Chimera AI的宏观分析发掘隐藏宝石',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  },
+  es:{
+    badge:'Descubrimiento de Joyas Ocultas Basado en Datos',
+    desc:'Investigación semanal de IA que descubre joyas ocultas en los mercados de Corea, EEUU y China mediante análisis de datos.<br>Cada semana: 1–2 acciones por país mediante screening cuantitativo + investigación cualitativa profunda.',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 Edición Especial',gems:'💎 Informes Semanales de Joyas Ocultas',sector:'🔬 Análisis Técnico Sectorial Profundo',sister:'🐉 Sitios Hermanos',
+    method:'💎 Metodología de Descubrimiento (Patrón HPSP)',
+    ms1:'<b>Screening Cuantitativo</b> — Crecimiento ingresos >20%, margen operativo >15%, consenso Strong Buy, caja neta, cap. mercado $1B–$20B',
+    ms2:'<b>Análisis de Ventaja Competitiva</b> — ¿Tecnología propietaria? ¿Moat? ¿Conectado a tendencias (IA/defensa/energía)?',
+    ms3:'<b>Verificación de Catalizador</b> — ¿Próximos resultados, nuevo producto, M&A, beneficio político inminente?',
+    ms4:'<b>Cuantificación de Riesgo</b> — ¿Ratio deuda, overhang, valoración sostenible?',
+    ms5:'<b>Precio de Entrada/Objetivo/Stop</b> — Precio de entrada, objetivo (+20%–50%), stop-loss (-15%) especificado',
+    schMon:'Lun',schTue:'Mar',schWed:'Mié',schThu:'Jue',schFri:'Vie',schSat:'Sáb',
+    schL1:'Corea<br>Screening',schL2:'Corea<br>Inv. Profunda',schL3:'EEUU<br>Screening',schL4:'EEUU<br>Inv. Profunda',schL5:'China<br>Screening+Inv.',schL6:'Resumen Semanal<br>Joya Oculta',
+    sp1h:'Excepcionalismo Estadounidense, Plataformas Privadas del Dólar y un Mundo Fragmentado',sp1s:'Perspectiva Macro 2026–2030 + Comentario IA | Reducción Fed · X Money · Ormuz · 5 bloques\nMapa de calor · escenario · panel de monitoreo · Análisis TACO-Gibbs · 9 gráficos ggplot oscuros',
+    g1h:'HPSP (403870) — Monopolio Global en Equipos HPA para Semiconductores',g1s:'Samsung 3nm GAA · TSMC 2nm equipo esencial · adopción HBM DRAM · Margen operativo 52%\nVentaja competitiva Buffett 9.5 · Historia Lynch 9.5 · 7 gráficos R ggplot oscuros',
+    g2h:'AROC (Archrock) — Monopolio de Infraestructura de Compresión de Gas Natural',g2s:'#1 en EEUU · Beneficiario exportación LNG · Margen operativo 39% · PEG 0.6 · Strong Buy 8/0/0',
+    g3h:'Resumen Semanal — Wontech · TransMedics (TMDX) · Actualización Portfolio',g3s:'Corea: Wontech PEG 0.4x láser K-beauty infravalorado | EEUU: TMDX trasplante órganos exclusivo FDA | China: sin nueva selección\nAROC +9.3% · HPSP +4.4% | Análisis Buffett/Lynch · 14 gráficos ggplot oscuros',
+    g4h:'FUTU (Futu Holdings) — La Mejor Correduría Fintech de China',g4s:'Ingresos +53% · Margen operativo 69% · ROE 33% · PEG 0.21x · PE forward 11.3x\nCorreduría digital en 12 países · Cobertura riesgo ADR cotización dual HK · 7 gráficos R ggplot',
+    g5h:'FSS (Federal Signal) — Monopolio de Equipos de Infraestructura Municipal en EEUU',g5s:'#1 Soluciones Ambientales · Q1 BPA sorpresa +55% · Ingresos +35% · PEG 0.6 · Compra 5/1/0\nPatrón AROC: monopolio infraestructura + utilización máxima + dividendo + crecimiento · 7 gráficos R ggplot',
+    g6h:'🔍 Selección de la Próxima Semana — Próximamente',g6s:'Mar: 🇰🇷 Corea | Jue: 🇺🇸 EEUU | Vie: 🇨🇳 China | Sáb: Informe Resumen',
+    sec1h:'Perspectiva Samsung Display 2026 Q1 — Juego del Pollo OLED e Inflexión del Sustrato de Vidrio',sec1s:'Comparativa SDC vs LGD vs BOE | Controversia Blind 6% | Lecciones del juego del pollo LCD | Hoja de ruta Glass Core Substrate | Estrategia de carrera',
+    sec2h:'🔬 Próxima Edición — Próximamente',sec2s:'Análisis profundo de tecnologías clave de empresas joya oculta — HBM, EUV, FMM-free, compresión gas natural, etc.',
+    sis1h:'🐉 Chimera AI — Informes Semanales de Análisis Económico',sis1s:'Análisis multi-agente de mercado Claude+GPT+Gemini\nEntorno macro · rotación sectorial · NS Index · modelo TACO — <b>la base macro para el descubrimiento de joyas ocultas</b>',
+    sis2h:'🔬 Insight Lab — Humanidades × Ciencias Crossover',sis2s:'Mecánica cuántica×democracia · Entropía×imperio · Modelo TACO-Gibbs — <b>el lente para leer la estructura del cambio mundial</b>',
+    disclaimer:'Este proyecto fue creado con fines de simulación de inversión virtual.<br>No constituye asesoramiento de inversión real. Todas las decisiones de inversión se toman bajo el criterio y responsabilidad personal.',
+    footer1:'💎 Descubrimiento de Joyas Ocultas Basado en Datos',footer3:'Alpha Hunter descubre joyas ocultas basándose en el análisis macro de Chimera AI',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  },
+  fr:{
+    badge:'Découverte de Gemmes Cachées Pilotée par les Données',
+    desc:'Recherche hebdomadaire IA découvrant des gemmes cachées sur les marchés coréen, américain et chinois via l\'analyse de données.<br>Chaque semaine : 1–2 actions par pays via screening quantitatif + recherche qualitative approfondie.',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 Édition Spéciale',gems:'💎 Rapports Hebdomadaires de Gemmes Cachées',sector:'🔬 Analyse Technique Sectorielle Approfondie',sister:'🐉 Sites Partenaires',
+    method:'💎 Méthodologie de Découverte (Modèle de Succès HPSP)',
+    ms1:'<b>Screening Quantitatif</b> — Croissance CA >20%, marge opérationnelle >15%, consensus Strong Buy, trésorerie nette, capitalisation $1B–$20B',
+    ms2:'<b>Analyse de l\'Avantage Concurrentiel</b> — Tech propriétaire ? Fossé (moat) ? Lié aux tendances sectorielles (IA/défense/énergie) ?',
+    ms3:'<b>Vérification du Catalyseur</b> — Résultats imminents, nouveau produit, M&A, bénéfice de politique proche ?',
+    ms4:'<b>Quantification du Risque</b> — Ratio d\'endettement, overhang, valorisation soutenable ?',
+    ms5:'<b>Prix d\'Entrée/Cible/Stop</b> — Prix d\'entrée, cible (+20%–50%), stop-loss (-15%) spécifiés',
+    schMon:'Lun',schTue:'Mar',schWed:'Mer',schThu:'Jeu',schFri:'Ven',schSat:'Sam',
+    schL1:'Corée<br>Screening',schL2:'Corée<br>Recherche Approfondie',schL3:'USA<br>Screening',schL4:'USA<br>Recherche Approfondie',schL5:'Chine<br>Screening+Recherche',schL6:'Synthèse Hebdo<br>Gemme Cachée',
+    sp1h:'L\'Exceptionnalisme Américain, les Plateformes Dollar Privées et un Monde Fragmenté',sp1s:'Perspectives Macro 2026–2030 + Commentaire IA | Réduction Fed · X Money · Ormuz · 5 blocs\nCarte de chaleur · scénario · tableau de bord · Analyse TACO-Gibbs · 9 graphiques ggplot sombres',
+    g1h:'HPSP (403870) — Monopole Mondial des Équipements HPA pour Semi-conducteurs',g1s:'Samsung 3nm GAA · TSMC 2nm équipement essentiel · adoption HBM DRAM · Marge opérationnelle 52%\nFossé Buffett 9,5 · Histoire Lynch 9,5 · 7 graphiques R ggplot sombres',
+    g2h:'AROC (Archrock) — Monopole de l\'Infrastructure de Compression de Gaz Naturel',g2s:'#1 aux USA · Bénéficiaire exportation GNL · Marge opérationnelle 39% · PEG 0,6 · Strong Buy 8/0/0',
+    g3h:'Synthèse Hebdomadaire — Wontech · TransMedics (TMDX) · Mise à Jour Portefeuille',g3s:'Corée : Wontech PEG 0,4x laser K-beauty sous-évalué | USA : TMDX transplantation exclusive FDA | Chine : aucune sélection\nAROC +9,3% · HPSP +4,4% | Analyse Buffett/Lynch · 14 graphiques ggplot sombres',
+    g4h:'FUTU (Futu Holdings) — Premier Courtier Fintech de Chine',g4s:'CA +53% · Marge opérationnelle 69% · ROE 33% · PEG 0,21x · PE forward 11,3x\nCourtage digital dans 12 pays · Couverture risque ADR double cotation HK · 7 graphiques R ggplot',
+    g5h:'FSS (Federal Signal) — Monopole des Équipements d\'Infrastructure Municipale Américaine',g5s:'#1 Solutions Environnementales · Q1 BPA surprise +55% · CA +35% · PEG 0,6 · Acheter 5/1/0\nRéplication motif AROC : monopole infra + maximisation taux d\'utilisation + dividende + croissance · 7 graphiques R ggplot',
+    g6h:'🔍 Sélection de la Semaine Prochaine — À venir',g6s:'Mar : 🇰🇷 Corée | Jeu : 🇺🇸 USA | Ven : 🇨🇳 Chine | Sam : Rapport de synthèse',
+    sec1h:'Perspectives Samsung Display 2026 Q1 — Jeu du Poulet OLED et Inflexion du Substrat Verre',sec1s:'Comparatif SDC vs LGD vs BOE | Controverse Blind 6% | Leçons du jeu du poulet LCD | Feuille de route Glass Core Substrate | Stratégie de carrière',
+    sec2h:'🔬 Prochaine Édition — À venir',sec2s:'Analyse approfondie des technologies clés des entreprises gemmes cachées — HBM, EUV, FMM-free, compression gaz naturel, etc.',
+    sis1h:'🐉 Chimera AI — Rapports Hebdomadaires d\'Analyse Économique',sis1s:'Analyse multi-agent Claude+GPT+Gemini du marché boursier\nEnvironnement macro · rotation sectorielle · NS Index · modèle TACO — <b>le fondement macro pour la découverte de gemmes cachées</b>',
+    sis2h:'🔬 Insight Lab — Humanités × Sciences Crossover',sis2s:'Mécanique quantique×démocratie · Entropie×empire · Modèle TACO-Gibbs — <b>le prisme pour lire la structure du changement mondial</b>',
+    disclaimer:'Ce projet a été créé à des fins de simulation d\'investissement virtuel.<br>Il ne constitue pas un conseil en investissement réel. Toutes les décisions d\'investissement sont prises sous la responsabilité et le jugement personnels.',
+    footer1:'💎 Découverte de Gemmes Cachées Pilotée par les Données',footer3:'Alpha Hunter découvre des gemmes cachées sur la base de l\'analyse macro de Chimera AI',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  },
+  de:{
+    badge:'Datengetriebene Hidden-Gem-Entdeckung',
+    desc:'KI-Wochenforschung, die Hidden Gems auf koreanischen, US-amerikanischen und chinesischen Märkten durch datenbasierte Analyse entdeckt.<br>Jede Woche: 1–2 Aktien pro Land via quantitativem Screening + qualitativer Tiefenrecherche.',
+    author:'Nakcho Choi | Chimera AI × Alpha Hunter',
+    special:'📊 Sonderausgabe',gems:'💎 Wöchentliche Hidden-Gem-Berichte',sector:'🔬 Sektor-Technik-Tiefenanalyse',sister:'🐉 Schwesterprojekte',
+    method:'💎 Entdeckungsmethodik (HPSP-Erfolgsmuster)',
+    ms1:'<b>Quantitatives Screening</b> — Umsatzwachstum >20%, operative Marge >15%, Strong-Buy-Konsens, Nettobarmittel, Marktkapitalisierung $1B–$20B',
+    ms2:'<b>Wettbewerbsvorteils-Analyse</b> — Proprietäre Technologie? Burggraben (Moat)? Verbindung zu Branchentrends (KI/Verteidigung/Energie)?',
+    ms3:'<b>Katalysator-Verifikation</b> — Bevorstehende Ergebnisse, neues Produkt, M&A, Politikbegünstigung unmittelbar bevorstehend?',
+    ms4:'<b>Risikoквантifizierung</b> — Schuldenquote, Overhang, Bewertung tragbar?',
+    ms5:'<b>Einstiegs-/Ziel-/Stop-Preis</b> — Einstiegspreis, Ziel (+20%–50%), Stop-Loss (-15%) angegeben',
+    schMon:'Mo',schTue:'Di',schWed:'Mi',schThu:'Do',schFri:'Fr',schSat:'Sa',
+    schL1:'Korea<br>Screening',schL2:'Korea<br>Tiefenrecherche',schL3:'USA<br>Screening',schL4:'USA<br>Tiefenrecherche',schL5:'China<br>Screening+Recherche',schL6:'Wochenzusammenfassung<br>Hidden Gem',
+    sp1h:'US-Exceptionalismus, private Dollarplattformen und eine fragmentierte Welt',sp1s:'Makroausblick 2026–2030 + KI-Kommentar | Fed-Rückzug · X Money · Hormuz · 5 Blöcke\nHeatmap · Szenarien · Monitoring-Dashboard · TACO-Gibbs-Analyse · 9 ggplot-Dunkeldiagramme',
+    g1h:'HPSP (403870) — Globales Monopol bei Halbleiter-HPA-Ausrüstung',g1s:'Samsung 3nm GAA · TSMC 2nm wesentliche Ausrüstung · HBM-DRAM-Adoption · Operative Marge 52%\nBuffett-Burggraben 9,5 · Lynch-Story 9,5 · 7 R-ggplot-Dunkeldiagramme',
+    g2h:'AROC (Archrock) — Monopol der Erdgaskompressionsinfrastruktur',g2s:'#1 in den USA · LNG-Exportbegünstigter · Operative Marge 39% · PEG 0,6 · Strong Buy 8/0/0',
+    g3h:'Wochenzusammenfassung — Wontech · TransMedics (TMDX) · Portfolio-Update',g3s:'Korea: Wontech PEG 0,4x unterbewerteter K-Beauty-Laser | USA: TMDX FDA-exklusives Organtransplantat | China: keine neue Auswahl\nAROC +9,3% · HPSP +4,4% | Buffett/Lynch-Analyse · 14 ggplot-Dunkeldiagramme',
+    g4h:'FUTU (Futu Holdings) — Chinas führendes Fintech-Brokerhaus',g4s:'Umsatz +53% · Operative Marge 69% · ROE 33% · PEG 0,21x · Forward-KGV 11,3x\nDigitales Brokerhaus in 12 Ländern · HK Doppelnotierung ADR-Risikoabsicherung · 7 R-ggplot-Diagramme',
+    g5h:'FSS (Federal Signal) — Monopol für kommunale Infrastrukturausrüstung in den USA',g5s:'#1 Umweltlösungen · Q1-EPS-Überraschung +55% · Umsatz +35% · PEG 0,6 · Kaufen 5/1/0\nAROC-Muster: Infrastruktur-Monopol + Auslastungsmaximierung + Dividende + Wachstum · 7 R-ggplot-Diagramme',
+    g6h:'🔍 Nächste-Woche-Auswahl — Demnächst',g6s:'Di: 🇰🇷 Korea | Do: 🇺🇸 USA | Fr: 🇨🇳 China | Sa: Zusammenfassungsbericht',
+    sec1h:'Samsung Display 2026 Q1 Ausblick — OLED-Hahnenkampf und Glassubstrat-Wendepunkt',sec1s:'SDC vs LGD vs BOE Vergleich | Blind-6%-Kontroverse | LCD-Hahnenkampf-Lektionen | Glass-Core-Substrate-Roadmap | Karrierestrategie',
+    sec2h:'🔬 Nächste Ausgabe — Demnächst',sec2s:'Tiefenanalyse der Kernsektortechnologien von Hidden-Gem-Unternehmen — HBM, EUV, FMM-free, Erdgaskompression usw.',
+    sis1h:'🐉 Chimera AI — Wöchentliche Wirtschaftsanalyse-Berichte',sis1s:'Claude+GPT+Gemini-Chimera-Multi-Agenten-Marktanalyse\nMakroumfeld · Sektorrrotation · NS-Index · TACO-Modell — <b>die Makrobasis für Hidden-Gem-Entdeckung</b>',
+    sis2h:'🔬 Insight Lab — Geistes- × Naturwissenschaften Crossover',sis2s:'Quantenmechanik×Demokratie · Entropie×Imperium · TACO-Gibbs-Modell — <b>die Linse zum Lesen der Struktur des Weltenwandels</b>',
+    disclaimer:'Dieses Projekt wurde für virtuelle Investitionssimulationszwecke erstellt.<br>Es stellt keine echte Anlageberatung dar. Alle Anlageentscheidungen erfolgen auf eigene Einschätzung und Verantwortung.',
+    footer1:'💎 Datengetriebene Hidden-Gem-Entdeckung',footer3:'Alpha Hunter entdeckt Hidden Gems auf Basis der Makroanalyse von Chimera AI',footer4:'© 2026 Alpha Hunter × Chimera AI'
+  }
 };
 function setLang(l){
   const t=AH_TRANS[l]||AH_TRANS.ko;
-  const secs=document.querySelectorAll('.sec');
-  const keys=['special','gems','sector','sister'];
-  secs.forEach((s,i)=>{if(keys[i]){const txt=s.childNodes[0];if(txt&&txt.nodeType===3)txt.textContent=t[keys[i]]||txt.textContent}});
+  // Header
+  const badgeEl=document.querySelector('header .badge');
+  if(badgeEl)badgeEl.textContent=t.badge;
+  const descEl=document.querySelector('header .desc');
+  if(descEl)descEl.innerHTML=t.desc;
+  const authorEl=document.querySelector('header .author');
+  if(authorEl)authorEl.textContent=t.author;
+  // Schedule grid
+  const days=document.querySelectorAll('.sch .day');
+  const dayKeys=['schMon','schTue','schWed','schThu','schFri','schSat'];
+  days.forEach((d,i)=>{if(t[dayKeys[i]])d.textContent=t[dayKeys[i]]});
+  const labels=document.querySelectorAll('.sch .label');
+  const labelKeys=['schL1','schL2','schL3','schL4','schL5','schL6'];
+  labels.forEach((lb,i)=>{if(t[labelKeys[i]])lb.innerHTML=t[labelKeys[i]]});
+  // Methodology
   const mh=document.querySelector('.method h3');
   if(mh)mh.textContent=t.method;
+  const steps=document.querySelectorAll('.method-step .step-text');
+  const stepKeys=['ms1','ms2','ms3','ms4','ms5'];
+  steps.forEach((s,i)=>{if(t[stepKeys[i]])s.innerHTML=t[stepKeys[i]]});
+  // Sections
+  const secs=document.querySelectorAll('.sec');
+  const secKeys=['special','gems','sector','sister'];
+  secs.forEach((s,i)=>{if(secKeys[i]){const txt=s.childNodes[0];if(txt&&txt.nodeType===3)txt.textContent=t[secKeys[i]]||txt.textContent}});
+  // Cards: build card groups by section
+  const allEls=Array.from(document.querySelector('.main').children);
+  function cardsAfterSec(secEl){
+    let cards=[];let found=false;
+    for(const el of allEls){
+      if(el===secEl){found=true;continue}
+      if(!found)continue;
+      if(el.classList&&el.classList.contains('sec'))break;
+      if(el.classList&&el.classList.contains('card'))cards.push(el);
+    }
+    return cards;
+  }
+  const cardGroups=Array.from(secs).map(s=>cardsAfterSec(s));
+  const groupKeys=[
+    [['sp1h','sp1s']],
+    [['g1h','g1s'],['g2h','g2s'],['g3h','g3s'],['g4h','g4s'],['g5h','g5s'],['g6h','g6s']],
+    [['sec1h','sec1s'],['sec2h','sec2s']],
+    [['sis1h','sis1s'],['sis2h','sis2s']]
+  ];
+  cardGroups.forEach((cards,gi)=>{
+    if(!groupKeys[gi])return;
+    cards.forEach((card,ci)=>{
+      const kp=groupKeys[gi][ci];if(!kp)return;
+      const h3=card.querySelector('h3');
+      if(h3&&t[kp[0]])h3.textContent=t[kp[0]];
+      const sub=card.querySelector('.sub');
+      if(sub&&t[kp[1]])sub.textContent=t[kp[1]];
+    });
+  });
+  // Disclaimer
+  const disc=document.querySelector('.disclaimer');
+  if(disc)disc.innerHTML=t.disclaimer;
+  // Footer
+  const footerDivs=document.querySelectorAll('footer > div');
+  if(footerDivs[0])footerDivs[0].textContent=t.footer1;
+  if(footerDivs[2])footerDivs[2].textContent=t.footer3;
+  if(footerDivs[3])footerDivs[3].textContent=t.footer4;
   localStorage.setItem('ah-lang',l);
 }
 (function(){const l=localStorage.getItem('ah-lang')||'ko';document.getElementById('langSel').value=l;if(l!=='ko')setLang(l)})();
