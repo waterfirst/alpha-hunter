@@ -28,7 +28,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--tx);
 @keyframes load{0%{width:0}60%{width:75%}100%{width:100%}}
 
 .main{display:flex;flex-direction:column;align-items:center;padding:0 16px 30px}
-.theme-btn{position:fixed;top:14px;right:14px;background:var(--sf);border:1px solid var(--bd);color:var(--tx);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;z-index:100;display:flex;align-items:center;justify-content:center}
+.ctrl-bar{position:fixed;top:14px;right:14px;display:flex;align-items:center;gap:8px;z-index:100}
+.theme-btn{background:var(--sf);border:1px solid var(--bd);color:var(--tx);border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .3s,color .3s}
+.theme-btn:hover{border-color:var(--ac)}
+.lang-sel{background:var(--sf);border:1px solid var(--bd);color:var(--tx);border-radius:20px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;appearance:none;-webkit-appearance:none;outline:none;transition:background .3s,color .3s}
+.lang-sel:hover{border-color:var(--ac)}
 .hero-banner{width:100%;max-height:200px;overflow:hidden;position:relative}
 .hero-banner img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.5)}
 .hero-banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent)}
@@ -94,7 +98,18 @@ footer a{color:var(--ac);text-decoration:none}
 </div>
 </div>
 
+<div class="ctrl-bar">
 <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+<select class="lang-sel" id="langSel" onchange="setLang(this.value)">
+  <option value="ko">한국어</option>
+  <option value="en">English</option>
+  <option value="ja">日本語</option>
+  <option value="zh">中文</option>
+  <option value="es">Español</option>
+  <option value="fr">Français</option>
+  <option value="de">Deutsch</option>
+</select>
+</div>
 <div class="main">
 
 <div class="hero-banner"><img src="hero.png" alt=""></div>
@@ -228,6 +243,27 @@ footer a{color:var(--ac);text-decoration:none}
 setTimeout(()=>{const s=document.getElementById('splash');s.classList.add('hide');setTimeout(()=>s.remove(),800)},3800);
 function toggleTheme(){const b=document.body,t=b.getAttribute('data-theme');b.setAttribute('data-theme',t==='light'?'':'light');document.getElementById('themeBtn').textContent=t==='light'?'🌙':'☀️';localStorage.setItem('ah-theme',t==='light'?'dark':'light')}
 const sv=localStorage.getItem('ah-theme');if(sv==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='☀️'}
+
+// Language switcher
+const AH_TRANS={
+  ko:{special:'📊 특별판 Special Edition',gems:'💎 주차별 히든젬 보고서 Weekly Gem Reports',sector:'🔬 섹터 기술 심층분석 Tech Deep Dive',sister:'🐉 형제 사이트 Sister Site',method:'💎 발굴 방법론 (HPSP 성공 패턴 기반)'},
+  en:{special:'📊 Special Edition',gems:'💎 Weekly Hidden Gem Reports',sector:'🔬 Sector Tech Deep Dive',sister:'🐉 Sister Sites',method:'💎 Discovery Methodology (HPSP Pattern)'},
+  ja:{special:'📊 特別版',gems:'💎 週次ヒドゥンジェムレポート',sector:'🔬 セクター技術分析',sister:'🐉 姉妹サイト',method:'💎 発掘方法論'},
+  zh:{special:'📊 特别版',gems:'💎 每周隐藏宝石报告',sector:'🔬 行业技术深度分析',sister:'🐉 姐妹网站',method:'💎 发掘方法论'},
+  es:{special:'📊 Edición Especial',gems:'💎 Informes Semanales de Gemas Ocultas',sector:'🔬 Análisis Técnico Sectorial',sister:'🐉 Sitios Hermanos',method:'💎 Metodología de Descubrimiento'},
+  fr:{special:'📊 Édition Spéciale',gems:'💎 Rapports Hebdomadaires de Gemmes Cachées',sector:'🔬 Analyse Technique Sectorielle',sister:'🐉 Sites Partenaires',method:'💎 Méthodologie de Découverte'},
+  de:{special:'📊 Sonderausgabe',gems:'💎 Wöchentliche Hidden-Gem-Berichte',sector:'🔬 Sektor-Technik-Analyse',sister:'🐉 Schwesterprojekte',method:'💎 Entdeckungsmethodik'}
+};
+function setLang(l){
+  const t=AH_TRANS[l]||AH_TRANS.ko;
+  const secs=document.querySelectorAll('.sec');
+  const keys=['special','gems','sector','sister'];
+  secs.forEach((s,i)=>{if(keys[i]){const txt=s.childNodes[0];if(txt&&txt.nodeType===3)txt.textContent=t[keys[i]]||txt.textContent}});
+  const mh=document.querySelector('.method h3');
+  if(mh)mh.textContent=t.method;
+  localStorage.setItem('ah-lang',l);
+}
+(function(){const l=localStorage.getItem('ah-lang')||'ko';document.getElementById('langSel').value=l;if(l!=='ko')setLang(l)})();
 </script>
 </body>
 </html>
