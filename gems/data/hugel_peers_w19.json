@@ -1,0 +1,57 @@
+[
+  {
+    "ticker": "145020.KQ",
+    "name": "휴젤",
+    "market_cap_B": 2824.5,
+    "forward_pe": 15.37536,
+    "trailing_pe": null,
+    "operating_margin": 48.5,
+    "revenue_growth": 21.3,
+    "roe": 16.1,
+    "ev_ebitda": 10.644
+  },
+  {
+    "ticker": "214150.KQ",
+    "name": "클래시스",
+    "market_cap_B": 3678.3,
+    "forward_pe": 15.744136,
+    "trailing_pe": null,
+    "operating_margin": 54.8,
+    "revenue_growth": 25.6,
+    "roe": 26.3,
+    "ev_ebitda": 19.143
+  },
+  {
+    "ticker": "086900.KQ",
+    "name": "메디톡스",
+    "market_cap_B": 694.1,
+    "forward_pe": 17.686533,
+    "trailing_pe": null,
+    "operating_margin": -6.6,
+    "revenue_growth": 10.0,
+    "roe": 3.4,
+    "ev_ebitda": 19.647
+  },
+  {
+    "ticker": "ABBV",
+    "name": "AbbVie(보톡스)",
+    "market_cap_B": 368.2,
+    "forward_pe": 12.847543,
+    "trailing_pe": 101.048546,
+    "operating_margin": 31.6,
+    "revenue_growth": 12.4,
+    "roe": null,
+    "ev_ebitda": 14.374
+  },
+  {
+    "ticker": "RVNC",
+    "name": "Revance",
+    "market_cap_B": 0.0,
+    "forward_pe": null,
+    "trailing_pe": null,
+    "operating_margin": 0,
+    "revenue_growth": 0,
+    "roe": null,
+    "ev_ebitda": null
+  }
+]

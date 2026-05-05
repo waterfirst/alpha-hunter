@@ -1,0 +1,34 @@
+[
+  {
+    "ticker": "145020.KQ",
+    "name": "Hugel",
+    "market_cap_krw": 2824537899008,
+    "market_cap_B": 2825,
+    "revenue_growth_pct": 21.3,
+    "operating_margin_pct": 48.5,
+    "recommendation": "strong_buy",
+    "forward_pe": 15.37536,
+    "trailing_pe": null,
+    "sector": "Healthcare",
+    "industry": "Biotechnology",
+    "current_price": 261500.0,
+    "fiftyTwoWeekHigh": 392000.0,
+    "fiftyTwoWeekLow": 208500.0
+  },
+  {
+    "ticker": "214150.KQ",
+    "name": "CLASSYS",
+    "market_cap_krw": 3678272749568,
+    "market_cap_B": 3678,
+    "revenue_growth_pct": 25.6,
+    "operating_margin_pct": 54.8,
+    "recommendation": "buy",
+    "forward_pe": 15.744136,
+    "trailing_pe": null,
+    "sector": "Healthcare",
+    "industry": "Medical Devices",
+    "current_price": 56300.0,
+    "fiftyTwoWeekHigh": 77600.0,
+    "fiftyTwoWeekLow": 45450.0
+  }
+]
