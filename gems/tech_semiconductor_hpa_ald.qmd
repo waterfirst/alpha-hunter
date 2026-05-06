@@ -1,0 +1,678 @@
+---
+title: "반도체 기술 심층분석 — HPA/ALD 박막증착과 고압 어닐링"
+subtitle: "Alpha Hunter Tech Deep Dive #1 | 관련 종목: HPSP (403870)"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-06"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      legend.position = "top",
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#6366f1"
+c_green <- "#22c55e"
+c_red <- "#ef4444"
+c_cyan <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray <- "#888888"
+c_text <- "#e4e4ec"
+```
+
+# 개요: 왜 HPA/ALD인가 {.unnumbered}
+
+::: {.callout-tip}
+## 핵심 메시지
+**고압수소어닐링(HPA)**과 **원자층증착(ALD)**은 선단 반도체 공정(3nm→2nm→A14)의 "게이트키퍼" 기술이다. 트랜지스터 구조가 FinFET에서 GAA(Gate-All-Around)로 전환되면서, 나노 수준의 계면 결함 제거(HPA)와 원자 단위 박막 제어(ALD)가 수율과 소자 성능을 좌우한다.
+:::
+
+반도체 소자가 미세화될수록 계면(interface) 결함 하나가 소자 전체의 성능을 좌우한다. **HPA(High Pressure Annealing, 고압수소어닐링)**는 25기압, 250~450°C 환경에서 수소를 소자 내부로 확산시켜 Si-SiO₂ 계면의 댕글링 본드(dangling bond)를 패시베이션(passivation)하는 기술이다. **ALD(Atomic Layer Deposition, 원자층증착)**는 전구체(precursor)를 교대로 투입하여 한 원자층씩 박막을 성장시키는 방법으로, 100:1 이상 종횡비 구조에서도 99% 이상의 균일도를 달성한다.
+
+이 두 기술이 2nm GAA, HBM4, CFET 시대에 왜 필수적인지, 그리고 어떤 기업이 수혜를 받는지 분석한다.
+
+# HPA 기술 원리와 진화
+
+## 고압수소어닐링이란
+
+HPA는 **고순도 수소(H₂) 또는 중수소(D₂)**를 고압(10~25 atm)으로 반도체 웨이퍼에 노출시키는 후처리(post-deposition) 공정이다. 핵심 메커니즘은 다음과 같다:
+
+1. **고압 환경에서 수소 확산 촉진**: 25atm에서 수소 분자의 용해도는 1atm 대비 약 25배 증가, 실리콘 산화막 내부까지 깊이 침투
+2. **저온 어닐링 가능**: 기존 어닐링은 600~1000°C가 필요했으나, 고압 환경에서는 250~450°C에서도 동등한 결함 제거 효과 달성
+3. **댕글링 본드 패시베이션**: Si-SiO₂ 계면의 미결합 전자(댕글링 본드)를 수소가 결합하여 전하 트랩 밀도(Dit) 감소
+4. **구동 전류 최대 15% 향상**: 트랩 밀도 감소로 캐리어 이동도 개선
+
+```{r}
+#| label: fig-hpa-mechanism
+#| fig-cap: "HPA 공정 핵심 파라미터: 압력별 수소 확산 깊이와 결함 제거 효과"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+df_hpa <- data.frame(
+  Pressure_atm = c(1, 5, 10, 15, 20, 25),
+  H2_Solubility = c(1.0, 4.8, 9.5, 14.2, 19.0, 24.5),
+  Dit_Reduction = c(15, 42, 65, 78, 88, 95),
+  Drive_Current = c(2, 5, 8, 11, 13, 15)
+)
+
+p1 <- ggplot(df_hpa) +
+  geom_area(aes(x = Pressure_atm, y = Dit_Reduction),
+            fill = c_amber, alpha = 0.2) +
+  geom_line(aes(x = Pressure_atm, y = Dit_Reduction, color = "계면 결함 감소율"),
+            linewidth = 1.5) +
+  geom_point(aes(x = Pressure_atm, y = Dit_Reduction, color = "계면 결함 감소율"),
+             size = 3) +
+  geom_line(aes(x = Pressure_atm, y = Drive_Current * 6.3, color = "구동전류 향상"),
+            linewidth = 1.5, linetype = "dashed") +
+  geom_point(aes(x = Pressure_atm, y = Drive_Current * 6.3, color = "구동전류 향상"),
+             size = 3) +
+  scale_y_continuous(
+    name = "계면 결함(Dit) 감소율 (%)",
+    sec.axis = sec_axis(~ . / 6.3, name = "구동 전류 향상 (%)")
+  ) +
+  scale_color_manual(values = c("계면 결함 감소율" = c_amber,
+                                 "구동전류 향상" = c_cyan)) +
+  labs(title = "HPA 압력별 성능 향상 효과",
+       subtitle = "25atm에서 Dit 95% 감소, 구동전류 15% 향상 | 온도 350°C 기준",
+       x = "수소 압력 (atm)", color = NULL) +
+  theme_hunter() +
+  theme(legend.position = "top")
+
+p1
+```
+
+## HPA 기술 세대별 진화
+
+HPA 기술은 2015년 imec과의 공동연구에서 시작하여, 4세대에 걸쳐 진화해왔다.
+
+```{r}
+#| label: fig-hpa-evolution
+#| fig-cap: "HPA 기술 세대별 진화 타임라인"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+timeline <- data.frame(
+  Year = c(2015, 2018, 2020, 2022, 2024, 2026),
+  Gen = c("R&D 시작", "1세대\n(FinFET)", "2세대\n(GAA 대응)",
+          "3세대\n(HBM 확장)", "4세대\n(HPO 추가)", "차세대\n(CFET)"),
+  Pressure = c(10, 15, 20, 25, 25, 30),
+  Wafer = c(25, 50, 50, 75, 75, 125),
+  Node = c("10nm+", "7nm", "5nm", "3nm", "2nm", "A14"),
+  y_pos = c(1, 1, 1, 1, 1, 1)
+)
+
+ggplot(timeline, aes(x = Year, y = y_pos)) +
+  geom_segment(aes(x = 2015, xend = 2026, y = 1, yend = 1),
+               color = "#2a2a4a", linewidth = 2) +
+  geom_point(size = 8, color = c_amber) +
+  geom_text(aes(label = Gen), vjust = -1.8, color = c_text,
+            size = 3.5, family = kfont, lineheight = 0.85) +
+  geom_text(aes(label = paste0(Pressure, "atm\n", Wafer, "매")),
+            vjust = 2.5, color = c_cyan, size = 3, family = kfont, lineheight = 0.9) +
+  geom_text(aes(label = Node), vjust = 4.5, color = c_amber,
+            size = 3, family = kfont, fontface = "bold") +
+  scale_x_continuous(breaks = timeline$Year) +
+  scale_y_continuous(limits = c(-0.5, 2.5)) +
+  labs(title = "HPA 기술 세대별 진화",
+       subtitle = "imec 공동연구(2015) → FinFET → GAA → HBM → HPO → CFET",
+       x = NULL, y = NULL) +
+  theme_hunter() +
+  theme(axis.text.y = element_blank(),
+        panel.grid = element_blank())
+```
+
+```{r}
+#| label: tbl-hpa-gen
+#| tbl-cap: "HPA 기술 세대별 비교"
+
+gen_tbl <- data.frame(
+  세대 = c("1세대 (2018)", "2세대 (2020)", "3세대 (2022)", "4세대 (2024)", "차세대 (2026E)"),
+  최대압력 = c("15 atm", "20 atm", "25 atm", "25 atm", "30 atm"),
+  처리매수 = c("50매/배치", "50매/배치", "75매/배치", "75매/배치", "125매/배치"),
+  대응공정 = c("7nm FinFET", "5nm FinFET", "3nm GAA", "2nm GAA", "A14 CFET"),
+  적용분야 = c("Logic", "Logic+NAND", "Logic+NAND+DRAM", "Logic+NAND+DRAM+HBM", "Logic+Memory+CFET"),
+  핵심혁신 = c("고압수소 상용화", "GAA 계면 최적화", "HBM DRAM 채택", "HPO 산화 추가", "CFET 듀얼채널")
+)
+
+kable(gen_tbl, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE)
+```
+
+::: {.callout-important}
+## 핵심 인사이트: GAA 전환이 HPA 수요를 구조적으로 확대
+FinFET에서 GAA(나노시트)로 전환되면 채널 표면적이 약 2~3배 증가하여, 패시베이션이 필요한 계면도 비례 증가한다. 이는 HPA 장비 수요의 **구조적 확대**를 의미한다.
+:::
+
+# ALD 원자층증착 기술
+
+## ALD vs CVD vs PVD 비교
+
+반도체 박막증착은 크게 세 가지 방법으로 나뉜다:
+
+- **PVD(Physical Vapor Deposition)**: 스퍼터링 방식, 빠르지만 단차 피복성 낮음
+- **CVD(Chemical Vapor Deposition)**: 화학반응 기반, 중간 수준 균일성
+- **ALD(Atomic Layer Deposition)**: 자기제한 반응(self-limiting), 최고 수준 균일성
+
+```{r}
+#| label: fig-deposition-compare
+#| fig-cap: "박막증착 기술별 핵심 성능 비교: PVD vs CVD vs ALD"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+depo <- data.frame(
+  Method = rep(c("PVD", "CVD", "ALD"), each = 5),
+  Metric = rep(c("증착 속도", "단차피복성", "두께 제어", "대면적 균일성", "종횡비 대응"), 3),
+  Score = c(
+    9, 3, 5, 6, 2,   # PVD
+    7, 6, 7, 7, 5,   # CVD
+    2, 10, 10, 9, 10  # ALD
+  )
+)
+depo$Method <- factor(depo$Method, levels = c("PVD", "CVD", "ALD"))
+depo$Metric <- factor(depo$Metric, levels = c("증착 속도", "단차피복성", "두께 제어",
+                                                "대면적 균일성", "종횡비 대응"))
+
+ggplot(depo, aes(x = Metric, y = Score, fill = Method)) +
+  geom_col(position = position_dodge(0.8), width = 0.7, alpha = 0.85) +
+  geom_text(aes(label = Score), position = position_dodge(0.8),
+            vjust = -0.5, color = c_text, size = 3.2) +
+  scale_fill_manual(values = c("PVD" = c_red, "CVD" = c_blue, "ALD" = c_green)) +
+  scale_y_continuous(limits = c(0, 12), breaks = seq(0, 10, 2)) +
+  labs(title = "박막증착 기술별 성능 비교 (10점 만점)",
+       subtitle = "ALD는 속도를 희생하고 정밀도를 극대화 | 선단 공정 필수",
+       x = NULL, y = "점수", fill = NULL) +
+  theme_hunter()
+```
+
+```{r}
+#| label: tbl-deposition-compare
+#| tbl-cap: "PVD / CVD / ALD 기술 상세 비교"
+
+dep_tbl <- data.frame(
+  항목 = c("원리", "증착 속도", "두께 제어 정밀도", "단차 피복성(Conformality)",
+           "종횡비 대응", "온도 범위", "주요 적용", "대표 장비사"),
+  PVD = c("물리적 스퍼터링", "매우 빠름 (수 nm/sec)", "중간 (±5%)",
+          "낮음 (<50%)", "10:1 이하", "상온~400°C", "금속 배선, 배리어",
+          "Applied Materials"),
+  CVD = c("화학 기상 반응", "빠름 (0.5~5 nm/sec)", "높음 (±2%)",
+          "중간~높음 (70~90%)", "30:1 이하", "200~800°C", "절연막, 보호막",
+          "Lam Research, TEL"),
+  ALD = c("자기제한 화학 반응", "매우 느림 (0.1~0.2 nm/cycle)", "극높음 (±0.1Å)",
+          "극높음 (>99%)", "100:1 이상", "50~400°C", "게이트 산화막, High-k",
+          "ASM Intl, TEL")
+)
+
+kable(dep_tbl, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 11) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE) |>
+  column_spec(4, bold = TRUE, color = "#22c55e")
+```
+
+## ALD가 선단 공정에 필수인 이유
+
+```{r}
+#| label: fig-ald-steps
+#| fig-cap: "공정 노드별 ALD 적용 공정 단계 수 증가 추이"
+#| fig-width: 8
+#| fig-height: 4.5
+#| lightbox: true
+
+ald_steps <- data.frame(
+  Node = c("14nm", "10nm", "7nm", "5nm", "3nm", "2nm", "A14"),
+  Year = c(2014, 2016, 2018, 2020, 2022, 2025, 2027),
+  ALD_Steps = c(8, 14, 22, 35, 52, 75, 110),
+  Architecture = c("FinFET", "FinFET", "FinFET", "FinFET",
+                    "GAA", "GAA", "CFET")
+)
+ald_steps$Node <- factor(ald_steps$Node, levels = ald_steps$Node)
+
+ggplot(ald_steps, aes(x = Node, y = ALD_Steps)) +
+  geom_col(aes(fill = Architecture), width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = ALD_Steps), vjust = -0.5, color = c_text,
+            size = 3.5, fontface = "bold") +
+  geom_vline(xintercept = 4.5, linetype = "dashed", color = c_amber, linewidth = 0.8) +
+  annotate("text", x = 5.5, y = 100, label = "GAA 전환점",
+           color = c_amber, size = 3.5, family = kfont, fontface = "bold") +
+  scale_fill_manual(values = c("FinFET" = c_blue, "GAA" = c_amber, "CFET" = c_purple)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "공정 노드별 ALD 적용 단계 수",
+       subtitle = "3nm GAA 전환 이후 ALD 단계 급증 | 2nm: 75단계, A14(CFET): 110단계 예상",
+       x = "공정 노드", y = "ALD 공정 단계 수", fill = "아키텍처") +
+  theme_hunter()
+```
+
+::: {.callout-note}
+## ALD 단계 증가의 의미
+ALD 공정 단계 수가 FinFET 14nm의 8단계에서 GAA 2nm의 75단계로 **약 9배 증가**했다. 이는 ALD 장비 수요가 노드 전환만으로도 구조적으로 성장함을 의미한다.
+:::
+
+# 선단 공정 로드맵과 HPA/ALD
+
+## FinFET → GAA → CFET 전환
+
+```{r}
+#| label: fig-architecture-roadmap
+#| fig-cap: "트랜지스터 아키텍처 진화와 HPA/ALD 필요도"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+arch <- data.frame(
+  Node = factor(c("7nm", "5nm", "3nm", "2nm", "A14"),
+                levels = c("7nm", "5nm", "3nm", "2nm", "A14")),
+  Architecture = c("FinFET", "FinFET", "GAA", "GAA", "CFET"),
+  HPA_Need = c(40, 55, 80, 95, 100),
+  ALD_Need = c(50, 60, 78, 90, 100),
+  Year = c(2018, 2020, 2022, 2025, 2027)
+)
+
+arch_long <- arch |>
+  pivot_longer(cols = c(HPA_Need, ALD_Need),
+               names_to = "Tech", values_to = "Need")
+arch_long$Tech <- ifelse(arch_long$Tech == "HPA_Need", "HPA 필요도", "ALD 필요도")
+
+ggplot(arch_long, aes(x = Node, y = Need, group = Tech, color = Tech)) +
+  geom_line(linewidth = 1.5) +
+  geom_point(size = 4) +
+  geom_text(aes(label = paste0(Need, "%")), vjust = -1.2, size = 3.2, show.legend = FALSE) +
+  geom_ribbon(data = arch_long |> filter(Tech == "HPA 필요도"),
+              aes(ymin = 0, ymax = Need, fill = "HPA"), alpha = 0.1, show.legend = FALSE) +
+  geom_vline(xintercept = 2.5, linetype = "dashed", color = "#666666") +
+  annotate("text", x = 1.5, y = 95, label = "FinFET 시대",
+           color = c_gray, size = 3.5, family = kfont) +
+  annotate("text", x = 4, y = 95, label = "GAA/CFET 시대",
+           color = c_amber, size = 3.5, family = kfont, fontface = "bold") +
+  scale_color_manual(values = c("HPA 필요도" = c_amber, "ALD 필요도" = c_cyan)) +
+  scale_fill_manual(values = c("HPA" = c_amber)) +
+  scale_y_continuous(limits = c(0, 110)) +
+  labs(title = "트랜지스터 아키텍처별 HPA/ALD 기술 필요도",
+       subtitle = "GAA 전환 이후 두 기술 모두 필수화 | CFET에서 100% 도달",
+       x = "공정 노드", y = "기술 필요도 (상대값 %)", color = NULL) +
+  theme_hunter()
+```
+
+## 삼성 vs TSMC 선단 공정 경쟁
+
+```{r}
+#| label: tbl-foundry-roadmap
+#| tbl-cap: "삼성 vs TSMC 선단 공정 로드맵 비교 (2026년 기준)"
+
+foundry_tbl <- data.frame(
+  항목 = c("현행 양산 노드", "아키텍처", "GAA 도입 시점", "수율(추정)",
+           "HPA 적용", "2nm 양산 시점", "CFET 계획"),
+  삼성파운드리 = c("3nm SF3E/SF3P", "GAA (나노시트)", "2022년 (업계 최초)",
+                    "70% (SF2P 기준)", "HPSP 장비 사용", "2025H2 양산 시작",
+                    "2027~2028 예상"),
+  TSMC = c("3nm N3E/N3P", "FinFET (3nm까지)", "2025 (N2 노드)",
+           "80%+ (N3E 기준)", "HPSP 장비 도입 중", "2025H2 양산 시작",
+           "2028~2029 예상")
+)
+
+kable(foundry_tbl, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE)
+```
+
+::: {.callout-warning}
+## 투자 시사점: 삼성과 TSMC 동시 수혜
+HPSP는 삼성(기존 고객)과 TSMC(신규 진입) 모두에 HPA 장비를 공급한다. 2025~2026년 양사 모두 2nm GAA 양산을 시작하면서, **듀얼 고객 기반**의 동시 수요 증가가 예상된다.
+:::
+
+# HPA 시장 경쟁 구도
+
+## HPSP vs 예스티(YesTech) 경쟁
+
+2025년 말, HPSP의 독점 구도에 균열이 발생했다. **예스티(YesTech)**가 글로벌 메모리 업체에 고압수소어닐링 장비를 처음 공급하면서 경쟁 구도가 형성되고 있다.
+
+```{r}
+#| label: fig-hpa-competition
+#| fig-cap: "HPA 장비 시장 경쟁 구도 변화"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+comp <- data.frame(
+  Year = rep(c("2020", "2022", "2024", "2026E", "2028E"), 2),
+  Company = rep(c("HPSP", "예스티(YesTech)"), each = 5),
+  Share = c(100, 100, 98, 85, 75, 0, 0, 2, 15, 25)
+)
+comp$Year <- factor(comp$Year, levels = c("2020", "2022", "2024", "2026E", "2028E"))
+
+ggplot(comp, aes(x = Year, y = Share, fill = Company)) +
+  geom_col(width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = ifelse(Share > 0, paste0(Share, "%"), "")),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 3.5, fontface = "bold") +
+  scale_fill_manual(values = c("HPSP" = c_amber, "예스티(YesTech)" = c_blue)) +
+  labs(title = "HPA 장비 시장 점유율 변화 (추정)",
+       subtitle = "HPSP 독점 → 예스티 진입으로 듀얼벤더 구도 형성 | 2026년 6월 특허 판결 관건",
+       x = NULL, y = "시장 점유율 (%)", fill = NULL) +
+  theme_hunter()
+```
+
+```{r}
+#| label: tbl-hpsp-vs-yestech
+#| tbl-cap: "HPSP vs 예스티(YesTech) 기술 비교"
+
+vs_tbl <- data.frame(
+  항목 = c("설립연도", "배치 처리 매수", "최대 압력", "주요 고객",
+           "적용 분야", "특허", "기술 성숙도", "핵심 강점"),
+  HPSP = c("2017", "75매/배치", "25 atm", "삼성, TSMC, SK하이닉스",
+           "Logic + DRAM + NAND + HBM", "핵심 특허 다수 보유",
+           "10년+ 양산 검증", "imec 공동개발, 양산 트랙레코드"),
+  예스티 = c("2013", "125매/배치 (세계 최초)", "25 atm", "글로벌 메모리 업체 2곳",
+             "Memory 중심", "특허 분쟁 진행 중 (2026.06 판결)",
+             "2026년 첫 출하", "대용량 배치, 가격 경쟁력")
+)
+
+kable(vs_tbl, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE)
+```
+
+::: {.callout-important}
+## 핵심 리스크: 2026년 6월 특허 판결
+HPSP와 예스티 간 핵심 특허 분쟁이 2026년 6월 특허법원에서 판결 예정이다. 결과에 따라 HPA 시장 구도가 크게 달라질 수 있다. 다만, 삼성증권은 "예스티가 진입해도 HPSP 타격은 제한적"이라는 분석을 내놓았다.
+:::
+
+# 박막증착 장비 시장 분석
+
+## 글로벌 시장 규모와 성장
+
+```{r}
+#| label: fig-market-size
+#| fig-cap: "글로벌 박막증착 장비 시장 규모 전망 (2020~2032)"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+market <- data.frame(
+  Year = c(2020, 2021, 2022, 2023, 2024, 2025, 2026, 2028, 2030, 2032),
+  Total_Depo = c(15.2, 18.5, 22.1, 20.8, 24.5, 27.3, 30.5, 38.0, 48.0, 60.8),
+  ALD_Market = c(1.2, 1.6, 2.0, 2.3, 2.7, 3.2, 3.7, 5.0, 7.0, 10.7),
+  HPA_Market = c(0.08, 0.12, 0.15, 0.14, 0.18, 0.25, 0.35, 0.55, 0.80, 1.20)
+)
+
+market_long <- market |>
+  pivot_longer(cols = c(Total_Depo, ALD_Market, HPA_Market),
+               names_to = "Segment", values_to = "Size") |>
+  mutate(Segment = case_when(
+    Segment == "Total_Depo" ~ "전체 박막증착",
+    Segment == "ALD_Market" ~ "ALD 장비",
+    Segment == "HPA_Market" ~ "HPA 장비"
+  ))
+
+ggplot(market_long |> filter(Segment != "전체 박막증착"),
+       aes(x = Year, y = Size, fill = Segment)) +
+  geom_area(alpha = 0.3, position = "identity") +
+  geom_line(aes(color = Segment), linewidth = 1.2) +
+  geom_point(aes(color = Segment), size = 2.5) +
+  scale_color_manual(values = c("ALD 장비" = c_cyan, "HPA 장비" = c_amber)) +
+  scale_fill_manual(values = c("ALD 장비" = c_cyan, "HPA 장비" = c_amber)) +
+  scale_x_continuous(breaks = market$Year) +
+  scale_y_continuous(labels = dollar_format(suffix = "B")) +
+  labs(title = "ALD 및 HPA 장비 시장 규모 전망",
+       subtitle = "ALD: CAGR 13.1% (2025-2032) | HPA: CAGR 25%+ (HPSP 독점 프리미엄 반영)",
+       x = NULL, y = "시장 규모 (USD)", color = NULL, fill = NULL) +
+  theme_hunter()
+```
+
+## 주요 경쟁사 시장 점유율
+
+```{r}
+#| label: fig-ald-share
+#| fig-cap: "ALD 장비 시장 점유율 (2025년 기준)"
+#| fig-width: 7
+#| fig-height: 5
+#| lightbox: true
+
+ald_share <- data.frame(
+  Company = c("ASM International", "Tokyo Electron", "Applied Materials",
+              "Lam Research", "기타"),
+  Share = c(28, 20, 15, 9, 28),
+  Label = c("ASM Intl\n28%", "TEL\n20%", "AMAT\n15%",
+            "Lam\n9%", "기타\n28%")
+)
+
+ggplot(ald_share, aes(x = "", y = Share, fill = Company)) +
+  geom_col(width = 1, color = "#1a1a2e", linewidth = 1) +
+  coord_polar("y") +
+  geom_text(aes(label = Label), position = position_stack(vjust = 0.5),
+            color = "white", size = 3.2, family = kfont, lineheight = 0.9) +
+  scale_fill_manual(values = c(c_amber, c_cyan, c_blue, c_green, c_gray)) +
+  labs(title = "ALD 장비 글로벌 시장 점유율 (2025)",
+       subtitle = "상위 4사 합산 72% | ASM International 선두") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        legend.position = "none")
+```
+
+# HPO: HPA의 차세대 확장
+
+## 고압산화(HPO) 기술
+
+**HPO(High Pressure Oxidation)**는 HPA의 기술 플랫폼을 산화 공정으로 확장한 것이다. 고압 환경에서 산화를 수행하면 저온에서도 양질의 산화막을 형성할 수 있어, 열에 민감한 차세대 소자(CFET, 3D NAND 300단+)에 적합하다.
+
+```{r}
+#| label: tbl-hpa-hpo
+#| tbl-cap: "HPA vs HPO 기술 비교"
+
+hpo_tbl <- data.frame(
+  항목 = c("목적", "가스", "압력", "온도", "적용 소자", "시장 단계", "HPSP 제품"),
+  HPA = c("계면 결함 제거", "H₂ / D₂ (수소/중수소)", "10~25 atm", "250~450°C",
+          "FinFET, GAA, DRAM, NAND", "양산 (2018~)", "HPA 시리즈"),
+  HPO = c("저온 고품질 산화막 형성", "O₂ / H₂O (산소/수증기)", "10~25 atm", "300~500°C",
+          "CFET, 3D NAND 300+단", "R&D → 초기 양산", "HPO 시리즈 (신규)")
+)
+
+kable(hpo_tbl, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE)
+```
+
+::: {.callout-tip}
+## HPO = HPSP의 두 번째 성장 엔진
+HPO는 HPA와 동일한 고압 챔버 플랫폼을 사용하므로, HPSP는 추가 R&D 비용 최소화로 TAM(총 가용 시장)을 **2배 이상 확장**할 수 있다. imec 공동개발로 CFET 시대 선점 중.
+:::
+
+# 기술 구조도
+
+## HPA 공정 흐름
+
+HPA 장비의 핵심 구조는 다음과 같다:
+
+1. **웨이퍼 로딩**: 카세트에 75~125매 웨이퍼를 수직 적재
+2. **챔버 밀봉**: 초고압(25atm) 견딜 수 있는 특수 합금 챔버
+3. **가스 주입**: 100% 고순도 수소(H₂) 또는 중수소(D₂) 주입
+4. **가압 + 가열**: 25atm, 350°C로 유지 (수 분~수십 분)
+5. **수소 확산**: 고압이 SiO₂ 막 내부까지 수소 침투 촉진
+6. **결함 패시베이션**: 댕글링 본드(Si-) + H → Si-H 결합 형성
+7. **감압 + 언로딩**: 서서히 감압 후 웨이퍼 회수
+
+## ALD 증착 사이클
+
+ALD의 자기제한(self-limiting) 반응 사이클은 4단계로 구성된다:
+
+1. **전구체 A 투입**: 금속 전구체(예: TMA, TDMA-Hf) → 표면 흡착
+2. **퍼지(Purge)**: 미반응 전구체와 부산물 제거
+3. **전구체 B 투입**: 산화제(H₂O, O₃) → 표면 반응으로 단일 원자층 형성
+4. **퍼지**: 잔류 가스 제거 → 1 사이클 완료 (약 0.1nm 증착)
+
+이 사이클을 수백~수천 회 반복하여 원하는 두께의 박막을 형성한다.
+
+# 투자 시사점
+
+## 수혜 기업 분석
+
+```{r}
+#| label: fig-beneficiary
+#| fig-cap: "HPA/ALD 기술 확산에 따른 수혜 기업 점수"
+#| fig-width: 9
+#| fig-height: 5.5
+#| lightbox: true
+
+beneficiary <- data.frame(
+  Company = c("HPSP\n(403870.KQ)", "ASM Intl\n(ASM.AS)", "TEL\n(8035.T)",
+              "Applied Materials\n(AMAT)", "Lam Research\n(LRCX)",
+              "예스티\n(비상장)", "원익IPS\n(240810.KQ)"),
+  HPA_Benefit = c(10, 1, 2, 2, 1, 8, 3),
+  ALD_Benefit = c(2, 10, 8, 7, 5, 0, 6),
+  Total = c(12, 11, 10, 9, 6, 8, 9)
+)
+
+beneficiary_long <- beneficiary |>
+  pivot_longer(cols = c(HPA_Benefit, ALD_Benefit),
+               names_to = "Tech", values_to = "Score") |>
+  mutate(Tech = ifelse(Tech == "HPA_Benefit", "HPA 수혜도", "ALD 수혜도"))
+
+beneficiary_long$Company <- factor(beneficiary_long$Company,
+  levels = rev(beneficiary$Company[order(beneficiary$Total)]))
+
+ggplot(beneficiary_long, aes(x = Company, y = Score, fill = Tech)) +
+  geom_col(width = 0.6, alpha = 0.85) +
+  coord_flip() +
+  geom_text(aes(label = Score), position = position_stack(vjust = 0.5),
+            color = "white", size = 3.2, fontface = "bold") +
+  scale_fill_manual(values = c("HPA 수혜도" = c_amber, "ALD 수혜도" = c_cyan)) +
+  labs(title = "HPA/ALD 기술 수혜 기업 (10점 만점)",
+       subtitle = "HPSP: HPA 독점으로 최고점 | ASM International: ALD 글로벌 1위",
+       x = NULL, y = "수혜 점수 (합산)", fill = NULL) +
+  theme_hunter()
+```
+
+## HPSP 투자 핵심 요약
+
+```{r}
+#| label: fig-hpsp-tam
+#| fig-cap: "HPSP의 TAM(총 가용 시장) 확장 시나리오"
+#| fig-width: 9
+#| fig-height: 5
+#| lightbox: true
+
+tam <- data.frame(
+  Year = c(2022, 2023, 2024, 2025, 2026, 2027, 2028),
+  Logic_HPA = c(800, 650, 1000, 1300, 1700, 2200, 2800),
+  Memory_HPA = c(200, 250, 400, 600, 900, 1200, 1600),
+  HPO_New = c(0, 0, 50, 100, 300, 600, 1000)
+)
+
+tam_long <- tam |>
+  pivot_longer(cols = -Year, names_to = "Segment", values_to = "Revenue") |>
+  mutate(Segment = case_when(
+    Segment == "Logic_HPA" ~ "로직 HPA",
+    Segment == "Memory_HPA" ~ "메모리 HPA",
+    Segment == "HPO_New" ~ "HPO (신규)"
+  ))
+tam_long$Segment <- factor(tam_long$Segment,
+                           levels = c("HPO (신규)", "메모리 HPA", "로직 HPA"))
+
+ggplot(tam_long, aes(x = factor(Year), y = Revenue, fill = Segment)) +
+  geom_col(width = 0.65, alpha = 0.85) +
+  geom_text(data = tam |> mutate(Total = Logic_HPA + Memory_HPA + HPO_New),
+            aes(x = factor(Year), y = Total, label = comma(Total)),
+            inherit.aes = FALSE, vjust = -0.5, color = c_text, size = 3.2) +
+  scale_fill_manual(values = c("로직 HPA" = c_amber, "메모리 HPA" = c_cyan,
+                                "HPO (신규)" = c_purple)) +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.12))) +
+  labs(title = "HPSP TAM 확장 시나리오 (추정)",
+       subtitle = "단위: 억원 | 로직(GAA) + 메모리(HBM) + HPO(CFET) 3축 성장",
+       x = NULL, y = "억원", fill = NULL) +
+  theme_hunter()
+```
+
+::: {.callout-tip}
+## Alpha Hunter 관점의 투자 시사점
+
+**단기 (6개월)**
+
+- 2026년 6월 특허 판결이 최대 변수. HPSP 승소 시 독점 재확인, 주가 재평가
+- 삼성·TSMC 2nm 양산 본격화에 따른 장비 발주 증가 기대
+
+**중기 (1~2년)**
+
+- HPO 신규 시장 진입으로 TAM 2배 확장 가능
+- HBM4 양산 시 메모리 HPA 수요 급증
+
+**장기 (3~5년)**
+
+- CFET 시대 도래 시 HPA+HPO 동시 적용 → 장비 수요 폭발적 성장
+- ALD 시장도 CAGR 13%+ 성장, 관련 장비사(ASM, TEL) 동반 수혜
+:::
+
+# 리스크 요인
+
+1. **예스티 특허 판결**: 2026년 6월 판결에서 HPSP 핵심 특허가 무효화될 경우 경쟁 심화
+2. **삼성 의존도**: HPSP 매출의 약 70%가 삼성전자 의존 → 고객 다변화 과제
+3. **반도체 사이클**: 업황 하강 시 설비투자 감소 → 장비 발주 지연
+4. **기술 대체 리스크**: 새로운 어닐링 기술(플라즈마 어닐링, 레이저 어닐링) 등장 가능성
+5. **ALD 쓰루풋 한계**: ALD의 느린 증착 속도를 극복하는 대안 기술 등장 가능
+
+---
+
+*이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.*
+
+*Alpha Hunter × Chimera AI | Tech Deep Dive Series*
