@@ -1,0 +1,454 @@
+---
+title: "AppFolio (APPF) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 19 — 부동산 관리 SaaS 독점, AI 혁신으로 제2성장"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-07"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      legend.position = "top",
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#6366f1"
+c_green <- "#22c55e"
+c_red <- "#ef4444"
+c_cyan <- "#06b6d4"
+c_gray <- "#888888"
+c_text <- "#e4e4ec"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | AppFolio, Inc. (APPF, NASDAQ) |
+| **업종** | Technology / 부동산 관리 SaaS |
+| **핵심 사업** | 부동산 관리 클라우드 플랫폼 (임대·결제·유지보수·투자관리) |
+| **시총** | $5.9B (약 8.3조원) |
+| **현재가** | $167.17 |
+| **PER (TTM/Fwd)** | 39.8x / 20.3x |
+| **PBR** | 12.6x |
+| **PSR** | 5.9x |
+| **배당수익률** | 0% (자사주매입 중심) |
+| **컨센서스** | Strong Buy (Strong Buy 3 / Buy 6 / Hold 0 / Sell 0) |
+| **목표가** | $178 ~ $300 (평균 $228) |
+
+::: {.callout-tip}
+## 핵심 투자 포인트
+미국 부동산 관리 SaaS 시장 플랫폼 독점. 950만 유닛 관리. Q1 2026 매출 $262M (+20% YoY), GAAP 영업이익 +50%. **AI 혁신(Realm-X)으로 AI 사용량 7x 증가.** 52주 고점 $326 대비 -49% 할인. 애널리스트 9명 전원 Buy/Strong Buy. **Forward PE 20.3x에 20%+ 성장 = 숨겨진 SaaS 보석.**
+:::
+
+## 사업 요약
+
+AppFolio는 **미국 최대 부동산 관리 소프트웨어 플랫폼**이다. 임대 관리, 세입자 온보딩, 유지보수 관리, 결제 처리, 투자 관리까지 부동산의 전 생애주기를 하나의 플랫폼에서 통합 운영한다.
+
+- **950만 유닛 관리** — YoY +8% 성장, 미국 전체 임대시장의 핵심 인프라
+- **AI-네이티브 전환** — Realm-X 플랫폼으로 유지보수 자동화, 세입자 온보딩 AI화
+- **높은 전환비용(Moat)** — 결제·보고·관리가 한 플랫폼에 통합되어 전환 불가
+- **자사주매입 $125M** — 배당 대신 주주환원은 바이백으로
+- **2026 가이던스 상향** — 매출 $1.11~1.125B, 비GAAP 영업이익률 26~28%
+
+## 투자 논리: AROC 패턴 적용
+
+AROC 성공패턴(인프라독점 + 가동률 + 배당 + 성장)을 AppFolio에 대입하면:
+
+- **인프라 독점**: 부동산 관리 SaaS 플랫폼 시장에서 사실상 표준 지위. 경쟁사(Yardi, RealPage) 대비 클라우드 네이티브 우위
+- **가동률**: 950만 유닛 → 미국 임대 시장 구조적 성장과 함께 자동 확장
+- **주주환원**: 배당은 없지만 자사주매입 $125M (시총의 2.1%)로 대체
+- **성장**: 매출 +20% YoY, 영업이익 +50% YoY, AI 도입으로 가속화
+
+# 차트 분석
+
+## 주가 추이 (52주)
+
+```{r}
+#| label: fig-price
+#| fig-cap: "APPF 52주 주가 추이 — 고점 $326에서 -49% 조정 후 $167 바닥권"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+prices <- data.frame(
+  date = as.Date(c("2026-05-07","2026-04-30","2026-04-23","2026-04-16","2026-04-09",
+                    "2026-04-02","2026-03-26","2026-03-19","2026-03-12","2026-03-05",
+                    "2026-02-26","2026-02-19","2026-02-12","2026-02-05","2026-01-29",
+                    "2026-01-22","2026-01-15","2026-01-08","2025-12-31","2025-12-24",
+                    "2025-12-17","2025-12-10","2025-12-03","2025-11-26","2025-11-19",
+                    "2025-11-12","2025-11-05","2025-10-29","2025-10-22","2025-10-15",
+                    "2025-10-08","2025-10-01","2025-09-24","2025-09-17","2025-09-10",
+                    "2025-09-03","2025-08-27","2025-08-20","2025-08-13","2025-08-06",
+                    "2025-07-30","2025-07-23","2025-07-16","2025-07-09","2025-07-02",
+                    "2025-06-25","2025-06-18","2025-06-11","2025-06-04","2025-05-28",
+                    "2025-05-21","2025-05-14")),
+  close = c(167.17, 172.83, 160.50, 155.20, 148.90,
+            143.34, 152.60, 158.40, 165.80, 175.20,
+            186.50, 195.30, 210.40, 225.80, 238.90,
+            252.10, 265.30, 278.60, 290.40, 298.50,
+            305.20, 312.80, 321.25, 318.40, 310.60,
+            295.80, 288.40, 280.20, 270.50, 262.30,
+            255.10, 248.90, 240.60, 235.80, 228.40,
+            222.10, 218.50, 225.30, 230.80, 236.40,
+            242.60, 248.90, 255.30, 248.60, 240.20,
+            235.80, 228.40, 222.50, 218.30, 214.80,
+            210.50, 215.20)
+)
+
+buy_zone <- 165
+target <- 228
+
+ggplot(prices, aes(x = date, y = close)) +
+  geom_area(fill = c_blue, alpha = 0.15) +
+  geom_line(color = c_blue, linewidth = 1.2) +
+  geom_hline(yintercept = buy_zone, color = c_green, linetype = "dashed", linewidth = 0.7) +
+  geom_hline(yintercept = target, color = c_amber, linetype = "dashed", linewidth = 0.7) +
+  annotate("text", x = as.Date("2025-06-01"), y = buy_zone + 8,
+           label = paste0("매수 존 $", buy_zone), color = c_green,
+           family = kfont, size = 3.5, hjust = 0) +
+  annotate("text", x = as.Date("2025-06-01"), y = target + 8,
+           label = paste0("목표가 $", target), color = c_amber,
+           family = kfont, size = 3.5, hjust = 0) +
+  annotate("point", x = as.Date("2025-12-03"), y = 321.25,
+           color = c_red, size = 3) +
+  annotate("text", x = as.Date("2025-12-03"), y = 330,
+           label = "52주 고점 $321", color = c_red,
+           family = kfont, size = 3, hjust = 0.5) +
+  scale_y_continuous(labels = dollar_format(), breaks = seq(140, 340, 20)) +
+  scale_x_date(date_breaks = "2 months", date_labels = "%Y-%m") +
+  labs(title = "APPF 52주 주가 추이",
+       subtitle = "고점 $321 → 현재 $167 (-49%) | 매수 존 진입",
+       x = NULL, y = "주가 (USD)",
+       caption = "출처: Yahoo Finance | Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+## 실적 추이 (매출/영업이익)
+
+```{r}
+#| label: fig-earnings
+#| fig-cap: "APPF 분기별 매출·영업이익 추이 — 지속적 우상향, Q1 2026 영업이익 +50%"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+earnings <- data.frame(
+  quarter = factor(c("Q2\n2025","Q3\n2025","Q4\n2025","Q1\n2026",
+                      "Q2\n2025","Q3\n2025","Q4\n2025","Q1\n2026"),
+                   levels = c("Q2\n2025","Q3\n2025","Q4\n2025","Q1\n2026")),
+  metric = rep(c("매출", "영업이익"), each = 4),
+  value = c(235.6, 249.4, 248.2, 262.2,
+            40.5, 35.0, 43.6, 50.7)
+)
+
+ggplot(earnings, aes(x = quarter, y = value, fill = metric)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  geom_text(aes(label = paste0("$", value, "M")),
+            position = position_dodge(width = 0.7),
+            vjust = -0.5, color = c_text, family = kfont, size = 3.2) +
+  scale_fill_manual(values = c("매출" = c_blue, "영업이익" = c_amber)) +
+  scale_y_continuous(labels = dollar_format(suffix = "M"), expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "APPF 분기별 실적 추이",
+       subtitle = "매출 +20% YoY | 영업이익 +50% YoY | 영업이익률 19.4%",
+       x = NULL, y = NULL, fill = NULL,
+       caption = "출처: AppFolio IR | Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+## 밸류에이션 비교 (동종업종)
+
+```{r}
+#| label: fig-valuation
+#| fig-cap: "APPF vs 동종 SaaS 밸류에이션 비교 — Forward PE 20.3x로 성장 대비 합리적"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+peers <- data.frame(
+  ticker = c("APPF", "PCTY", "PAYC", "TYL", "GWRE", "PRGS"),
+  name = c("AppFolio", "Paylocity", "Paycom", "Tyler Tech", "Guidewire", "Progress"),
+  fwd_pe = c(20.3, 12.3, 10.9, 22.3, 31.0, 4.6),
+  rev_growth = c(20.4, 10.4, 10.2, 8.6, 24.0, 4.1),
+  op_margin = c(19.4, 16.9, 28.9, 16.3, 10.7, 19.9)
+)
+
+peers$ticker <- factor(peers$ticker, levels = peers$ticker[order(peers$fwd_pe)])
+peers$highlight <- ifelse(peers$ticker == "APPF", "APPF", "기타")
+
+ggplot(peers, aes(x = rev_growth, y = fwd_pe, color = highlight, size = op_margin)) +
+  geom_point(alpha = 0.85) +
+  geom_text(aes(label = ticker), vjust = -1.3, size = 3.5, family = kfont, show.legend = FALSE) +
+  scale_color_manual(values = c("APPF" = c_amber, "기타" = c_blue)) +
+  scale_size_continuous(range = c(4, 14), name = "영업이익률(%)") +
+  scale_x_continuous(labels = function(x) paste0(x, "%")) +
+  labs(title = "동종업종 밸류에이션 비교",
+       subtitle = "X축: 매출성장률 | Y축: Forward PE | 크기: 영업이익률",
+       x = "매출 성장률 (%)", y = "Forward PE",
+       color = NULL,
+       caption = "출처: Yahoo Finance | Alpha Hunter × Chimera AI") +
+  theme_hunter() +
+  guides(color = "none")
+```
+
+## 워런 버핏 해자 레이더 차트
+
+```{r}
+#| label: fig-moat
+#| fig-cap: "AppFolio 워런 버핏 해자 분석 — 전환비용(10점), AI 혁신력(9점) 최고 수준"
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat_data <- data.frame(
+  category = c("전환비용\n(Switching)", "네트워크\n효과", "브랜드\n파워", "원가\n우위",
+               "규모의\n경제", "AI\n혁신력", "경영진\n역량", "재무\n건전성"),
+  score = c(10, 7, 7, 6, 8, 9, 8, 9)
+)
+
+n <- nrow(moat_data)
+angles <- seq(0, 2 * pi, length.out = n + 1)[1:n]
+moat_data$x <- moat_data$score * cos(angles - pi/2)
+moat_data$y <- moat_data$score * sin(angles - pi/2)
+
+polygon_df <- rbind(moat_data, moat_data[1, ])
+
+grid_lines <- do.call(rbind, lapply(c(2, 4, 6, 8, 10), function(r) {
+  pts <- data.frame(
+    x = r * cos(c(angles, angles[1]) - pi/2),
+    y = r * sin(c(angles, angles[1]) - pi/2),
+    r = r
+  )
+  pts
+}))
+
+spoke_df <- do.call(rbind, lapply(1:n, function(i) {
+  data.frame(x = c(0, 10 * cos(angles[i] - pi/2)),
+             y = c(0, 10 * sin(angles[i] - pi/2)),
+             group = i)
+}))
+
+label_r <- 11.5
+label_df <- data.frame(
+  x = label_r * cos(angles - pi/2),
+  y = label_r * sin(angles - pi/2),
+  label = paste0(moat_data$category, "\n", moat_data$score, "/10")
+)
+
+ggplot() +
+  geom_path(data = grid_lines, aes(x = x, y = y, group = r),
+            color = "#2a2a4a", linewidth = 0.3) +
+  geom_line(data = spoke_df, aes(x = x, y = y, group = group),
+            color = "#2a2a4a", linewidth = 0.3) +
+  geom_polygon(data = polygon_df, aes(x = x, y = y),
+               fill = c_amber, alpha = 0.25, color = c_amber, linewidth = 1) +
+  geom_point(data = moat_data, aes(x = x, y = y),
+             color = c_amber, size = 4) +
+  geom_text(data = label_df, aes(x = x, y = y, label = label),
+            color = c_text, family = kfont, size = 3.2, lineheight = 1.1) +
+  coord_fixed(xlim = c(-14, 14), ylim = c(-14, 14)) +
+  labs(title = "워런 버핏 해자 레이더 차트",
+       subtitle = paste0("평균 점수: ", round(mean(moat_data$score), 1), "/10 | 전환비용 10점, AI 혁신력 9점"),
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid.major = element_blank())
+```
+
+## 피터 린치 스토리 점수
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "AppFolio 피터 린치 스토리 점수 — 일상에서 보이는 SaaS, 높은 성장성"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+lynch <- data.frame(
+  item = c("이해 용이성\n(부동산 관리 SaaS)",
+           "매출 성장률\n(+20% YoY)",
+           "이익 성장\n(EPS +37% YoY)",
+           "부채 수준\n(D/E 7.9%)",
+           "FCF 창출\n($178M, 마진 18%)",
+           "내부자 행동\n(바이백 $125M)",
+           "경쟁 우위\n(전환비용 해자)",
+           "카탈리스트\n(AI Realm-X 도입)"),
+  score = c(9, 8, 8, 9, 8, 8, 9, 9)
+)
+
+lynch$item <- factor(lynch$item, levels = rev(lynch$item))
+lynch$color <- ifelse(lynch$score >= 9, c_amber,
+                      ifelse(lynch$score >= 7, c_green, c_gray))
+
+ggplot(lynch, aes(x = item, y = score, fill = color)) +
+  geom_col(width = 0.65, show.legend = FALSE) +
+  geom_text(aes(label = paste0(score, "/10")),
+            hjust = -0.2, color = c_text, family = kfont, size = 3.5) +
+  scale_fill_identity() +
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 10, 2)) +
+  coord_flip() +
+  labs(title = "피터 린치 스토리 점수",
+       subtitle = paste0("총점: ", sum(lynch$score), "/80 | 평균 ", round(mean(lynch$score), 1), "/10"),
+       x = NULL, y = "점수",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+## 리스크 팩터 대시보드
+
+```{r}
+#| label: fig-risk
+#| fig-cap: "APPF 리스크 팩터 대시보드 — 밸류에이션 리스크 중간, 나머지 관리 가능"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+risk <- data.frame(
+  factor = c("밸류에이션\n(TTM PE 39.8x)", "경쟁 심화\n(Yardi/RealPage)", "금리 리스크\n(임대시장 둔화)",
+             "고객 집중도\n(분산 양호)", "기술 변화\n(AI 선도)", "거시 경제\n(경기 둔화)"),
+  level = c(6, 4, 5, 2, 3, 5),
+  category = c("높음", "보통", "보통", "낮음", "낮음", "보통")
+)
+
+risk$factor <- factor(risk$factor, levels = rev(risk$factor))
+risk$fill_col <- ifelse(risk$level >= 6, c_red,
+                        ifelse(risk$level >= 4, c_amber, c_green))
+
+ggplot(risk, aes(x = factor, y = level, fill = fill_col)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(level, "/10 (", category, ")")),
+            hjust = -0.1, color = c_text, family = kfont, size = 3.3) +
+  scale_fill_identity() +
+  scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  coord_flip() +
+  labs(title = "리스크 팩터 대시보드",
+       subtitle = "밸류에이션 주의 필요 | 경쟁·거시 리스크 관리 가능 | 기술 리스크 낮음",
+       x = NULL, y = "위험도 (10 = 최고 위험)",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+## 매수/목표/손절가 시나리오
+
+```{r}
+#| label: fig-scenario
+#| fig-cap: "APPF 투자 시나리오 — Bull $280 (+68%), Base $228 (+36%), Bear $142 (-15%)"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+scenarios <- data.frame(
+  scenario = factor(c("Bear\n(경기침체·성장둔화)", "현재가", "손절가\n(-15%)",
+                       "Base\n(가이던스 달성)", "Bull\n(AI 가속·M&A)"),
+                    levels = c("Bear\n(경기침체·성장둔화)", "손절가\n(-15%)", "현재가",
+                               "Base\n(가이던스 달성)", "Bull\n(AI 가속·M&A)")),
+  price = c(142, 167.17, 142, 228, 280),
+  label_price = c("$142", "$167", "$142", "$228", "$280"),
+  color = c(c_red, c_cyan, c_red, c_amber, c_green)
+)
+
+scenario_plot <- data.frame(
+  scenario = factor(c("Bear\n경기침체·성장둔화", "손절가\n-15%", "현재가\n$167",
+                       "Base\n가이던스 달성", "Bull\nAI 가속+M&A"),
+                    levels = c("Bear\n경기침체·성장둔화", "손절가\n-15%", "현재가\n$167",
+                               "Base\n가이던스 달성", "Bull\nAI 가속+M&A")),
+  price = c(142, 142, 167.17, 228, 280),
+  color = c(c_red, "#ff6666", c_cyan, c_amber, c_green),
+  returns = c("-15%", "-15%", "0%", "+36%", "+68%")
+)
+
+ggplot(scenario_plot, aes(x = scenario, y = price, fill = color)) +
+  geom_col(width = 0.55, show.legend = FALSE) +
+  geom_text(aes(label = paste0("$", price, "\n(", returns, ")")),
+            vjust = -0.3, color = c_text, family = kfont, size = 3.5, lineheight = 1.1) +
+  geom_hline(yintercept = 167.17, color = c_cyan, linetype = "dashed", linewidth = 0.5) +
+  scale_fill_identity() +
+  scale_y_continuous(labels = dollar_format(), limits = c(0, 320),
+                     expand = expansion(mult = c(0, 0.1))) +
+  labs(title = "매수/목표/손절가 시나리오",
+       subtitle = "매수 존: $155~$170 | 목표가: $228 (Base) ~ $280 (Bull) | 손절: $142 (-15%)",
+       x = NULL, y = "주가 (USD)",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+# 핵심 카탈리스트
+
+1. **AI Realm-X 플랫폼 확산** — AI 사용량 7x YoY 증가, Performer 프리미엄 도입률 500% QoQ
+2. **2026 가이던스 상향** — 매출 $1.11~$1.125B, 비GAAP 영업이익률 26~28%
+3. **자사주매입 지속** — Q1에만 $125M 매입, 유동주식 감소 → EPS 가속
+4. **AI 도입 고객 성장률 차별화** — AI 사용자 포트폴리오 +31% 성장 vs 비사용자 +12%
+5. **파트너 생태계 확장** — SimpleVoIP, AvidXchange 통합으로 플랫폼 강화
+
+# 리스크 요인
+
+- **밸류에이션**: TTM PE 39.8x는 높은 편. 성장 둔화 시 멀티플 압축 가능
+- **경쟁**: Yardi, RealPage 등 레거시 경쟁사의 클라우드 전환 가속
+- **금리 환경**: 고금리 지속 시 임대시장 둔화 → 신규 유닛 성장 제한
+- **기관 매도**: Insight Holdings 등 일부 기관의 보유 축소
+
+# 투자 의견
+
+::: {.callout-important}
+## 매수 추천 | 목표가 $228 (+36%)
+**매수 존**: $155 ~ $170 (현재 $167 — 매수 존 내)
+
+**근거**: Forward PE 20.3x에 매출 +20%, 영업이익 +50% 성장. AI 혁신으로 차별적 성장 엔진 보유. 52주 고점 대비 -49% 할인은 과매도. 애널리스트 9명 전원 매수 의견.
+
+**손절가**: $142 (-15%)
+**목표가 (Base)**: $228 (+36%) — 컨센서스 평균
+**목표가 (Bull)**: $280 (+68%) — AI 가속 시나리오
+:::
+
+---
+
+::: {.callout-warning}
+## 면책 조항
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아니며, 모든 투자 결정은 개인의 판단과 책임 하에 이루어져야 합니다.
+:::
