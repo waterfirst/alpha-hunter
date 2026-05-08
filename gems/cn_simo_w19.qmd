@@ -1,0 +1,444 @@
+---
+title: "Silicon Motion (SIMO) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 19 — NAND 컨트롤러 글로벌 1위, 매출 105% 폭증 + AI SSD 진입"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-08"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+library(jsonlite)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+
+data <- fromJSON("data/simo_data.json")
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | Silicon Motion Technology Corporation (SIMO, NASDAQ) |
+| **업종** | Technology / Semiconductors (NAND Flash 컨트롤러) |
+| **핵심 사업** | SSD 컨트롤러, eMMC/UFS 모바일 스토리지, AI 엔터프라이즈 SSD |
+| **본사** | 홍콩 (R&D: 대만 / 글로벌 NAND 생태계) |
+| **시총** | $8.2B (약 11.5조원) |
+| **현재가** | $242.71 |
+| **PER (TTM/Fwd)** | 54.2x / 25.1x |
+| **PEG** | 0.70 |
+| **ROE** | 20.3% |
+| **부채** | $0 (무차입) |
+
+## 핵심 투자 포인트 (One-Liner)
+
+> **NAND 플래시 컨트롤러 글로벌 1위. Q1 매출 105% YoY 폭증 + MonTitan 엔터프라이즈 SSD로 AI 데이터센터 진입. PEG 0.7, 무차입, Strong Buy 10명.**
+
+---
+
+# 왜 지금 SIMO인가?
+
+## NAND 슈퍼사이클의 최대 수혜주
+
+2025~2026년 NAND 플래시 가격이 분기 55~60%씩 급등하며 전례 없는 공급 부족이 발생하고 있다. Silicon Motion은 3대 NAND 제조사(삼성·SK하이닉스·키오시아)와 모두 컨트롤러 공급 계약을 체결한 **유일한** 독립 컨트롤러 업체다.
+
+## AI 데이터센터 진입: MonTitan
+
+- **SM8366**: PCIe Gen5 엔터프라이즈 SSD 컨트롤러 — NVIDIA GTC 2026에서 시연
+- **SM8388**: QLC NAND 기반 대용량 Warm Storage — AI 데이터 저장소 최적화
+- **SM8008**: NVMe Boot SSD — AI 서버 부팅 스토리지 글로벌 표준화 추진
+
+## Q1 2026: 분기 신기록
+
+- 매출 $342.1M (+105% YoY, +23% QoQ) — 컨센서스 $300M 대비 14% 상회
+- Non-GAAP EPS $1.58 — 예상 $1.28 대비 23% 서프라이즈
+- 모바일 스토리지 +140% YoY, SSD 컨트롤러 +45% YoY
+- **Q2 가이던스**: 매출 $393~411M (추가 15~20% QoQ 성장), 영업이익률 19.8~21.1%
+
+---
+
+# 중국 산업 트렌드와 SIMO
+
+## 반도체: 탈미국 자급화와 NAND 생태계
+
+중국 NAND 제조사(YMTC 등)의 자급 확대는 오히려 SIMO에 기회다. YMTC는 자체 컨트롤러 대신 검증된 Silicon Motion 컨트롤러를 채택하는 전략을 취하고 있다. 미중 반도체 갈등이 심화될수록 "중립적 홍콩 기업"인 SIMO의 양진영 공급자 포지션이 강화된다.
+
+## 전기차: 차량용 스토리지 성장
+
+차량용 eMMC/UFS 스토리지 수요가 급증 중이며, SIMO는 자동차 향 NAND 컨트롤러로 NIO·BYD·리오토 등 중국 EV 공급망에 간접 노출되어 있다.
+
+## 정치 리스크: VIE 구조 해당 없음
+
+- SIMO는 **VIE(가변이해관계) 구조가 아니다** — 케이맨 법인, 홍콩 본사, NASDAQ 직접 상장
+- ADR 상장폐지 리스크 **해당 없음** — 미국 SEC 감사 투명성 확보
+- 다만 **미중 반도체 제재 확대 시** 고객사(중국 NAND 제조사) 매출 감소 가능성 존재
+- 대만 R&D 센터의 지정학적 리스크(양안 긴장) 존재
+
+---
+
+# 차트 분석
+
+## 1. 주가 추이 (52주)
+
+```{r}
+#| label: fig-price
+#| fig-cap: "SIMO 52주 주가 추이"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+prices <- data$prices
+prices$date <- as.Date(prices$date)
+
+ggplot(prices, aes(x = date, y = close)) +
+  geom_area(fill = c_amber, alpha = 0.15) +
+  geom_line(color = c_amber, linewidth = 0.9) +
+  geom_hline(yintercept = 242.71, linetype = "dashed", color = c_green, linewidth = 0.5) +
+  geom_hline(yintercept = 260, linetype = "dotted", color = c_cyan, linewidth = 0.5) +
+  geom_hline(yintercept = 206, linetype = "dashed", color = c_red, linewidth = 0.5) +
+  annotate("text", x = min(prices$date) + 30, y = 250, label = "현재가 $242.71",
+           color = c_green, family = kfont, size = 3.5) +
+  annotate("text", x = min(prices$date) + 30, y = 268, label = "JP Morgan 목표 $260",
+           color = c_cyan, family = kfont, size = 3.5) +
+  annotate("text", x = min(prices$date) + 30, y = 198, label = "손절가 $206",
+           color = c_red, family = kfont, size = 3.5) +
+  scale_x_date(date_labels = "%Y-%m", date_breaks = "2 months") +
+  scale_y_continuous(labels = dollar_format()) +
+  labs(title = "SIMO 52주 주가 추이",
+       subtitle = "52주 저점 $51.09 → 현재 $242.71 (+375% 상승)",
+       x = NULL, y = "주가 (USD)",
+       caption = "출처: Yahoo Finance | Alpha Hunter") +
+  theme_hunter()
+```
+
+## 2. 실적 추이 (매출/영업이익)
+
+```{r}
+#| label: fig-revenue
+#| fig-cap: "SIMO 분기별 매출 및 영업이익 추이"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+rev_df <- data.frame(
+  quarter = c("Q2'24","Q3'24","Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26"),
+  revenue = c(110.3, 130.5, 168.0, 166.5, 198.7, 242.0, 278.5, 342.1),
+  op_income = c(8.8, 13.1, 19.3, 15.0, 22.8, 33.9, 41.8, 62.3)
+)
+rev_df$quarter <- factor(rev_df$quarter, levels = rev_df$quarter)
+
+ggplot(rev_df, aes(x = quarter)) +
+  geom_col(aes(y = revenue), fill = c_blue, alpha = 0.8, width = 0.6) +
+  geom_line(aes(y = op_income * 3, group = 1), color = c_green, linewidth = 1.2) +
+  geom_point(aes(y = op_income * 3), color = c_green, size = 3) +
+  geom_text(aes(y = revenue, label = paste0("$", revenue, "M")),
+            vjust = -0.5, color = c_amber, family = kfont, size = 3) +
+  scale_y_continuous(
+    name = "매출 (USD M)",
+    sec.axis = sec_axis(~ . / 3, name = "영업이익 (USD M)"),
+    labels = dollar_format(suffix = "M")
+  ) +
+  labs(title = "분기별 매출 (막대) 및 영업이익 (선)",
+       subtitle = "Q1'26 매출 $342M (+105% YoY) — 연속 분기 신기록",
+       x = NULL,
+       caption = "출처: Silicon Motion IR | Alpha Hunter") +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 3. 밸류에이션 비교 (동종업종)
+
+```{r}
+#| label: fig-valuation
+#| fig-cap: "반도체 컨트롤러 동종업종 밸류에이션 비교"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+peers <- data.frame(
+  ticker = c("SIMO", "MRVL", "ALAB", "MCHP", "ON"),
+  name = c("Silicon Motion", "Marvell", "Astera Labs", "Microchip", "ON Semi"),
+  fwd_pe = c(25.1, 29.4, 46.8, 25.9, 23.6),
+  peg = c(0.70, 2.02, 4.50, 1.28, 0.35),
+  rev_growth = c(105.5, 22.1, 93.4, 15.6, 4.7),
+  roe = c(20.3, 19.3, 21.1, -1.1, 7.5)
+)
+peers$ticker <- factor(peers$ticker, levels = peers$ticker)
+peers$highlight <- ifelse(peers$ticker == "SIMO", "SIMO", "Peer")
+
+ggplot(peers, aes(x = fwd_pe, y = rev_growth, size = roe + 5, color = highlight)) +
+  geom_point(alpha = 0.8) +
+  geom_text(aes(label = ticker), vjust = -1.5, size = 4, family = kfont, show.legend = FALSE) +
+  scale_color_manual(values = c("SIMO" = c_amber, "Peer" = c_blue)) +
+  scale_size_continuous(range = c(4, 14), guide = "none") +
+  labs(title = "매출성장률 vs Forward PE (버블 = ROE)",
+       subtitle = "SIMO: 105% 성장 + Fwd PE 25.1x + PEG 0.7 → 압도적 저평가",
+       x = "Forward P/E", y = "매출 성장률 (%)",
+       color = NULL,
+       caption = "출처: Yahoo Finance | Alpha Hunter") +
+  theme_hunter() +
+  theme(legend.position = "none")
+```
+
+## 4. 워런 버핏 해자(Moat) 레이더 차트
+
+```{r}
+#| label: fig-moat
+#| fig-cap: "워런 버핏 스타일 경쟁 우위(해자) 레이더 차트"
+#| fig-width: 8
+#| fig-height: 8
+#| lightbox: true
+
+categories <- c("시장 점유율\n독점", "전환 비용", "가격 결정력", "네트워크 효과",
+                 "브랜드 인지도", "특허/IP", "규모의 경제", "진입 장벽",
+                 "고객 충성도", "마진 지속성")
+scores <- c(9.0, 8.5, 7.5, 6.0, 7.0, 9.0, 7.5, 8.5, 8.0, 7.5)
+
+df <- data.frame(
+  category = factor(categories, levels = categories),
+  score = scores,
+  angle = seq(0, 2 * pi * (1 - 1/length(categories)), length.out = length(categories))
+)
+df$x <- df$score * cos(df$angle - pi/2)
+df$y <- df$score * sin(df$angle - pi/2)
+
+grid_lines <- do.call(rbind, lapply(c(2, 4, 6, 8, 10), function(r) {
+  angles <- seq(0, 2 * pi, length.out = 100)
+  data.frame(x = r * cos(angles - pi/2), y = r * sin(angles - pi/2), r = r)
+}))
+
+spoke_lines <- do.call(rbind, lapply(df$angle, function(a) {
+  data.frame(x = c(0, 10 * cos(a - pi/2)), y = c(0, 10 * sin(a - pi/2)))
+}))
+
+polygon_df <- rbind(df, df[1, ])
+
+ggplot() +
+  geom_path(data = grid_lines, aes(x, y, group = r), color = "#2a2a4a", linewidth = 0.3) +
+  geom_line(data = spoke_lines, aes(x, y, group = ceiling(seq_len(nrow(spoke_lines))/2)),
+            color = "#2a2a4a", linewidth = 0.2) +
+  geom_polygon(data = polygon_df, aes(x, y), fill = c_amber, alpha = 0.2, color = c_amber, linewidth = 1) +
+  geom_point(data = df, aes(x, y), color = c_amber, size = 3) +
+  geom_text(data = df, aes(x = 12 * cos(angle - pi/2), y = 12 * sin(angle - pi/2), label = category),
+            color = "#e4e4ec", family = kfont, size = 3.2) +
+  geom_text(data = df, aes(x = x, y = y, label = score),
+            color = "#ffffff", family = kfont, size = 3, vjust = -1) +
+  coord_fixed(xlim = c(-14, 14), ylim = c(-14, 14)) +
+  labs(title = "워런 버핏 해자(Moat) 분석 — 종합 7.85/10",
+       subtitle = "NAND 컨트롤러 독점 + 3대 NAND 메이커 동시 공급 = 강력한 진입장벽",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid = element_blank())
+```
+
+**해자 분석 요약**: SIMO는 NAND 컨트롤러 설계에서 글로벌 1위다. 삼성·SK하이닉스·키오시아 3대 NAND 메이커 모두에 컨트롤러를 공급하는 유일한 독립 업체라는 점이 최대 해자다. NAND 메이커들이 자체 컨트롤러를 개발하는 것은 기술적으로 가능하지만, Silicon Motion의 검증된 IP와 빠른 time-to-market이 대체를 어렵게 만든다.
+
+## 5. 피터 린치 스토리 점수
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "피터 린치 스타일 스토리 점수 평가"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+lynch_df <- data.frame(
+  category = c("성장 스토리 명확성", "PEG 매력도", "기관 관심도",
+                "부채 건전성", "내부자 매매", "산업 트렌드",
+                "경쟁 우위 지속성", "카탈리스트"),
+  score = c(9.5, 8.5, 8.0, 10.0, 7.0, 9.5, 8.5, 9.0),
+  max_score = rep(10, 8)
+)
+lynch_df$category <- factor(lynch_df$category, levels = rev(lynch_df$category))
+
+ggplot(lynch_df, aes(x = category)) +
+  geom_col(aes(y = max_score), fill = "#2a2a4a", width = 0.7) +
+  geom_col(aes(y = score), fill = c_amber, alpha = 0.85, width = 0.7) +
+  geom_text(aes(y = score, label = paste0(score, "/10")),
+            hjust = -0.2, color = "#ffffff", family = kfont, size = 3.5) +
+  coord_flip(ylim = c(0, 12)) +
+  labs(title = "피터 린치 스토리 점수 — 종합 8.75/10",
+       subtitle = "무차입(10점) + NAND 슈퍼사이클 성장 스토리(9.5점) + PEG 0.7(8.5점)",
+       x = NULL, y = "점수 (10점 만점)",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+**린치 분류: Fast Grower (빠른 성장주)**
+
+- PEG 0.7 = 성장 대비 극단적 저평가
+- 무차입 경영 (부채 $0) → 재무 안정성 10점 만점
+- NAND 슈퍼사이클 + AI SSD = 이중 카탈리스트
+
+## 6. 리스크 팩터 대시보드
+
+```{r}
+#| label: fig-risk
+#| fig-cap: "리스크 팩터 정량 평가 대시보드"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+risk_df <- data.frame(
+  risk = c("밸류에이션\n(52주 고점 근접)", "NAND 사이클\n(가격 피크 리스크)", "미중 반도체\n제재 확대",
+           "대만 지정학\n리스크", "경쟁 심화\n(NAND 자체 개발)", "고객 집중도\n리스크",
+           "환율 변동\n(USD/TWD)", "FCF 적자\n(투자 확대기)"),
+  severity = c(7, 6, 5, 4, 4, 5, 3, 5),
+  probability = c(8, 5, 4, 3, 3, 4, 4, 6)
+)
+risk_df$impact <- risk_df$severity * risk_df$probability / 10
+
+ggplot(risk_df, aes(x = probability, y = severity)) +
+  geom_rect(aes(xmin = 0, xmax = 4, ymin = 0, ymax = 4), fill = c_green, alpha = 0.05) +
+  geom_rect(aes(xmin = 4, xmax = 7, ymin = 4, ymax = 7), fill = c_amber, alpha = 0.05) +
+  geom_rect(aes(xmin = 7, xmax = 10, ymin = 7, ymax = 10), fill = c_red, alpha = 0.05) +
+  geom_point(aes(size = impact), color = c_red, alpha = 0.7) +
+  geom_text(aes(label = risk), color = "#e4e4ec", family = kfont, size = 2.8,
+            vjust = -1.5, lineheight = 0.9) +
+  scale_size_continuous(range = c(4, 14), guide = "none") +
+  scale_x_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  labs(title = "리스크 팩터 매트릭스 (크기 = 종합 영향도)",
+       subtitle = "최대 리스크: 밸류에이션 과열 (52주 고점 $251.71 근접) / NAND 사이클 피크",
+       x = "발생 확률 →", y = "심각도 →",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+### 리스크 상세
+
+1. **밸류에이션 과열** (심각도 7/확률 8): 52주 저점 대비 +375% 급등, 현재 $242.71은 52주 고점 $251.71에 근접. 단기 차익 실현 매물 가능성.
+2. **NAND 사이클 피크** (심각도 6/확률 5): 분기 55~60% 가격 급등은 지속 불가. 2026H2 수급 완화 시 역풍.
+3. **미중 반도체 제재** (심각도 5/확률 4): 중국 NAND 제조사(YMTC) 향 매출 제한 가능성. 단, SIMO는 미국 기업이 아닌 홍콩 법인.
+4. **FCF 적자** (심각도 5/확률 6): MonTitan R&D 투자 확대로 Free Cash Flow -$125M. 성장 투자 vs 현금소진 균형 모니터링 필요.
+
+## 7. 매수/목표/손절가 시나리오
+
+```{r}
+#| label: fig-scenario
+#| fig-cap: "매수/목표/손절가 3단계 시나리오"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+scenario_df <- data.frame(
+  scenario = factor(c("손절가", "현재가\n(매수가)", "Base 목표", "Bull 목표", "Max 목표"),
+                    levels = c("손절가", "현재가\n(매수가)", "Base 목표", "Bull 목표", "Max 목표")),
+  price = c(206, 242.71, 260, 290, 320),
+  color = c(c_red, c_gray, c_green, c_cyan, c_amber)
+)
+
+ggplot(scenario_df, aes(x = scenario, y = price, fill = color)) +
+  geom_col(width = 0.55, show.legend = FALSE) +
+  geom_text(aes(label = paste0("$", price)),
+            vjust = -0.5, color = "#ffffff", family = kfont, size = 4.5, fontface = "bold") +
+  geom_text(aes(label = paste0(ifelse(price > 242.71,
+                                       paste0("+", round((price/242.71 - 1)*100, 1), "%"),
+                                       paste0(round((price/242.71 - 1)*100, 1), "%")))),
+            vjust = 1.5, color = "#ffffff", family = kfont, size = 3.5) +
+  scale_fill_identity() +
+  scale_y_continuous(labels = dollar_format(), expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "SIMO 매수/목표/손절 시나리오",
+       subtitle = "Base $260 (JP Morgan) → Bull $290 → Max $320 | 손절 $206 (-15%)",
+       x = NULL, y = "주가 (USD)",
+       caption = "Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+### 시나리오 분석
+
+| 시나리오 | 목표가 | 근거 |
+|:---|:---|:---|
+| **손절가** | $206 (-15%) | 최근 급등 추세 붕괴 시 |
+| **Base** | $260 (+7%) | JP Morgan 목표가. Q2 실적 확인 후 안정화 |
+| **Bull** | $290 (+19%) | MonTitan 양산 + NAND 가격 강세 지속 |
+| **Max** | $320 (+32%) | 최고 애널리스트 목표가. AI SSD TAM 확대 반영 |
+
+---
+
+# 투자 판단 요약
+
+## 선정 사유
+
+1. **매출 105% 폭증** — Q1 $342M으로 역대 최고 분기. Q2도 15~20% 추가 성장 가이던스
+2. **PEG 0.7** — 100%+ 성장률 대비 Fwd PE 25x는 극단적 저평가
+3. **무차입 + 배당 0.83%** — 성장주이면서 배당까지 지급하는 안정적 재무
+4. **AI 진입** — MonTitan 엔터프라이즈 SSD로 NVIDIA AI 생태계 진입
+5. **3대 NAND 메이커 동시 공급** — 경쟁사 없는 독보적 포지션
+
+## 주의 사항
+
+- 52주 저점 대비 +375% 급등 후 고점 근접 — 단기 조정 가능성
+- NAND 가격 사이클 피크 우려 — 2026H2 수급 완화 가능
+- FCF 적자 (-$125M) — R&D 투자 확대기
+- 애널리스트 목표가 일부 이미 현재가와 유사
+
+## 최종 판단
+
+**워치리스트 추가 (WATCHLIST)** — 5~10% 조정 시 $220 부근 매수 기회 대기
+
+현재가 $242.71은 52주 고점 근접으로 추격 매수보다 조정 매수가 바람직하다. Q2 실적(7월 예상) 확인 후 모멘텀 지속 여부를 판단한다.
+
+---
+
+::: {.callout-warning}
+## 면책 조항
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+모든 투자 결정은 개인의 판단과 책임 하에 이루어져야 합니다.
+:::

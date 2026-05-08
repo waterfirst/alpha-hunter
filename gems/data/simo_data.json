@@ -1,0 +1,1559 @@
+{
+  "prices": [
+    {
+      "date": "2025-05-08",
+      "close": 51.84,
+      "volume": 365500
+    },
+    {
+      "date": "2025-05-09",
+      "close": 52.57,
+      "volume": 307700
+    },
+    {
+      "date": "2025-05-12",
+      "close": 56.04,
+      "volume": 642800
+    },
+    {
+      "date": "2025-05-13",
+      "close": 56.38,
+      "volume": 716400
+    },
+    {
+      "date": "2025-05-14",
+      "close": 57.18,
+      "volume": 550000
+    },
+    {
+      "date": "2025-05-15",
+      "close": 60.07,
+      "volume": 967900
+    },
+    {
+      "date": "2025-05-16",
+      "close": 62.07,
+      "volume": 1207500
+    },
+    {
+      "date": "2025-05-19",
+      "close": 62.99,
+      "volume": 1019200
+    },
+    {
+      "date": "2025-05-20",
+      "close": 63.93,
+      "volume": 655700
+    },
+    {
+      "date": "2025-05-21",
+      "close": 63.54,
+      "volume": 491000
+    },
+    {
+      "date": "2025-05-22",
+      "close": 63.9,
+      "volume": 521300
+    },
+    {
+      "date": "2025-05-23",
+      "close": 62.55,
+      "volume": 470700
+    },
+    {
+      "date": "2025-05-27",
+      "close": 62.43,
+      "volume": 398300
+    },
+    {
+      "date": "2025-05-28",
+      "close": 61.16,
+      "volume": 442100
+    },
+    {
+      "date": "2025-05-29",
+      "close": 61.89,
+      "volume": 411300
+    },
+    {
+      "date": "2025-05-30",
+      "close": 60.1,
+      "volume": 522600
+    },
+    {
+      "date": "2025-06-02",
+      "close": 62.41,
+      "volume": 396100
+    },
+    {
+      "date": "2025-06-03",
+      "close": 63.82,
+      "volume": 405500
+    },
+    {
+      "date": "2025-06-04",
+      "close": 64.46,
+      "volume": 385000
+    },
+    {
+      "date": "2025-06-05",
+      "close": 65.28,
+      "volume": 482400
+    },
+    {
+      "date": "2025-06-06",
+      "close": 65.87,
+      "volume": 398800
+    },
+    {
+      "date": "2025-06-09",
+      "close": 66.08,
+      "volume": 343200
+    },
+    {
+      "date": "2025-06-10",
+      "close": 65.8,
+      "volume": 421100
+    },
+    {
+      "date": "2025-06-11",
+      "close": 65.78,
+      "volume": 307900
+    },
+    {
+      "date": "2025-06-12",
+      "close": 66.25,
+      "volume": 155800
+    },
+    {
+      "date": "2025-06-13",
+      "close": 65.75,
+      "volume": 193600
+    },
+    {
+      "date": "2025-06-16",
+      "close": 68.54,
+      "volume": 418700
+    },
+    {
+      "date": "2025-06-17",
+      "close": 67.18,
+      "volume": 322000
+    },
+    {
+      "date": "2025-06-18",
+      "close": 70.2,
+      "volume": 456900
+    },
+    {
+      "date": "2025-06-20",
+      "close": 68.7,
+      "volume": 290900
+    },
+    {
+      "date": "2025-06-23",
+      "close": 68.76,
+      "volume": 231600
+    },
+    {
+      "date": "2025-06-24",
+      "close": 71.02,
+      "volume": 319300
+    },
+    {
+      "date": "2025-06-25",
+      "close": 70.17,
+      "volume": 355500
+    },
+    {
+      "date": "2025-06-26",
+      "close": 71.82,
+      "volume": 327700
+    },
+    {
+      "date": "2025-06-27",
+      "close": 74.4,
+      "volume": 721900
+    },
+    {
+      "date": "2025-06-30",
+      "close": 73.81,
+      "volume": 355600
+    },
+    {
+      "date": "2025-07-01",
+      "close": 72.95,
+      "volume": 328800
+    },
+    {
+      "date": "2025-07-02",
+      "close": 72.66,
+      "volume": 277500
+    },
+    {
+      "date": "2025-07-03",
+      "close": 73.46,
+      "volume": 147100
+    },
+    {
+      "date": "2025-07-07",
+      "close": 72.47,
+      "volume": 264100
+    },
+    {
+      "date": "2025-07-08",
+      "close": 71.04,
+      "volume": 235400
+    },
+    {
+      "date": "2025-07-09",
+      "close": 73.36,
+      "volume": 416400
+    },
+    {
+      "date": "2025-07-10",
+      "close": 73.48,
+      "volume": 167000
+    },
+    {
+      "date": "2025-07-11",
+      "close": 72.15,
+      "volume": 267100
+    },
+    {
+      "date": "2025-07-14",
+      "close": 71.1,
+      "volume": 422700
+    },
+    {
+      "date": "2025-07-15",
+      "close": 69.89,
+      "volume": 193300
+    },
+    {
+      "date": "2025-07-16",
+      "close": 70.05,
+      "volume": 630700
+    },
+    {
+      "date": "2025-07-17",
+      "close": 71.84,
+      "volume": 148100
+    },
+    {
+      "date": "2025-07-18",
+      "close": 72.0,
+      "volume": 188900
+    },
+    {
+      "date": "2025-07-21",
+      "close": 73.32,
+      "volume": 239500
+    },
+    {
+      "date": "2025-07-22",
+      "close": 70.56,
+      "volume": 272600
+    },
+    {
+      "date": "2025-07-23",
+      "close": 71.88,
+      "volume": 219900
+    },
+    {
+      "date": "2025-07-24",
+      "close": 72.51,
+      "volume": 250700
+    },
+    {
+      "date": "2025-07-25",
+      "close": 71.49,
+      "volume": 216400
+    },
+    {
+      "date": "2025-07-28",
+      "close": 74.42,
+      "volume": 356300
+    },
+    {
+      "date": "2025-07-29",
+      "close": 76.03,
+      "volume": 454400
+    },
+    {
+      "date": "2025-07-30",
+      "close": 75.26,
+      "volume": 592500
+    },
+    {
+      "date": "2025-07-31",
+      "close": 75.16,
+      "volume": 1387800
+    },
+    {
+      "date": "2025-08-01",
+      "close": 75.04,
+      "volume": 447200
+    },
+    {
+      "date": "2025-08-04",
+      "close": 75.13,
+      "volume": 311100
+    },
+    {
+      "date": "2025-08-05",
+      "close": 73.41,
+      "volume": 427800
+    },
+    {
+      "date": "2025-08-06",
+      "close": 75.21,
+      "volume": 268000
+    },
+    {
+      "date": "2025-08-07",
+      "close": 73.64,
+      "volume": 245400
+    },
+    {
+      "date": "2025-08-08",
+      "close": 75.5,
+      "volume": 257900
+    },
+    {
+      "date": "2025-08-11",
+      "close": 74.17,
+      "volume": 185900
+    },
+    {
+      "date": "2025-08-12",
+      "close": 76.5,
+      "volume": 151400
+    },
+    {
+      "date": "2025-08-13",
+      "close": 75.75,
+      "volume": 488500
+    },
+    {
+      "date": "2025-08-14",
+      "close": 74.61,
+      "volume": 188300
+    },
+    {
+      "date": "2025-08-15",
+      "close": 72.82,
+      "volume": 185400
+    },
+    {
+      "date": "2025-08-18",
+      "close": 74.32,
+      "volume": 196200
+    },
+    {
+      "date": "2025-08-19",
+      "close": 72.81,
+      "volume": 193800
+    },
+    {
+      "date": "2025-08-20",
+      "close": 73.28,
+      "volume": 234300
+    },
+    {
+      "date": "2025-08-21",
+      "close": 73.34,
+      "volume": 153000
+    },
+    {
+      "date": "2025-08-22",
+      "close": 75.54,
+      "volume": 123000
+    },
+    {
+      "date": "2025-08-25",
+      "close": 76.78,
+      "volume": 153500
+    },
+    {
+      "date": "2025-08-26",
+      "close": 78.09,
+      "volume": 218300
+    },
+    {
+      "date": "2025-08-27",
+      "close": 77.66,
+      "volume": 100700
+    },
+    {
+      "date": "2025-08-28",
+      "close": 81.79,
+      "volume": 427600
+    },
+    {
+      "date": "2025-08-29",
+      "close": 78.76,
+      "volume": 329200
+    },
+    {
+      "date": "2025-09-02",
+      "close": 78.88,
+      "volume": 227900
+    },
+    {
+      "date": "2025-09-03",
+      "close": 78.57,
+      "volume": 267000
+    },
+    {
+      "date": "2025-09-04",
+      "close": 80.23,
+      "volume": 135800
+    },
+    {
+      "date": "2025-09-05",
+      "close": 81.43,
+      "volume": 326900
+    },
+    {
+      "date": "2025-09-08",
+      "close": 83.87,
+      "volume": 249100
+    },
+    {
+      "date": "2025-09-09",
+      "close": 82.94,
+      "volume": 246900
+    },
+    {
+      "date": "2025-09-10",
+      "close": 82.73,
+      "volume": 165900
+    },
+    {
+      "date": "2025-09-11",
+      "close": 88.05,
+      "volume": 1014500
+    },
+    {
+      "date": "2025-09-12",
+      "close": 87.7,
+      "volume": 303800
+    },
+    {
+      "date": "2025-09-15",
+      "close": 88.97,
+      "volume": 191100
+    },
+    {
+      "date": "2025-09-16",
+      "close": 89.24,
+      "volume": 258700
+    },
+    {
+      "date": "2025-09-17",
+      "close": 87.44,
+      "volume": 328800
+    },
+    {
+      "date": "2025-09-18",
+      "close": 90.31,
+      "volume": 464600
+    },
+    {
+      "date": "2025-09-19",
+      "close": 91.3,
+      "volume": 350300
+    },
+    {
+      "date": "2025-09-22",
+      "close": 93.96,
+      "volume": 414900
+    },
+    {
+      "date": "2025-09-23",
+      "close": 90.29,
+      "volume": 566800
+    },
+    {
+      "date": "2025-09-24",
+      "close": 91.37,
+      "volume": 344500
+    },
+    {
+      "date": "2025-09-25",
+      "close": 89.26,
+      "volume": 523900
+    },
+    {
+      "date": "2025-09-26",
+      "close": 89.54,
+      "volume": 168900
+    },
+    {
+      "date": "2025-09-29",
+      "close": 92.7,
+      "volume": 295300
+    },
+    {
+      "date": "2025-09-30",
+      "close": 93.71,
+      "volume": 216800
+    },
+    {
+      "date": "2025-10-01",
+      "close": 96.17,
+      "volume": 309800
+    },
+    {
+      "date": "2025-10-02",
+      "close": 100.89,
+      "volume": 777900
+    },
+    {
+      "date": "2025-10-03",
+      "close": 97.71,
+      "volume": 565900
+    },
+    {
+      "date": "2025-10-06",
+      "close": 98.83,
+      "volume": 622500
+    },
+    {
+      "date": "2025-10-07",
+      "close": 93.36,
+      "volume": 441400
+    },
+    {
+      "date": "2025-10-08",
+      "close": 92.77,
+      "volume": 744400
+    },
+    {
+      "date": "2025-10-09",
+      "close": 93.08,
+      "volume": 355900
+    },
+    {
+      "date": "2025-10-10",
+      "close": 84.81,
+      "volume": 847600
+    },
+    {
+      "date": "2025-10-13",
+      "close": 88.73,
+      "volume": 356600
+    },
+    {
+      "date": "2025-10-14",
+      "close": 87.71,
+      "volume": 338300
+    },
+    {
+      "date": "2025-10-15",
+      "close": 91.58,
+      "volume": 379900
+    },
+    {
+      "date": "2025-10-16",
+      "close": 91.29,
+      "volume": 387700
+    },
+    {
+      "date": "2025-10-17",
+      "close": 93.05,
+      "volume": 359000
+    },
+    {
+      "date": "2025-10-20",
+      "close": 95.02,
+      "volume": 178900
+    },
+    {
+      "date": "2025-10-21",
+      "close": 93.01,
+      "volume": 213500
+    },
+    {
+      "date": "2025-10-22",
+      "close": 91.12,
+      "volume": 300200
+    },
+    {
+      "date": "2025-10-23",
+      "close": 93.93,
+      "volume": 131500
+    },
+    {
+      "date": "2025-10-24",
+      "close": 97.98,
+      "volume": 353500
+    },
+    {
+      "date": "2025-10-27",
+      "close": 101.78,
+      "volume": 631300
+    },
+    {
+      "date": "2025-10-28",
+      "close": 99.29,
+      "volume": 478000
+    },
+    {
+      "date": "2025-10-29",
+      "close": 99.43,
+      "volume": 346600
+    },
+    {
+      "date": "2025-10-30",
+      "close": 98.8,
+      "volume": 822500
+    },
+    {
+      "date": "2025-10-31",
+      "close": 96.97,
+      "volume": 870500
+    },
+    {
+      "date": "2025-11-03",
+      "close": 96.53,
+      "volume": 590300
+    },
+    {
+      "date": "2025-11-04",
+      "close": 91.22,
+      "volume": 477800
+    },
+    {
+      "date": "2025-11-05",
+      "close": 97.62,
+      "volume": 788100
+    },
+    {
+      "date": "2025-11-06",
+      "close": 94.27,
+      "volume": 471300
+    },
+    {
+      "date": "2025-11-07",
+      "close": 92.62,
+      "volume": 339900
+    },
+    {
+      "date": "2025-11-10",
+      "close": 93.36,
+      "volume": 502800
+    },
+    {
+      "date": "2025-11-11",
+      "close": 92.13,
+      "volume": 200800
+    },
+    {
+      "date": "2025-11-12",
+      "close": 90.2,
+      "volume": 363600
+    },
+    {
+      "date": "2025-11-13",
+      "close": 85.6,
+      "volume": 462200
+    },
+    {
+      "date": "2025-11-14",
+      "close": 86.23,
+      "volume": 560600
+    },
+    {
+      "date": "2025-11-17",
+      "close": 84.97,
+      "volume": 285100
+    },
+    {
+      "date": "2025-11-18",
+      "close": 84.05,
+      "volume": 423600
+    },
+    {
+      "date": "2025-11-19",
+      "close": 84.3,
+      "volume": 305000
+    },
+    {
+      "date": "2025-11-20",
+      "close": 79.69,
+      "volume": 552600
+    },
+    {
+      "date": "2025-11-21",
+      "close": 80.57,
+      "volume": 771500
+    },
+    {
+      "date": "2025-11-24",
+      "close": 83.35,
+      "volume": 326200
+    },
+    {
+      "date": "2025-11-25",
+      "close": 84.22,
+      "volume": 377300
+    },
+    {
+      "date": "2025-11-26",
+      "close": 87.07,
+      "volume": 301700
+    },
+    {
+      "date": "2025-11-28",
+      "close": 88.44,
+      "volume": 99200
+    },
+    {
+      "date": "2025-12-01",
+      "close": 88.19,
+      "volume": 312000
+    },
+    {
+      "date": "2025-12-02",
+      "close": 88.11,
+      "volume": 218100
+    },
+    {
+      "date": "2025-12-03",
+      "close": 90.42,
+      "volume": 379300
+    },
+    {
+      "date": "2025-12-04",
+      "close": 90.49,
+      "volume": 325300
+    },
+    {
+      "date": "2025-12-05",
+      "close": 91.67,
+      "volume": 243600
+    },
+    {
+      "date": "2025-12-08",
+      "close": 92.31,
+      "volume": 283600
+    },
+    {
+      "date": "2025-12-09",
+      "close": 94.02,
+      "volume": 162800
+    },
+    {
+      "date": "2025-12-10",
+      "close": 95.16,
+      "volume": 165600
+    },
+    {
+      "date": "2025-12-11",
+      "close": 92.72,
+      "volume": 267300
+    },
+    {
+      "date": "2025-12-12",
+      "close": 87.2,
+      "volume": 612200
+    },
+    {
+      "date": "2025-12-15",
+      "close": 86.56,
+      "volume": 207500
+    },
+    {
+      "date": "2025-12-16",
+      "close": 85.0,
+      "volume": 316400
+    },
+    {
+      "date": "2025-12-17",
+      "close": 84.05,
+      "volume": 279200
+    },
+    {
+      "date": "2025-12-18",
+      "close": 86.05,
+      "volume": 597300
+    },
+    {
+      "date": "2025-12-19",
+      "close": 88.23,
+      "volume": 290400
+    },
+    {
+      "date": "2025-12-22",
+      "close": 89.03,
+      "volume": 207800
+    },
+    {
+      "date": "2025-12-23",
+      "close": 89.11,
+      "volume": 174400
+    },
+    {
+      "date": "2025-12-24",
+      "close": 88.56,
+      "volume": 109100
+    },
+    {
+      "date": "2025-12-26",
+      "close": 89.7,
+      "volume": 153700
+    },
+    {
+      "date": "2025-12-29",
+      "close": 88.61,
+      "volume": 172600
+    },
+    {
+      "date": "2025-12-30",
+      "close": 89.93,
+      "volume": 149500
+    },
+    {
+      "date": "2025-12-31",
+      "close": 92.16,
+      "volume": 236700
+    },
+    {
+      "date": "2026-01-02",
+      "close": 93.21,
+      "volume": 413900
+    },
+    {
+      "date": "2026-01-05",
+      "close": 93.03,
+      "volume": 200200
+    },
+    {
+      "date": "2026-01-06",
+      "close": 104.6,
+      "volume": 1329300
+    },
+    {
+      "date": "2026-01-07",
+      "close": 120.42,
+      "volume": 2788400
+    },
+    {
+      "date": "2026-01-08",
+      "close": 110.38,
+      "volume": 1896400
+    },
+    {
+      "date": "2026-01-09",
+      "close": 112.46,
+      "volume": 728300
+    },
+    {
+      "date": "2026-01-12",
+      "close": 114.65,
+      "volume": 814300
+    },
+    {
+      "date": "2026-01-13",
+      "close": 112.9,
+      "volume": 569900
+    },
+    {
+      "date": "2026-01-14",
+      "close": 111.09,
+      "volume": 653400
+    },
+    {
+      "date": "2026-01-15",
+      "close": 112.72,
+      "volume": 645000
+    },
+    {
+      "date": "2026-01-16",
+      "close": 112.21,
+      "volume": 631400
+    },
+    {
+      "date": "2026-01-20",
+      "close": 112.35,
+      "volume": 453300
+    },
+    {
+      "date": "2026-01-21",
+      "close": 117.12,
+      "volume": 950400
+    },
+    {
+      "date": "2026-01-22",
+      "close": 114.6,
+      "volume": 1051500
+    },
+    {
+      "date": "2026-01-23",
+      "close": 112.27,
+      "volume": 440000
+    },
+    {
+      "date": "2026-01-26",
+      "close": 112.49,
+      "volume": 342900
+    },
+    {
+      "date": "2026-01-27",
+      "close": 115.56,
+      "volume": 570700
+    },
+    {
+      "date": "2026-01-28",
+      "close": 116.42,
+      "volume": 680300
+    },
+    {
+      "date": "2026-01-29",
+      "close": 115.49,
+      "volume": 537100
+    },
+    {
+      "date": "2026-01-30",
+      "close": 118.24,
+      "volume": 1062600
+    },
+    {
+      "date": "2026-02-02",
+      "close": 119.05,
+      "volume": 839500
+    },
+    {
+      "date": "2026-02-03",
+      "close": 119.72,
+      "volume": 1154900
+    },
+    {
+      "date": "2026-02-04",
+      "close": 127.62,
+      "volume": 2091100
+    },
+    {
+      "date": "2026-02-05",
+      "close": 125.44,
+      "volume": 855400
+    },
+    {
+      "date": "2026-02-06",
+      "close": 127.31,
+      "volume": 453200
+    },
+    {
+      "date": "2026-02-09",
+      "close": 136.75,
+      "volume": 1068700
+    },
+    {
+      "date": "2026-02-10",
+      "close": 130.55,
+      "volume": 658500
+    },
+    {
+      "date": "2026-02-11",
+      "close": 139.65,
+      "volume": 880000
+    },
+    {
+      "date": "2026-02-12",
+      "close": 138.07,
+      "volume": 707600
+    },
+    {
+      "date": "2026-02-13",
+      "close": 136.0,
+      "volume": 511600
+    },
+    {
+      "date": "2026-02-17",
+      "close": 131.09,
+      "volume": 571800
+    },
+    {
+      "date": "2026-02-18",
+      "close": 132.49,
+      "volume": 476000
+    },
+    {
+      "date": "2026-02-19",
+      "close": 132.04,
+      "volume": 502700
+    },
+    {
+      "date": "2026-02-20",
+      "close": 134.6,
+      "volume": 448700
+    },
+    {
+      "date": "2026-02-23",
+      "close": 135.88,
+      "volume": 443600
+    },
+    {
+      "date": "2026-02-24",
+      "close": 135.61,
+      "volume": 364800
+    },
+    {
+      "date": "2026-02-25",
+      "close": 142.72,
+      "volume": 676100
+    },
+    {
+      "date": "2026-02-26",
+      "close": 130.81,
+      "volume": 1021700
+    },
+    {
+      "date": "2026-02-27",
+      "close": 128.97,
+      "volume": 544600
+    },
+    {
+      "date": "2026-03-02",
+      "close": 128.93,
+      "volume": 696700
+    },
+    {
+      "date": "2026-03-03",
+      "close": 119.19,
+      "volume": 852600
+    },
+    {
+      "date": "2026-03-04",
+      "close": 122.05,
+      "volume": 538300
+    },
+    {
+      "date": "2026-03-05",
+      "close": 123.51,
+      "volume": 379800
+    },
+    {
+      "date": "2026-03-06",
+      "close": 118.11,
+      "volume": 338400
+    },
+    {
+      "date": "2026-03-09",
+      "close": 121.38,
+      "volume": 515400
+    },
+    {
+      "date": "2026-03-10",
+      "close": 122.53,
+      "volume": 302800
+    },
+    {
+      "date": "2026-03-11",
+      "close": 123.39,
+      "volume": 343600
+    },
+    {
+      "date": "2026-03-12",
+      "close": 119.86,
+      "volume": 326200
+    },
+    {
+      "date": "2026-03-13",
+      "close": 123.01,
+      "volume": 312300
+    },
+    {
+      "date": "2026-03-16",
+      "close": 125.71,
+      "volume": 544100
+    },
+    {
+      "date": "2026-03-17",
+      "close": 125.92,
+      "volume": 238700
+    },
+    {
+      "date": "2026-03-18",
+      "close": 125.14,
+      "volume": 234700
+    },
+    {
+      "date": "2026-03-19",
+      "close": 127.24,
+      "volume": 457600
+    },
+    {
+      "date": "2026-03-20",
+      "close": 123.51,
+      "volume": 356500
+    },
+    {
+      "date": "2026-03-23",
+      "close": 123.48,
+      "volume": 486100
+    },
+    {
+      "date": "2026-03-24",
+      "close": 118.4,
+      "volume": 699000
+    },
+    {
+      "date": "2026-03-25",
+      "close": 110.7,
+      "volume": 1102100
+    },
+    {
+      "date": "2026-03-26",
+      "close": 111.0,
+      "volume": 938500
+    },
+    {
+      "date": "2026-03-27",
+      "close": 109.84,
+      "volume": 293700
+    },
+    {
+      "date": "2026-03-30",
+      "close": 105.23,
+      "volume": 640000
+    },
+    {
+      "date": "2026-03-31",
+      "close": 112.06,
+      "volume": 301600
+    },
+    {
+      "date": "2026-04-01",
+      "close": 116.74,
+      "volume": 493500
+    },
+    {
+      "date": "2026-04-02",
+      "close": 113.67,
+      "volume": 273600
+    },
+    {
+      "date": "2026-04-06",
+      "close": 116.35,
+      "volume": 160300
+    },
+    {
+      "date": "2026-04-07",
+      "close": 116.77,
+      "volume": 237300
+    },
+    {
+      "date": "2026-04-08",
+      "close": 121.5,
+      "volume": 563900
+    },
+    {
+      "date": "2026-04-09",
+      "close": 126.74,
+      "volume": 968500
+    },
+    {
+      "date": "2026-04-10",
+      "close": 126.45,
+      "volume": 535000
+    },
+    {
+      "date": "2026-04-13",
+      "close": 125.74,
+      "volume": 445900
+    },
+    {
+      "date": "2026-04-14",
+      "close": 129.88,
+      "volume": 790900
+    },
+    {
+      "date": "2026-04-15",
+      "close": 138.75,
+      "volume": 1137900
+    },
+    {
+      "date": "2026-04-16",
+      "close": 136.72,
+      "volume": 526000
+    },
+    {
+      "date": "2026-04-17",
+      "close": 139.42,
+      "volume": 845800
+    },
+    {
+      "date": "2026-04-20",
+      "close": 138.42,
+      "volume": 441600
+    },
+    {
+      "date": "2026-04-21",
+      "close": 142.16,
+      "volume": 530100
+    },
+    {
+      "date": "2026-04-22",
+      "close": 141.66,
+      "volume": 377500
+    },
+    {
+      "date": "2026-04-23",
+      "close": 141.71,
+      "volume": 589300
+    },
+    {
+      "date": "2026-04-24",
+      "close": 153.15,
+      "volume": 748000
+    },
+    {
+      "date": "2026-04-27",
+      "close": 147.24,
+      "volume": 907400
+    },
+    {
+      "date": "2026-04-28",
+      "close": 148.88,
+      "volume": 1310600
+    },
+    {
+      "date": "2026-04-29",
+      "close": 217.06,
+      "volume": 4374100
+    },
+    {
+      "date": "2026-04-30",
+      "close": 218.33,
+      "volume": 1893800
+    },
+    {
+      "date": "2026-05-01",
+      "close": 234.04,
+      "volume": 1412700
+    },
+    {
+      "date": "2026-05-04",
+      "close": 226.7,
+      "volume": 1253900
+    },
+    {
+      "date": "2026-05-05",
+      "close": 237.92,
+      "volume": 2104400
+    },
+    {
+      "date": "2026-05-06",
+      "close": 244.45,
+      "volume": 1309900
+    },
+    {
+      "date": "2026-05-07",
+      "close": 242.71,
+      "volume": 1178800
+    }
+  ],
+  "revenue_quarterly": [
+    {
+      "quarter": "2026-Q1",
+      "Tax_Effect_Of_Unusual_Items": 4375625.763599,
+      "Tax_Rate_For_Calcs": 0.178342,
+      "Normalized_EBITDA": 16130000.0,
+      "Total_Unusual_Items": 24535000.0,
+      "Total_Unusual_Items_Excluding_Goodwill": 24535000.0,
+      "Net_Income_From_Continuing_Operation_Net_Minority_Interest": 47749000.0,
+      "Reconciled_Depreciation": 8954000.0,
+      "Reconciled_Cost_Of_Revenue": 141694000.0,
+      "EBITDA": 40665000.0,
+      "EBIT": 31711000.0,
+      "Net_Interest_Income": 1867000.0,
+      "Normalized_Income": 27589625.763599,
+      "Net_Income_From_Continuing_And_Discontinued_Operation": 47749000.0,
+      "Total_Expenses": 246750000.0,
+      "Total_Operating_Income_As_Reported": 31711000.0,
+      "Diluted_Average_Shares": 33916000.0,
+      "Basic_Average_Shares": 33678000.0,
+      "Diluted_EPS": 1.4,
+      "Basic_EPS": 1.4,
+      "Diluted_NI_Availto_Com_Stockholders": 47749000.0,
+      "Net_Income_Common_Stockholders": 47749000.0,
+      "Net_Income": 47749000.0,
+      "Net_Income_Including_Noncontrolling_Interests": 47749000.0,
+      "Net_Income_Continuous_Operations": 47749000.0,
+      "Tax_Provision": 10364000.0,
+      "Pretax_Income": 58113000.0,
+      "Other_Income_Expense": 24535000.0,
+      "Gain_On_Sale_Of_Security": 24535000.0,
+      "Net_Non_Operating_Interest_Income_Expense": 1867000.0,
+      "Total_Other_Finance_Cost": -1867000.0,
+      "Operating_Income": 31711000.0,
+      "Operating_Expense": 105056000.0,
+      "Research_And_Development": 80084000.0,
+      "Selling_General_And_Administration": 24972000.0,
+      "Selling_And_Marketing_Expense": 10682000.0,
+      "General_And_Administrative_Expense": 14290000.0,
+      "Other_Gand_A": 14290000.0,
+      "Gross_Profit": 136767000.0,
+      "Cost_Of_Revenue": 141694000.0,
+      "Total_Revenue": 278461000.0,
+      "Operating_Revenue": 278461000.0
+    },
+    {
+      "quarter": "2025-Q4",
+      "Tax_Effect_Of_Unusual_Items": 4372593.946277,
+      "Tax_Rate_For_Calcs": 0.178342,
+      "Normalized_EBITDA": 14658000.0,
+      "Total_Unusual_Items": 24518000.0,
+      "Total_Unusual_Items_Excluding_Goodwill": 24518000.0,
+      "Net_Income_From_Continuing_Operation_Net_Minority_Interest": 47749000.0,
+      "Reconciled_Depreciation": 7465000.0,
+      "Reconciled_Cost_Of_Revenue": 141694000.0,
+      "EBITDA": 39176000.0,
+      "EBIT": 31711000.0,
+      "Net_Interest_Income": 1867000.0,
+      "Interest_Income": 1867000.0,
+      "Normalized_Income": 27603593.946277,
+      "Net_Income_From_Continuing_And_Discontinued_Operation": 47749000.0,
+      "Total_Expenses": 246750000.0,
+      "Total_Operating_Income_As_Reported": 31711000.0,
+      "Diluted_Average_Shares": 33764000.0,
+      "Basic_Average_Shares": 33561000.0,
+      "Diluted_EPS": 1.41,
+      "Basic_EPS": 1.42,
+      "Diluted_NI_Availto_Com_Stockholders": 47749000.0,
+      "Net_Income_Common_Stockholders": 47749000.0,
+      "Net_Income": 47749000.0,
+      "Net_Income_Including_Noncontrolling_Interests": 47749000.0,
+      "Net_Income_Continuous_Operations": 47749000.0,
+      "Tax_Provision": 10364000.0,
+      "Pretax_Income": 58113000.0,
+      "Other_Income_Expense": 24535000.0,
+      "Other_Non_Operating_Income_Expenses": 17000.0,
+      "Special_Income_Charges": 0.0,
+      "Gain_On_Sale_Of_Security": 24518000.0,
+      "Net_Non_Operating_Interest_Income_Expense": 1867000.0,
+      "Interest_Income_Non_Operating": 1867000.0,
+      "Operating_Income": 31711000.0,
+      "Operating_Expense": 105056000.0,
+      "Research_And_Development": 80084000.0,
+      "Selling_General_And_Administration": 24972000.0,
+      "Selling_And_Marketing_Expense": -12506000.0,
+      "General_And_Administrative_Expense": 37478000.0,
+      "Other_Gand_A": -2370000.0,
+      "Gross_Profit": 136767000.0,
+      "Cost_Of_Revenue": 141694000.0,
+      "Total_Revenue": 278461000.0,
+      "Operating_Revenue": 278461000.0
+    },
+    {
+      "quarter": "2025-Q3",
+      "Tax_Effect_Of_Unusual_Items": 1767947.340331,
+      "Tax_Rate_For_Calcs": 0.130226,
+      "Normalized_EBITDA": 23695000.0,
+      "Total_Unusual_Items": 13576000.0,
+      "Total_Unusual_Items_Excluding_Goodwill": 13576000.0,
+      "Net_Income_From_Continuing_Operation_Net_Minority_Interest": 39112000.0,
+      "Reconciled_Depreciation": 8039000.0,
+      "Reconciled_Cost_Of_Revenue": 124311000.0,
+      "EBITDA": 37271000.0,
+      "EBIT": 29232000.0,
+      "Net_Interest_Income": 2160000.0,
+      "Interest_Income": 2160000.0,
+      "Normalized_Income": 27303947.340331,
+      "Net_Income_From_Continuing_And_Discontinued_Operation": 39112000.0,
+      "Total_Expenses": 212767000.0,
+      "Total_Operating_Income_As_Reported": 29232000.0,
+      "Diluted_Average_Shares": 33592000.0,
+      "Basic_Average_Shares": 33560000.0,
+      "Diluted_EPS": 1.164,
+      "Basic_EPS": 1.164,
+      "Diluted_NI_Availto_Com_Stockholders": 39112000.0,
+      "Net_Income_Common_Stockholders": 39112000.0,
+      "Net_Income": 39112000.0,
+      "Net_Income_Including_Noncontrolling_Interests": 39112000.0,
+      "Net_Income_Continuous_Operations": 39112000.0,
+      "Tax_Provision": 5856000.0,
+      "Pretax_Income": 44968000.0,
+      "Other_Income_Expense": 13576000.0,
+      "Special_Income_Charges": 0.0,
+      "Gain_On_Sale_Of_Security": 13576000.0,
+      "Net_Non_Operating_Interest_Income_Expense": 2160000.0,
+      "Interest_Income_Non_Operating": 2160000.0,
+      "Operating_Income": 29232000.0,
+      "Operating_Expense": 88456000.0,
+      "Research_And_Development": 69461000.0,
+      "Selling_General_And_Administration": 18995000.0,
+      "Selling_And_Marketing_Expense": 9492000.0,
+      "General_And_Administrative_Expense": 9503000.0,
+      "Other_Gand_A": 9503000.0,
+      "Gross_Profit": 117688000.0,
+      "Cost_Of_Revenue": 124311000.0,
+      "Total_Revenue": 241999000.0,
+      "Operating_Revenue": 241999000.0
+    },
+    {
+      "quarter": "2025-Q2",
+      "Tax_Effect_Of_Unusual_Items": -920142.919306,
+      "Tax_Rate_For_Calcs": 0.211381,
+      "Normalized_EBITDA": 34127000.0,
+      "Total_Unusual_Items": -4353000.0,
+      "Total_Unusual_Items_Excluding_Goodwill": -4353000.0,
+      "Net_Income_From_Continuing_Operation_Net_Minority_Interest": 16311000.0,
+      "Reconciled_Depreciation": 7445000.0,
+      "Reconciled_Cost_Of_Revenue": 103988000.0,
+      "EBITDA": 29774000.0,
+      "EBIT": 22329000.0,
+      "Net_Interest_Income": 2706000.0,
+      "Interest_Income": 2706000.0,
+      "Normalized_Income": 19743857.080694,
+      "Net_Income_From_Continuing_And_Discontinued_Operation": 16311000.0,
+      "Total_Expenses": 176346000.0,
+      "Total_Operating_Income_As_Reported": 22329000.0,
+      "Diluted_EPS": 0.49,
+      "Diluted_NI_Availto_Com_Stockholders": 16311000.0,
+      "Net_Income_Common_Stockholders": 16311000.0,
+      "Net_Income": 16311000.0,
+      "Net_Income_Including_Noncontrolling_Interests": 16311000.0,
+      "Net_Income_Continuous_Operations": 16311000.0,
+      "Tax_Provision": 4372000.0,
+      "Pretax_Income": 20683000.0,
+      "Other_Income_Expense": -4352000.0,
+      "Other_Non_Operating_Income_Expenses": 1000.0,
+      "Special_Income_Charges": 0.0,
+      "Gain_On_Sale_Of_Security": -4353000.0,
+      "Net_Non_Operating_Interest_Income_Expense": 2706000.0,
+      "Interest_Income_Non_Operating": 2706000.0,
+      "Operating_Income": 22329000.0,
+      "Operating_Expense": 72358000.0,
+      "Research_And_Development": 58147000.0,
+      "Selling_General_And_Administration": 14211000.0,
+      "Selling_And_Marketing_Expense": 7093000.0,
+      "General_And_Administrative_Expense": 7118000.0,
+      "Other_Gand_A": 7118000.0,
+      "Gross_Profit": 94687000.0,
+      "Cost_Of_Revenue": 103988000.0,
+      "Total_Revenue": 198675000.0,
+      "Operating_Revenue": 198675000.0
+    },
+    {
+      "quarter": "2025-Q1",
+      "Tax_Effect_Of_Unusual_Items": 917250.0,
+      "Tax_Rate_For_Calcs": 0.25,
+      "Normalized_EBITDA": 13322000.0,
+      "Total_Unusual_Items": 3669000.0,
+      "Total_Unusual_Items_Excluding_Goodwill": 3669000.0,
+      "Net_Income_From_Continuing_Operation_Net_Minority_Interest": 19463000.0,
+      "Reconciled_Depreciation": 7225000.0,
+      "Reconciled_Cost_Of_Revenue": 88125000.0,
+      "EBITDA": 16991000.0,
+      "EBIT": 9766000.0,
+      "Net_Interest_Income": 2929000.0,
+      "Normalized_Income": 16711250.0,
+      "Net_Income_From_Continuing_And_Discontinued_Operation": 19463000.0,
+      "Total_Expenses": 156726000.0,
+      "Total_Operating_Income_As_Reported": 9766000.0,
+      "Diluted_Average_Shares": 33827000.0,
+      "Basic_Average_Shares": 33634000.0,
+      "Diluted_EPS": 0.56,
+      "Basic_EPS": 0.56,
+      "Diluted_NI_Availto_Com_Stockholders": 19463000.0,
+      "Net_Income_Common_Stockholders": 19463000.0,
+      "Net_Income": 19463000.0,
+      "Net_Income_Including_Noncontrolling_Interests": 19463000.0,
+      "Net_Income_Continuous_Operations": 19463000.0,
+      "Tax_Provision": -3099000.0,
+      "Pretax_Income": 16364000.0,
+      "Other_Income_Expense": 3669000.0,
+      "Gain_On_Sale_Of_Security": 3669000.0,
+      "Net_Non_Operating_Interest_Income_Expense": 2929000.0,
+      "Total_Other_Finance_Cost": -2929000.0,
+      "Operating_Income": 9766000.0,
+      "Operating_Expense": 68601000.0,
+      "Research_And_Development": 55026000.0,
+      "Selling_General_And_Administration": 13575000.0,
+      "Selling_And_Marketing_Expense": 7115000.0,
+      "General_And_Administrative_Expense": 6460000.0,
+      "Other_Gand_A": 6460000.0,
+      "Gross_Profit": 78367000.0,
+      "Cost_Of_Revenue": 88125000.0,
+      "Total_Revenue": 166492000.0,
+      "Operating_Revenue": 166492000.0
+    },
+    {
+      "quarter": "2024-Q4",
+      "Interest_Income": 3768000.0,
+      "Diluted_Average_Shares": 33814000.0,
+      "Basic_Average_Shares": 33690000.0,
+      "Basic_EPS": 0.68,
+      "Special_Income_Charges": 0.0,
+      "Other_Special_Charges": 0.0,
+      "Interest_Income_Non_Operating": 3768000.0
+    },
+    {
+      "quarter": "2024-Q3",
+      "Interest_Income": 3518000.0,
+      "Special_Income_Charges": 0.0,
+      "Interest_Income_Non_Operating": 3518000.0
+    }
+  ],
+  "peers": [
+    {
+      "ticker": "MRVL",
+      "name": "Marvell Technology, ",
+      "mcap_b": 139.9,
+      "rev_growth": 22.1,
+      "op_margin": 18.7,
+      "gross_margin": 51.0,
+      "fwd_pe": 29.4,
+      "peg": 2.02,
+      "roe": 19.3
+    },
+    {
+      "ticker": "ALAB",
+      "name": "Astera Labs, Inc.",
+      "mcap_b": 33.5,
+      "rev_growth": 93.4,
+      "op_margin": 20.1,
+      "gross_margin": 76.0,
+      "fwd_pe": 46.8,
+      "peg": 0,
+      "roe": 21.1
+    },
+    {
+      "ticker": "MCHP",
+      "name": "Microchip Technology",
+      "mcap_b": 55.0,
+      "rev_growth": 15.6,
+      "op_margin": 13.2,
+      "gross_margin": 55.4,
+      "fwd_pe": 25.9,
+      "peg": 1.28,
+      "roe": -1.1
+    },
+    {
+      "ticker": "ON",
+      "name": "ON Semiconductor Cor",
+      "mcap_b": 39.4,
+      "rev_growth": 4.7,
+      "op_margin": 18.2,
+      "gross_margin": 42.7,
+      "fwd_pe": 23.6,
+      "peg": 0.35,
+      "roe": 7.5
+    },
+    {
+      "ticker": "SIMO",
+      "name": "Silicon Motion Techn",
+      "mcap_b": 8.2,
+      "rev_growth": 105.5,
+      "op_margin": 15.3,
+      "gross_margin": 48.1,
+      "fwd_pe": 25.1,
+      "peg": 0.7,
+      "roe": 20.3
+    }
+  ]
+}
