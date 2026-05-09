@@ -1,0 +1,783 @@
+---
+title: "Alpha Hunter 주간 종합 히든젬 보고서"
+subtitle: "Week 19 — 한국 휴젤(Hugel) · 미국 AppFolio(APPF) · 중국 SIMO(Silicon Motion)"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-09"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+c_orange <- "#fb923c"
+```
+
+# 주간 종합 요약 {.unnumbered}
+
+::: {.callout-note}
+## Week 19 (2026-05-05 ~ 2026-05-09) 히든젬 종합 결과
+
+- **한국 시장**: 휴젤(Hugel, 145020) — 글로벌 보톡스 3강, Q1 사상 최대 실적 달성
+- **미국 시장**: AppFolio(APPF) — 부동산 관리 SaaS 독점, AI Realm-X 제2성장
+- **중국 시장**: Silicon Motion(SIMO) — NAND 컨트롤러 글로벌 1위, 매출 +105% 폭증
+:::
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+---
+
+# 포트폴리오 성과 업데이트
+
+## 현재 포지션 현황
+
+```{r}
+#| label: portfolio-table
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+portfolio <- data.frame(
+  name = c("AROC\n(Archrock)", "HPSP\n(403870)", "Hugel\n(145020)"),
+  entry = c(35.70, 36.00, 186.79),
+  current = c(36.96, 36.88, 199.47),
+  stringsAsFactors = FALSE
+)
+portfolio$pct <- (portfolio$current - portfolio$entry) / portfolio$entry * 100
+
+ggplot(portfolio, aes(x = name, y = pct, fill = ifelse(pct > 0, "profit", "loss"))) +
+  geom_col(width = 0.5, show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%+.1f%%", pct)),
+            vjust = ifelse(portfolio$pct > 0, -0.5, 1.5),
+            color = "#e4e4ec", family = kfont, size = 5, fontface = "bold") +
+  geom_hline(yintercept = 0, color = "#aaaaaa", linewidth = 0.3) +
+  scale_fill_manual(values = c("profit" = c_green, "loss" = c_red)) +
+  labs(title = "Alpha Hunter 가상 포트폴리오 수익률",
+       subtitle = "매수일: 2026-04-02 ~ 2026-05-05 | 기준일: 2026-05-09",
+       x = NULL, y = "수익률 (%)") +
+  theme_hunter()
+```
+
+**AROC (Archrock)**: $35.70 → $36.96 (**+3.5%**). Q1 EBITDA $221M (+12% YoY), 가동률 95%, 조정 매출총이익률 72%. 2026 EBITDA 가이던스 $865~$915M 재확인. EPS $0.42 (예상 $0.47 소폭 미스)로 주가 소폭 조정.
+
+**HPSP (403870)**: ₩50,400 → ₩53,900 (**+6.9%**). 5/14 Q1 실적발표 임박. 삼성 3nm GAA 램프업 기대감 지속. 애널리스트 평균 목표가 ₩54,000으로 현재가 도달.
+
+**Hugel (145020)**: ₩261,500 → ₩291,500 (**+11.5%**). **사상 최대 Q1 실적**: 매출 1,166억원 (+29.9% YoY), 영업이익 476억원 (+22.3%), 순이익 406억원 (+31.5%). 해외 보톡스+필러 매출 708억원 (+46% YoY) 대폭 성장.
+
+**포트폴리오 총 수익**: AROC $51,744 + HPSP ₩53,900,000 + Hugel ₩58,300,000 = **약 $128,460** (투자원금 $123,337 대비 **+4.2%**)
+
+**현금**: $14,020 (총 포트폴리오 대비 약 10%)
+
+## 포트폴리오 주가 추이
+
+```{r}
+#| label: portfolio-price-chart
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+aroc <- tryCatch(read.csv("data/AROC.csv"), error = function(e) NULL)
+hpsp <- tryCatch(read.csv("data/403870_KQ.csv"), error = function(e) NULL)
+hugel <- tryCatch(read.csv("data/145020_KQ.csv"), error = function(e) NULL)
+
+port_frames <- list()
+
+if (!is.null(aroc) && nrow(aroc) > 0) {
+  aroc$Date <- as.Date(aroc$Date)
+  aroc$ticker <- "AROC"
+  aroc$norm <- aroc$Close / aroc$Close[1] * 100
+  port_frames <- c(port_frames, list(aroc[, c("Date", "ticker", "norm")]))
+}
+if (!is.null(hpsp) && nrow(hpsp) > 0) {
+  hpsp$Date <- as.Date(hpsp$Date)
+  hpsp$ticker <- "HPSP"
+  hpsp$norm <- hpsp$Close / hpsp$Close[1] * 100
+  port_frames <- c(port_frames, list(hpsp[, c("Date", "ticker", "norm")]))
+}
+if (!is.null(hugel) && nrow(hugel) > 0) {
+  hugel$Date <- as.Date(hugel$Date)
+  hugel$ticker <- "Hugel"
+  hugel$norm <- hugel$Close / hugel$Close[1] * 100
+  port_frames <- c(port_frames, list(hugel[, c("Date", "ticker", "norm")]))
+}
+
+if (length(port_frames) > 0) {
+  port_all <- do.call(rbind, port_frames)
+
+  ggplot(port_all, aes(x = Date, y = norm, color = ticker)) +
+    geom_line(linewidth = 0.9) +
+    geom_hline(yintercept = 100, linetype = "dashed", color = "#aaaaaa", linewidth = 0.3) +
+    scale_color_manual(values = c("AROC" = c_green, "HPSP" = c_amber, "Hugel" = c_purple)) +
+    scale_x_date(date_labels = "%m/%d", date_breaks = "2 months") +
+    labs(title = "포트폴리오 정규화 주가 (1년, 기준=100)",
+         subtitle = "AROC · HPSP · Hugel | 기준일: 2026-05-09",
+         x = NULL, y = "정규화 지수", color = "종목") +
+    theme_hunter()
+}
+```
+
+## 워치리스트 성과 추적
+
+```{r}
+#| label: watchlist-performance
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+watch_df <- data.frame(
+  name = c("FUTU\n(W18)", "WONTECH\n(W18)", "TMDX\n(W18)", "APPF\n(W19)", "SIMO\n(W19)"),
+  entry = c(154.51, 7320, 100.01, 167.17, 242.71),
+  current = c(144.59, 8370, 67.84, 166.59, 253.59),
+  stringsAsFactors = FALSE
+)
+watch_df$pct <- (watch_df$current - watch_df$entry) / watch_df$entry * 100
+
+ggplot(watch_df, aes(x = reorder(name, pct), y = pct, fill = ifelse(pct > 0, "profit", "loss"))) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = sprintf("%+.1f%%", pct)),
+            hjust = ifelse(watch_df$pct > 0, -0.2, 1.2),
+            color = "#e4e4ec", family = kfont, size = 4, fontface = "bold") +
+  geom_hline(yintercept = 0, color = "#aaaaaa", linewidth = 0.3) +
+  scale_fill_manual(values = c("profit" = c_green, "loss" = c_red)) +
+  coord_flip() +
+  labs(title = "워치리스트 수익률 추적",
+       subtitle = "워치리스트 추가 시점 대비 현재 수익률 | 기준일: 2026-05-09",
+       x = NULL, y = "수익률 (%)") +
+  theme_hunter()
+```
+
+::: {.callout-important}
+## TMDX 워치리스트 경고
+
+TransMedics(TMDX)는 5/5 Q1 실적 발표 후 **-32.2% 급락**. EPS $0.20 (예상 $0.63 대폭 미스), 영업이익 -51.6% YoY. 원가 +31.6%, 판관비 +42.1% 급증으로 마진 압력 심각. 2026 가이던스($727-757M)는 유지했으나 신뢰도 훼손. **워치리스트에서 제거** 권고.
+:::
+
+::: {.callout-tip}
+## WONTECH 워치리스트 호조
+
+원텍(336570)은 W18 추가 이후 **+14.3%** 상승 (₩7,320 → ₩8,370). K-뷰티 의료기기 성장 모멘텀 지속. 목표가 ₩9,500 접근 중.
+:::
+
+---
+
+# 한국 히든젬: 휴젤 (Hugel, 145020)
+
+## 기업 개요
+
+- **종목명**: 휴젤 (Hugel, 145020.KQ)
+- **업종**: 바이오/미용의료 (보툴리눔 톡신, 필러)
+- **핵심 제품**: 레티보(Letybo, 보톡스), 더채움(The Chaeum, 필러)
+- **시총**: 약 3.1조원
+- **현재가**: ₩291,500
+- **52주 범위**: ₩177,000 ~ ₩306,000
+- **매출 성장**: +29.9% YoY (Q1 2026 기준)
+- **영업이익률**: 40.8% (Q1 2026)
+- **Forward PER**: 15.4x → **현재 PER 약 14.2x (주가 상승 반영)**
+- **PEG**: 0.72
+- **애널리스트 컨센서스**: **Strong Buy** (14명)
+
+## 투자 논거
+
+**Q1 2026 사상 최대 실적 달성:**
+
+1. **매출 1,166억원** (+29.9% YoY): 해외 보톡스+필러 매출 708억원 (+46% YoY)
+2. **영업이익 476억원** (+22.3%): 미국 직판 비용 선반영에도 견조한 이익 성장
+3. **순이익 406억원** (+31.5%): 순이익률 34.8%의 고수익 기업
+4. **FDA+NMPA+CE 동시 허가**: 한국 유일 3대 시장 진입 기업
+5. **미국 직판 2026H2 본격화**: 마진 구조 개선의 게임체인저
+
+## 주가 추이 (52주)
+
+```{r}
+#| label: kr-hugel-price
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+hg <- tryCatch(read.csv("data/145020_KQ.csv"), error = function(e) NULL)
+
+if (!is.null(hg) && nrow(hg) > 0) {
+  hg$Date <- as.Date(hg$Date)
+
+  ggplot(hg, aes(x = Date, y = Close)) +
+    geom_line(color = c_purple, linewidth = 0.8) +
+    geom_area(aes(y = Close), fill = c_purple, alpha = 0.15) +
+    geom_hline(yintercept = 291500, linetype = "dashed", color = c_green, linewidth = 0.4) +
+    geom_hline(yintercept = 261500, linetype = "dotted", color = c_amber, linewidth = 0.4) +
+    annotate("text", x = max(hg$Date) - 60, y = 298000, label = "현재가 291,500",
+             color = c_green, family = kfont, size = 3.5) +
+    annotate("text", x = max(hg$Date) - 60, y = 255000, label = "매수가 261,500",
+             color = c_amber, family = kfont, size = 3.5) +
+    scale_y_continuous(labels = comma_format()) +
+    scale_x_date(date_labels = "%m/%d", date_breaks = "2 months") +
+    labs(title = "휴젤 (145020) 52주 주가 추이",
+         subtitle = "매수가 대비 +11.5% 수익 | 52주 고점 근접",
+         x = NULL, y = "주가 (원)") +
+    theme_hunter()
+}
+```
+
+## 실적 추이 (매출/영업이익)
+
+```{r}
+#| label: kr-hugel-earnings
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+qf_hugel <- tryCatch(read.csv("data/hugel_quarterly.csv", row.names = 1, check.names = FALSE), error = function(e) NULL)
+
+if (!is.null(qf_hugel)) {
+  rev_row <- which(grepl("Total Revenue", rownames(qf_hugel), ignore.case = TRUE))
+  oi_row <- which(grepl("Operating Income", rownames(qf_hugel), ignore.case = TRUE))
+
+  if (length(rev_row) > 0 && length(oi_row) > 0) {
+    fin_data <- data.frame(
+      Quarter = colnames(qf_hugel),
+      Revenue = as.numeric(qf_hugel[rev_row[1], ]) / 1e8,
+      OpIncome = as.numeric(qf_hugel[oi_row[1], ]) / 1e8,
+      stringsAsFactors = FALSE
+    )
+    fin_data <- fin_data[!is.na(fin_data$Revenue), ]
+    fin_data <- fin_data[order(fin_data$Quarter), ]
+    fin_data <- tail(fin_data, 8)
+    fin_data$Q_label <- paste0(substr(fin_data$Quarter, 1, 4), "\n",
+                                ifelse(substr(fin_data$Quarter, 6, 7) <= "03", "Q1",
+                                ifelse(substr(fin_data$Quarter, 6, 7) <= "06", "Q2",
+                                ifelse(substr(fin_data$Quarter, 6, 7) <= "09", "Q3", "Q4"))))
+
+    fin_long <- rbind(
+      data.frame(Quarter = fin_data$Q_label, Value = fin_data$Revenue, Type = "매출 (억원)", stringsAsFactors = FALSE),
+      data.frame(Quarter = fin_data$Q_label, Value = fin_data$OpIncome, Type = "영업이익 (억원)", stringsAsFactors = FALSE)
+    )
+    fin_long$Quarter <- factor(fin_long$Quarter, levels = unique(fin_data$Q_label))
+
+    ggplot(fin_long, aes(x = Quarter, y = Value, fill = Type)) +
+      geom_col(position = "dodge", width = 0.6) +
+      geom_text(aes(label = round(Value, 0)), position = position_dodge(width = 0.6),
+                vjust = -0.5, color = "#e4e4ec", family = kfont, size = 3) +
+      scale_fill_manual(values = c("매출 (억원)" = c_blue, "영업이익 (억원)" = c_green)) +
+      labs(title = "휴젤 분기별 매출 · 영업이익 추이",
+           subtitle = "Q1 2026: 매출 1,166억 (+29.9%) · 영업이익 476억 (+22.3%)",
+           x = NULL, y = "금액 (억원)", fill = NULL) +
+      theme_hunter()
+  }
+}
+```
+
+## 밸류에이션 비교 (동종업종)
+
+```{r}
+#| label: kr-hugel-valuation
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+val_data <- data.frame(
+  Company = c("휴젤\n(Hugel)", "대웅제약\n(Daewoong)", "메디톡스\n(Medytox)", "Allergan\n(AbbVie)", "Ipsen"),
+  FwdPE = c(14.2, 25.0, 30.0, 18.5, 22.0),
+  OpMargin = c(40.8, 12.0, 35.0, 28.0, 25.0),
+  RevGrowth = c(29.9, 8.0, 15.0, 5.0, 10.0),
+  stringsAsFactors = FALSE
+)
+
+ggplot(val_data, aes(x = RevGrowth, y = FwdPE, size = OpMargin)) +
+  geom_point(aes(color = Company == "휴젤\n(Hugel)"), show.legend = FALSE) +
+  geom_text(aes(label = Company), vjust = -1.5,
+            color = "#e4e4ec", family = kfont, size = 3) +
+  scale_color_manual(values = c("TRUE" = c_amber, "FALSE" = c_blue)) +
+  scale_size_continuous(range = c(4, 12)) +
+  labs(title = "보톡스/미용의료 업종 PER vs 매출성장 비교",
+       subtitle = "휴젤: Fwd PER 14.2x + 매출성장 29.9% = PEG 0.47 (극저평가)",
+       x = "매출 성장률 (%)", y = "Forward PER") +
+  theme_hunter()
+```
+
+## 워런 버핏 해자(Moat) 레이더
+
+```{r}
+#| label: kr-hugel-buffett
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat_items <- c("브랜드 파워", "전환비용", "네트워크 효과", "비용 우위", "규제 장벽",
+                "기술 해자", "수익성 지속", "재무 건전성")
+moat_scores <- c(8, 7, 5, 6, 10, 9, 9, 8)
+
+moat_df <- data.frame(
+  item = factor(moat_items, levels = moat_items),
+  score = moat_scores,
+  angle = seq(0, 2 * pi * (1 - 1/length(moat_items)), length.out = length(moat_items)),
+  stringsAsFactors = FALSE
+)
+
+moat_df$x <- moat_df$score * cos(moat_df$angle - pi/2)
+moat_df$y <- moat_df$score * sin(moat_df$angle - pi/2)
+moat_df$lx <- 11 * cos(moat_df$angle - pi/2)
+moat_df$ly <- 11 * sin(moat_df$angle - pi/2)
+
+ggplot() +
+  lapply(c(2, 4, 6, 8, 10), function(r) {
+    geom_polygon(data = data.frame(
+      x = r * cos(seq(0, 2*pi, length.out = 100)),
+      y = r * sin(seq(0, 2*pi, length.out = 100))
+    ), aes(x = x, y = y), fill = NA, color = "#2a2a4a", linewidth = 0.2)
+  }) +
+  lapply(1:nrow(moat_df), function(i) {
+    geom_segment(data = data.frame(x = 0, y = 0,
+                                    xend = 10 * cos(moat_df$angle[i] - pi/2),
+                                    yend = 10 * sin(moat_df$angle[i] - pi/2)),
+                 aes(x = x, y = y, xend = xend, yend = yend),
+                 color = "#2a2a4a", linewidth = 0.2)
+  }) +
+  geom_polygon(data = moat_df, aes(x = x, y = y), fill = c_purple, alpha = 0.3, color = c_purple, linewidth = 1) +
+  geom_point(data = moat_df, aes(x = x, y = y), color = c_purple, size = 3) +
+  geom_text(data = moat_df, aes(x = lx, y = ly,
+            label = paste0(item, "\n(", score, "/10)")),
+            color = "#e4e4ec", family = kfont, size = 3.2) +
+  coord_fixed() +
+  labs(title = "워런 버핏 해자(Moat) 분석 — 휴젤",
+       subtitle = "종합 점수 62/80 (78%) | 강점: 규제장벽(FDA/NMPA/CE)·기술해자·수익성") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid.major = element_blank())
+```
+
+**버핏 렌즈 해석**: 휴젤은 FDA+NMPA+CE 3대 시장 동시 허가라는 **한국 유일의 규제 해자**(10/10)를 보유. 보톡스의 반복 시술 특성으로 전환비용(7/10)이 높고, 영업이익률 40%+의 지속적 수익성(9/10) 입증. 네트워크 효과가 제한적인 점이 감점 요인이나, 미국 직판 전환이 브랜드 파워를 더 강화할 전망.
+
+## 피터 린치 스토리 점수
+
+```{r}
+#| label: kr-hugel-lynch
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+lynch_items <- c("이해하기 쉬운 사업", "매출 성장률 (>20%)", "이익 성장률",
+                 "PEG 비율 (<1)", "부채 비율", "내부자 매수",
+                 "기관 관심도", "카탈리스트 존재")
+lynch_scores <- c(10, 9, 9, 9, 7, 6, 9, 9)
+
+lynch_df <- data.frame(
+  item = factor(lynch_items, levels = rev(lynch_items)),
+  score = lynch_scores,
+  stringsAsFactors = FALSE
+)
+
+ggplot(lynch_df, aes(x = item, y = score, fill = score >= 7)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(score, "/10")), hjust = -0.3,
+            color = "#e4e4ec", family = kfont, size = 3.5) +
+  scale_fill_manual(values = c("TRUE" = c_green, "FALSE" = c_orange)) +
+  scale_y_continuous(limits = c(0, 11)) +
+  coord_flip() +
+  labs(title = "피터 린치 스토리 점수 — 휴젤",
+       subtitle = "종합 68/80 (85%) | '보톡스 맞으면 휴젤 주주 된다' — 명확한 생활밀착형 스토리",
+       x = NULL, y = "점수 (10점 만점)") +
+  theme_hunter()
+```
+
+**린치 렌즈 해석**: "보톡스 맞으면 휴젤 주주가 된다" — 린치가 가장 좋아하는 유형의 생활밀착형 스토리. PEG 0.72로 매력적이고, Q1 실적이 스토리를 숫자로 증명. 14명 애널리스트 전원 Strong Buy로 기관 관심도 최상.
+
+## 리스크 팩터
+
+```{r}
+#| label: kr-hugel-risk
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+risk_items <- c("미국 직판\n실행 리스크", "환율 변동\n(수출 60%+)", "경쟁 심화\n(메디톡스/대웅)",
+                "밸류에이션\n상승 속도", "원재료\n공급 리스크", "규제 변경\n(FDA/NMPA)")
+risk_levels <- c(6, 5, 5, 4, 3, 3)
+
+risk_df <- data.frame(
+  risk = factor(risk_items, levels = risk_items),
+  level = risk_levels,
+  stringsAsFactors = FALSE
+)
+
+ggplot(risk_df, aes(x = risk, y = level, fill = level)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = paste0(level, "/10")), vjust = -0.5,
+            color = "#e4e4ec", family = kfont, size = 3.5) +
+  scale_fill_gradient(low = c_green, high = c_red, guide = "none") +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(title = "리스크 팩터 대시보드 — 휴젤",
+       subtitle = "주요 리스크: 미국 직판 실행, 환율 변동",
+       x = NULL, y = "리스크 수준 (10=최고위험)") +
+  theme_hunter()
+```
+
+## 매수/목표/손절 시나리오
+
+```{r}
+#| label: kr-hugel-scenario
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+scenario_df <- data.frame(
+  Label = factor(c("손절가", "매수가", "현재가", "1차 목표", "2차 목표"),
+                 levels = c("손절가", "매수가", "현재가", "1차 목표", "2차 목표")),
+  Price = c(220000, 261500, 291500, 357714, 430000),
+  Color = c(c_red, c_gray, c_green, c_amber, "#f59e0b"),
+  stringsAsFactors = FALSE
+)
+
+ggplot(scenario_df, aes(x = Label, y = Price, fill = Color)) +
+  geom_col(width = 0.5, show.legend = FALSE) +
+  geom_text(aes(label = scales::comma(Price)), vjust = -0.5,
+            color = "#e4e4ec", family = kfont, size = 4, fontface = "bold") +
+  scale_fill_identity() +
+  scale_y_continuous(labels = comma_format(), limits = c(0, 500000)) +
+  labs(title = "매수/목표/손절 시나리오 — 휴젤",
+       subtitle = "현재가 ₩291,500 (+11.5% 수익) | 1차 목표 ₩357,714 (+23%) | 손절 ₩220,000",
+       x = NULL, y = "주가 (원)") +
+  theme_hunter()
+```
+
+---
+
+# 미국 히든젬: AppFolio (APPF)
+
+## 기업 개요
+
+- **종목명**: AppFolio, Inc. (APPF, NASDAQ)
+- **업종**: Technology / Property Management SaaS
+- **시총**: $5.9B
+- **현재가**: $166.59
+- **52주 범위**: $137 ~ $325
+- **매출 성장**: +20.4% YoY
+- **영업이익률**: 19.4%
+- **매출총이익률**: 63.7%
+- **Forward PER**: 20.3x
+- **ROE**: 32.6%
+- **애널리스트 컨센서스**: **Strong Buy** (9명)
+
+## 투자 논거
+
+1. **부동산 관리 SaaS 독점**: 950만 유닛(아파트/상가) 관리 — 미국 1위 플랫폼
+2. **AI Realm-X 혁명**: AI 사용량 7x 증가, 임대·유지보수·회계 자동화
+3. **52주 고점 대비 -49%**: 과매도 구간, 2026 가이던스 $1.1B+ 상향
+4. **자사주매입 $125M**: 경영진이 밸류에이션 매력 직접 증명
+5. **고수익 SaaS 모델**: 매출총이익률 63.7%, 영업이익률 19.4%, ROE 32.6%
+
+## 워런 버핏 해자(Moat) 레이더
+
+```{r}
+#| label: us-appf-buffett
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat_items2 <- c("브랜드 파워", "전환비용", "네트워크 효과", "비용 우위", "규제 장벽",
+                "기술 해자", "수익성 지속", "재무 건전성")
+moat_scores2 <- c(7, 9, 7, 6, 4, 8, 8, 9)
+
+moat_df2 <- data.frame(
+  item = factor(moat_items2, levels = moat_items2),
+  score = moat_scores2,
+  angle = seq(0, 2 * pi * (1 - 1/length(moat_items2)), length.out = length(moat_items2)),
+  stringsAsFactors = FALSE
+)
+
+moat_df2$x <- moat_df2$score * cos(moat_df2$angle - pi/2)
+moat_df2$y <- moat_df2$score * sin(moat_df2$angle - pi/2)
+moat_df2$lx <- 11 * cos(moat_df2$angle - pi/2)
+moat_df2$ly <- 11 * sin(moat_df2$angle - pi/2)
+
+ggplot() +
+  lapply(c(2, 4, 6, 8, 10), function(r) {
+    geom_polygon(data = data.frame(
+      x = r * cos(seq(0, 2*pi, length.out = 100)),
+      y = r * sin(seq(0, 2*pi, length.out = 100))
+    ), aes(x = x, y = y), fill = NA, color = "#2a2a4a", linewidth = 0.2)
+  }) +
+  lapply(1:nrow(moat_df2), function(i) {
+    geom_segment(data = data.frame(x = 0, y = 0,
+                                    xend = 10 * cos(moat_df2$angle[i] - pi/2),
+                                    yend = 10 * sin(moat_df2$angle[i] - pi/2)),
+                 aes(x = x, y = y, xend = xend, yend = yend),
+                 color = "#2a2a4a", linewidth = 0.2)
+  }) +
+  geom_polygon(data = moat_df2, aes(x = x, y = y), fill = c_cyan, alpha = 0.3, color = c_cyan, linewidth = 1) +
+  geom_point(data = moat_df2, aes(x = x, y = y), color = c_cyan, size = 3) +
+  geom_text(data = moat_df2, aes(x = lx, y = ly,
+            label = paste0(item, "\n(", score, "/10)")),
+            color = "#e4e4ec", family = kfont, size = 3.2) +
+  coord_fixed() +
+  labs(title = "워런 버핏 해자(Moat) 분석 — AppFolio",
+       subtitle = "종합 점수 58/80 (73%) | 강점: 전환비용·재무건전성·기술해자") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid.major = element_blank())
+```
+
+**버핏 렌즈 해석**: AppFolio는 부동산 관리 소프트웨어의 **높은 전환비용**(9/10)이 핵심 해자. 950만 유닛 데이터가 축적되면 경쟁사 이동이 극도로 어렵습니다. 무부채 재무구조(9/10)와 AI Realm-X 기술 해자(8/10)도 강력. 규제 장벽이 낮은 점(4/10)이 유일한 약점.
+
+## 피터 린치 스토리 점수
+
+```{r}
+#| label: us-appf-lynch
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+lynch_items2 <- c("이해하기 쉬운 사업", "매출 성장률 (>20%)", "이익 성장률",
+                 "PEG 비율 (<1)", "부채 비율", "내부자 매수",
+                 "기관 관심도", "카탈리스트 존재")
+lynch_scores2 <- c(9, 8, 9, 7, 9, 7, 8, 8)
+
+lynch_df2 <- data.frame(
+  item = factor(lynch_items2, levels = rev(lynch_items2)),
+  score = lynch_scores2,
+  stringsAsFactors = FALSE
+)
+
+ggplot(lynch_df2, aes(x = item, y = score, fill = score >= 7)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(score, "/10")), hjust = -0.3,
+            color = "#e4e4ec", family = kfont, size = 3.5) +
+  scale_fill_manual(values = c("TRUE" = c_green, "FALSE" = c_orange)) +
+  scale_y_continuous(limits = c(0, 11)) +
+  coord_flip() +
+  labs(title = "피터 린치 스토리 점수 — AppFolio",
+       subtitle = "종합 65/80 (81%) | '부동산 관리의 구글' — SaaS 독점 + AI 혁신",
+       x = NULL, y = "점수 (10점 만점)") +
+  theme_hunter()
+```
+
+---
+
+# 중국 히든젬: Silicon Motion (SIMO)
+
+## 기업 개요
+
+- **종목명**: Silicon Motion Technology (SIMO, NASDAQ)
+- **업종**: Semiconductors / NAND Flash Controller
+- **시총**: $8.6B
+- **현재가**: $253.59 (워치리스트 추가 후 +4.5%)
+- **매출 성장**: +105.5% YoY (Q1 2026)
+- **영업이익률**: 18.2% (비GAAP)
+- **매출총이익률**: 47.2%
+- **Forward PER**: 25.1x
+- **PEG**: 0.70
+- **애널리스트 컨센서스**: **Strong Buy** (10명)
+
+## 투자 논거
+
+1. **NAND 컨트롤러 글로벌 1위**: Samsung/SK Hynix/Kioxia 3대 NAND 메이커에 동시 공급
+2. **Q1 매출 $342M (+105% YoY)**: 역대 최대 분기 매출 달성
+3. **MonTitan AI SSD**: NVIDIA AI 생태계 진입, 데이터센터용 고성능 SSD 컨트롤러
+4. **PEG 0.70, 무차입**: 성장 대비 합리적 밸류에이션, 순현금 상태
+5. **Q2 가이던스 $393-411M**: 전분기 대비 +15~20% 추가 성장 예고
+
+## 워런 버핏 해자(Moat) 레이더
+
+```{r}
+#| label: cn-simo-buffett
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat_items3 <- c("브랜드 파워", "전환비용", "네트워크 효과", "비용 우위", "규제 장벽",
+                "기술 해자", "수익성 지속", "재무 건전성")
+moat_scores3 <- c(6, 8, 5, 7, 5, 9, 7, 9)
+
+moat_df3 <- data.frame(
+  item = factor(moat_items3, levels = moat_items3),
+  score = moat_scores3,
+  angle = seq(0, 2 * pi * (1 - 1/length(moat_items3)), length.out = length(moat_items3)),
+  stringsAsFactors = FALSE
+)
+
+moat_df3$x <- moat_df3$score * cos(moat_df3$angle - pi/2)
+moat_df3$y <- moat_df3$score * sin(moat_df3$angle - pi/2)
+moat_df3$lx <- 11 * cos(moat_df3$angle - pi/2)
+moat_df3$ly <- 11 * sin(moat_df3$angle - pi/2)
+
+ggplot() +
+  lapply(c(2, 4, 6, 8, 10), function(r) {
+    geom_polygon(data = data.frame(
+      x = r * cos(seq(0, 2*pi, length.out = 100)),
+      y = r * sin(seq(0, 2*pi, length.out = 100))
+    ), aes(x = x, y = y), fill = NA, color = "#2a2a4a", linewidth = 0.2)
+  }) +
+  lapply(1:nrow(moat_df3), function(i) {
+    geom_segment(data = data.frame(x = 0, y = 0,
+                                    xend = 10 * cos(moat_df3$angle[i] - pi/2),
+                                    yend = 10 * sin(moat_df3$angle[i] - pi/2)),
+                 aes(x = x, y = y, xend = xend, yend = yend),
+                 color = "#2a2a4a", linewidth = 0.2)
+  }) +
+  geom_polygon(data = moat_df3, aes(x = x, y = y), fill = c_red, alpha = 0.3, color = c_red, linewidth = 1) +
+  geom_point(data = moat_df3, aes(x = x, y = y), color = c_red, size = 3) +
+  geom_text(data = moat_df3, aes(x = lx, y = ly,
+            label = paste0(item, "\n(", score, "/10)")),
+            color = "#e4e4ec", family = kfont, size = 3.2) +
+  coord_fixed() +
+  labs(title = "워런 버핏 해자(Moat) 분석 — Silicon Motion",
+       subtitle = "종합 점수 56/80 (70%) | 강점: 기술해자·재무건전성·전환비용") +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid.major = element_blank())
+```
+
+## 피터 린치 스토리 점수
+
+```{r}
+#| label: cn-simo-lynch
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+lynch_items3 <- c("이해하기 쉬운 사업", "매출 성장률 (>20%)", "이익 성장률",
+                 "PEG 비율 (<1)", "부채 비율", "내부자 매수",
+                 "기관 관심도", "카탈리스트 존재")
+lynch_scores3 <- c(6, 10, 9, 8, 10, 5, 8, 9)
+
+lynch_df3 <- data.frame(
+  item = factor(lynch_items3, levels = rev(lynch_items3)),
+  score = lynch_scores3,
+  stringsAsFactors = FALSE
+)
+
+ggplot(lynch_df3, aes(x = item, y = score, fill = score >= 7)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(score, "/10")), hjust = -0.3,
+            color = "#e4e4ec", family = kfont, size = 3.5) +
+  scale_fill_manual(values = c("TRUE" = c_green, "FALSE" = c_orange)) +
+  scale_y_continuous(limits = c(0, 11)) +
+  coord_flip() +
+  labs(title = "피터 린치 스토리 점수 — Silicon Motion",
+       subtitle = "종합 65/80 (81%) | 'SSD의 두뇌를 만드는 보이지 않는 거인'",
+       x = NULL, y = "점수 (10점 만점)") +
+  theme_hunter()
+```
+
+---
+
+# 종합 판정
+
+```{r}
+#| label: final-summary
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+summary_df <- data.frame(
+  Market = factor(c("한국\n휴젤", "미국\nAppFolio", "중국\nSIMO"),
+                  levels = c("한국\n휴젤", "미국\nAppFolio", "중국\nSIMO")),
+  Buffett = c(78, 73, 70),
+  Lynch = c(85, 81, 81),
+  stringsAsFactors = FALSE
+)
+
+summary_long <- rbind(
+  data.frame(Market = summary_df$Market, Score = summary_df$Buffett, Type = "버핏 해자 (%)", stringsAsFactors = FALSE),
+  data.frame(Market = summary_df$Market, Score = summary_df$Lynch, Type = "린치 스토리 (%)", stringsAsFactors = FALSE)
+)
+
+ggplot(summary_long, aes(x = Market, y = Score, fill = Type)) +
+  geom_col(position = "dodge", width = 0.6) +
+  geom_text(aes(label = paste0(Score, "%")), position = position_dodge(width = 0.6),
+            vjust = -0.5, color = "#e4e4ec", family = kfont, size = 4) +
+  scale_fill_manual(values = c("버핏 해자 (%)" = c_amber, "린치 스토리 (%)" = c_cyan)) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(title = "Week 19 종합 판정 — 버핏/린치 점수 비교",
+       subtitle = "휴젤이 해자+스토리 종합 최고점 | Q1 실적으로 논거 강화",
+       x = NULL, y = "종합 점수 (%)", fill = NULL) +
+  theme_hunter()
+```
+
+## Week 19 결론
+
+**한국 휴젤(145020)** — **포트폴리오 유지, 목표가 상향 검토**
+
+- Q1 사상 최대 실적(매출 +29.9%, 해외 +46%)이 투자 논거를 강력히 뒷받침
+- 매수가 대비 +11.5% 수익 중, 1차 목표 ₩357,714 (+23% 잔여 업사이드)
+- 미국 직판 2026H2 가동이 다음 카탈리스트
+
+**미국 AppFolio(APPF)** — **워치리스트 유지**
+
+- 52주 고점 -49% 과매도 구간, SaaS 독점 + AI 혁신 스토리 유효
+- $166.59 현재가에서 타겟 $228(+37% 업사이드)
+- 다음 실적 확인 후 포트폴리오 편입 검토
+
+**중국 SIMO** — **워치리스트 유지**
+
+- Q1 매출 +105% 폭발적 성장, MonTitan AI SSD 카탈리스트
+- $253.59 현재가에서 Base $260(+3%), Bull $290(+14%)
+- 52주 고점 근접 부담 → 눌림목 시 매수 검토
+
+**TMDX 교훈**: Q1 실적 대참사(-32.2%)로 워치리스트 제거 권고. "독점 기술 ≠ 실적 보장" — 원가 관리 실패가 해자를 무력화할 수 있음을 재확인.
+
+---
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+모든 데이터는 yfinance 및 공개 웹소스에서 수집되었으며, 정확성을 보증하지 않습니다.
+:::
+
+*Alpha Hunter × Chimera AI | Week 19 종합 보고서 | 2026-05-09*
