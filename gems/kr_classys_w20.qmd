@@ -1,0 +1,455 @@
+---
+title: "클래시스 (214150) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 20 — 글로벌 에너지 미용기기 플랫폼, 밸류에이션 바닥권 진입"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-12"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold")
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#3b82f6"
+c_green <- "#10b981"
+c_red <- "#ef4444"
+c_purple <- "#8b5cf6"
+c_gray <- "#6b7280"
+c_cyan <- "#06b6d4"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | 클래시스 (214150.KQ) |
+| **업종** | 의료기기 (에너지 기반 미용의료기기) |
+| **핵심 제품** | 슈링크(Ultraformer, HIFU), 볼뉴머(Volnewmer, MRF), 쿼드세이(Quadessy, MNRF) |
+| **시총** | 약 3.57조원 |
+| **현재가** | 54,700원 |
+| **Forward PER** | 15.3x |
+| **EV/EBITDA** | 18.9x |
+| **컨센서스** | Buy (17명 애널리스트) |
+| **목표가** | 63,000 ~ 100,000원 (평균 79,941원) |
+
+> **이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.**
+
+## 투자 포인트 요약
+
+**클래시스는 HIFU(고강도 집속 초음파) 기술 기반 슈링크 시리즈로 글로벌 80개국 누적 45,000대 이상을 설치한 에너지 기반 미용의료기기(EBD) 플랫폼 기업이다.** 2025년 매출 3,368억원(YoY +26%), 영업이익률 54.8%의 압도적 수익성을 기록했으며, 2026년 매출 가이던스 4,900억원(+46%)을 제시했다.
+
+핵심 투자포인트:
+
+1. **슈링크 → 볼뉴머 → 쿼드세이 3단계 플랫폼 확장**: HIFU 독점에서 MRF·MNRF까지 포트폴리오 다변화
+2. **소모품 기반 반복매출(Recurring Revenue)**: 카트리지 교체 수요가 안정적 캐시플로우 창출
+3. **브라질 메드시스템즈 연결 효과**: 2026년 하반기부터 본격 매출 기여(연간 +500억)
+4. **밸류에이션 바닥권**: Forward PER 15.3x는 상장 이후 최저 수준, PER밴드 하단(19x) 대비 할인
+
+# 독점기술 & 해자 분석
+
+## 기술 경쟁력
+
+**슈링크(Ultraformer MPT)**: HIFU 기술을 미용 시장에 상업화한 선구적 제품. 에너지 전달의 정밀도와 재현성에서 울쎄라(Merz)와 양강 구도를 형성하고 있으나, 가격 대비 성능(Price-Performance)과 카트리지 비즈니스 모델에서 우위.
+
+**볼뉴머(Volnewmer)**: 모노폴라 RF 기술로 써마지(Solta Medical) 대항마. 2026년 글로벌 설치 목표 2,000대 이상으로 고성장 진입.
+
+**AI 제어 기술 연구**: 에너지 전달 시 조직 반응, 온도 변화, 출력 안정성을 AI로 정밀 관리하는 차세대 기술 개발 중.
+
+## 해자(Moat) 평가
+
+- **전환비용**: 의사 교육·인증 체계로 장비 교체 진입장벽 형성
+- **네트워크 효과**: 80개국 유통망, 45,000대 설치 기반 → 소모품 반복매출 잠금
+- **브랜드**: "슈링크" = HIFU 미용시술의 대명사적 브랜드 인지도
+- **R&D 투자**: 2025년 R&D 비용 1,744억원, 매출 대비 5.2%
+
+# 실적 분석
+
+```{r}
+#| label: chart1-price
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+price_data <- read.csv("/tmp/classys_hist.csv")
+price_data$Date <- as.Date(price_data$Date)
+
+ggplot(price_data, aes(x = Date, y = Close)) +
+  geom_line(color = c_amber, linewidth = 0.8) +
+  geom_hline(yintercept = 79941, linetype = "dashed", color = c_green, linewidth = 0.5) +
+  geom_hline(yintercept = 54700, linetype = "dotted", color = c_red, linewidth = 0.5) +
+  annotate("text", x = min(price_data$Date) + 30, y = 81500,
+           label = "목표가 79,941", color = c_green, family = kfont, size = 3.5) +
+  annotate("text", x = min(price_data$Date) + 30, y = 53000,
+           label = "현재가 54,700", color = c_red, family = kfont, size = 3.5) +
+  annotate("rect",
+           xmin = as.Date("2026-01-01"), xmax = as.Date("2026-03-01"),
+           ymin = 45000, ymax = 52000, fill = c_blue, alpha = 0.15) +
+  annotate("text", x = as.Date("2026-02-01"), y = 48000,
+           label = "바닥권", color = c_blue, family = kfont, size = 3) +
+  scale_y_continuous(labels = comma_format()) +
+  labs(title = "클래시스 주가 추이 (52주)",
+       subtitle = "목표가 대비 46% 업사이드 | 52주 최저 45,450원 부근에서 반등",
+       x = NULL, y = "주가 (원)",
+       caption = "출처: Yahoo Finance | Alpha Hunter") +
+  theme_hunter()
+```
+
+```{r}
+#| label: chart2-revenue
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+rev_data <- data.frame(
+  year = factor(c("2022", "2023", "2024", "2025", "2026E"),
+                levels = c("2022", "2023", "2024", "2025", "2026E")),
+  revenue = c(1418, 1801, 2429, 3368, 4900),
+  op_income = c(689, 896, 1224, 1706, 2600)
+)
+
+rev_long <- rev_data |>
+  pivot_longer(cols = c(revenue, op_income), names_to = "metric", values_to = "value") |>
+  mutate(metric = ifelse(metric == "revenue", "매출액", "영업이익"))
+
+ggplot(rev_long, aes(x = year, y = value, fill = metric)) +
+  geom_col(position = "dodge", width = 0.6) +
+  geom_text(aes(label = paste0(value, "억")),
+            position = position_dodge(width = 0.6),
+            vjust = -0.5, color = "#e4e4ec", size = 3.2, family = kfont) +
+  scale_fill_manual(values = c("매출액" = c_amber, "영업이익" = c_green)) +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "클래시스 실적 추이",
+       subtitle = "2022~2026E | 매출 CAGR 36% | 영업이익률 50%+ 유지",
+       x = NULL, y = "억원", fill = NULL,
+       caption = "2026E는 회사 가이던스 기준 | Alpha Hunter") +
+  theme_hunter() +
+  theme(legend.position = "top")
+```
+
+## 분기별 실적 추세
+
+```{r}
+#| label: chart2b-quarterly
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+q_data <- data.frame(
+  quarter = factor(c("24Q4", "25Q1", "25Q2", "25Q3", "25Q4"),
+                   levels = c("24Q4", "25Q1", "25Q2", "25Q3", "25Q4")),
+  revenue = c(744, 771, 833, 830, 934),
+  op_margin = c(48.1, 50.3, 51.6, 45.3, 54.8)
+)
+
+ggplot(q_data, aes(x = quarter)) +
+  geom_col(aes(y = revenue), fill = c_blue, width = 0.5) +
+  geom_line(aes(y = op_margin * 15, group = 1), color = c_amber, linewidth = 1.2) +
+  geom_point(aes(y = op_margin * 15), color = c_amber, size = 3) +
+  geom_text(aes(y = op_margin * 15, label = paste0(op_margin, "%")),
+            vjust = -1, color = c_amber, size = 3.2, family = kfont) +
+  scale_y_continuous(
+    name = "매출액 (억원)",
+    labels = comma_format(),
+    sec.axis = sec_axis(~ . / 15, name = "영업이익률 (%)")
+  ) +
+  labs(title = "분기별 매출 & 영업이익률",
+       subtitle = "최근 5분기 | OPM 45~55% 레인지 안정적 유지",
+       x = NULL,
+       caption = "Alpha Hunter") +
+  theme_hunter()
+```
+
+# 밸류에이션 비교
+
+```{r}
+#| label: chart3-valuation
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+val_data <- data.frame(
+  company = c("클래시스", "휴젤", "원텍", "섹터평균"),
+  fwd_pe = c(15.3, 16.1, 11.7, 17.4),
+  ev_ebitda = c(18.9, 12.3, 13.0, 15.0),
+  op_margin = c(54.8, 48.5, 26.4, 35.0)
+)
+
+val_long <- val_data |>
+  pivot_longer(cols = c(fwd_pe, ev_ebitda, op_margin),
+               names_to = "metric", values_to = "value") |>
+  mutate(metric = case_when(
+    metric == "fwd_pe" ~ "Forward PER",
+    metric == "ev_ebitda" ~ "EV/EBITDA",
+    metric == "op_margin" ~ "영업이익률(%)"
+  ))
+
+ggplot(val_long, aes(x = company, y = value, fill = company)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = round(value, 1)),
+            vjust = -0.5, color = "#e4e4ec", size = 3.2, family = kfont) +
+  facet_wrap(~metric, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("클래시스" = c_amber, "휴젤" = c_blue,
+                                "원텍" = c_purple, "섹터평균" = c_gray)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  labs(title = "동종업계 밸류에이션 비교",
+       subtitle = "클래시스: 가장 높은 수익성에도 PER 밴드 하단 — 리레이팅 여지",
+       x = NULL, y = NULL, fill = NULL,
+       caption = "데이터: Yahoo Finance 2026.05.12 | Alpha Hunter") +
+  theme_hunter() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 0, hjust = 0.5))
+```
+
+# 해자 레이더 차트
+
+```{r}
+#| label: chart4-moat
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat_categories <- c("브랜드 파워", "전환비용", "네트워크 효과",
+                      "원가우위", "규제장벽", "기술특허",
+                      "반복매출", "글로벌 확장성")
+moat_scores <- c(9, 8, 7, 6, 7, 9, 9, 8)
+
+moat_df <- data.frame(
+  category = factor(moat_categories, levels = moat_categories),
+  score = moat_scores,
+  id = seq_along(moat_categories)
+)
+
+n <- nrow(moat_df)
+angles <- seq(0, 2 * pi, length.out = n + 1)[1:n]
+moat_df$x <- moat_df$score * cos(angles - pi/2)
+moat_df$y <- moat_df$score * sin(angles - pi/2)
+
+moat_df_closed <- rbind(moat_df, moat_df[1, ])
+
+grid_df <- expand.grid(r = c(2, 4, 6, 8, 10), id = 1:(n + 1))
+grid_df$angle <- seq(0, 2 * pi, length.out = n + 1)[grid_df$id]
+grid_df$x <- grid_df$r * cos(grid_df$angle - pi/2)
+grid_df$y <- grid_df$r * sin(grid_df$angle - pi/2)
+
+label_r <- 11
+label_df <- data.frame(
+  label = moat_categories,
+  x = label_r * cos(angles - pi/2),
+  y = label_r * sin(angles - pi/2)
+)
+
+ggplot() +
+  # Grid circles
+  geom_path(data = grid_df, aes(x = x, y = y, group = r),
+            color = "#2a2a4a", linewidth = 0.3) +
+  # Axis lines
+  geom_segment(data = data.frame(x0 = 0, y0 = 0,
+                                  x1 = 10 * cos(angles - pi/2),
+                                  y1 = 10 * sin(angles - pi/2)),
+               aes(x = x0, y = y0, xend = x1, yend = y1),
+               color = "#2a2a4a", linewidth = 0.3) +
+  # Filled area
+  geom_polygon(data = moat_df_closed, aes(x = x, y = y),
+               fill = c_amber, alpha = 0.25, color = c_amber, linewidth = 1) +
+  # Points
+  geom_point(data = moat_df, aes(x = x, y = y),
+             color = c_amber, size = 3) +
+  # Score labels
+  geom_text(data = moat_df, aes(x = x * 1.12, y = y * 1.12, label = score),
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  # Category labels
+  geom_text(data = label_df, aes(x = x, y = y, label = label),
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  coord_fixed() +
+  labs(title = "워런 버핏 해자(Moat) 레이더 차트",
+       subtitle = "클래시스 — 기술특허·브랜드·반복매출에서 최고 점수",
+       caption = "10점 만점 | Alpha Hunter") +
+  theme_hunter() +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.grid = element_blank())
+```
+
+# 피터 린치 스토리 점수
+
+```{r}
+#| label: chart5-lynch
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+lynch_data <- data.frame(
+  factor = c("성장 지속성", "PEG 비율", "이해 용이성", "기관 관심도",
+             "부채 안전성", "내부자 보유", "독점적 지위", "신제품 파이프라인"),
+  score = c(9, 8, 9, 7, 9, 7, 8, 9),
+  category = c("성장", "밸류", "이해도", "수급",
+               "안전", "신뢰", "경쟁력", "성장")
+)
+
+lynch_data$factor <- factor(lynch_data$factor, levels = rev(lynch_data$factor))
+
+ggplot(lynch_data, aes(x = factor, y = score, fill = score)) +
+  geom_col(width = 0.65) +
+  geom_text(aes(label = paste0(score, "/10")),
+            hjust = -0.2, color = "#e4e4ec", size = 3.5, family = kfont) +
+  scale_fill_gradient(low = c_blue, high = c_green, guide = "none") +
+  scale_y_continuous(limits = c(0, 11), expand = expansion(mult = c(0, 0.05))) +
+  coord_flip() +
+  labs(title = "피터 린치 스토리 점수",
+       subtitle = "클래시스 종합 66/80 (82.5%) — 성장 지속성·이해도·파이프라인 최고점",
+       x = NULL, y = "점수 (10점 만점)",
+       caption = "PEG = Forward PER 15.3 / EPS성장률 49% = 0.31x (매력적) | Alpha Hunter") +
+  theme_hunter()
+```
+
+# 리스크 팩터
+
+```{r}
+#| label: chart6-risk
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+risk_data <- data.frame(
+  risk = c("환율 변동\n(수출 비중 높음)",
+           "경기 둔화\n(미용 소비 위축)",
+           "경쟁 심화\n(중국 저가 장비)",
+           "규제 리스크\n(의료기기 인허가)",
+           "키맨 리스크\n(창업자 의존)",
+           "카트리지\n가격 압력"),
+  severity = c(6, 5, 7, 4, 3, 5),
+  probability = c(5, 6, 6, 3, 2, 4)
+)
+
+risk_data$composite <- (risk_data$severity + risk_data$probability) / 2
+
+ggplot(risk_data, aes(x = probability, y = severity)) +
+  geom_rect(aes(xmin = 0, xmax = 5, ymin = 0, ymax = 5),
+            fill = c_green, alpha = 0.08) +
+  geom_rect(aes(xmin = 5, xmax = 10, ymin = 0, ymax = 5),
+            fill = c_amber, alpha = 0.08) +
+  geom_rect(aes(xmin = 0, xmax = 5, ymin = 5, ymax = 10),
+            fill = c_amber, alpha = 0.08) +
+  geom_rect(aes(xmin = 5, xmax = 10, ymin = 5, ymax = 10),
+            fill = c_red, alpha = 0.08) +
+  geom_point(aes(size = composite), color = c_red, alpha = 0.7) +
+  geom_text(aes(label = risk), color = "#e4e4ec", size = 2.8,
+            vjust = -1.5, family = kfont) +
+  scale_x_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  scale_size_continuous(range = c(4, 12), guide = "none") +
+  labs(title = "리스크 팩터 대시보드",
+       subtitle = "중국 저가 경쟁이 가장 큰 위협 | 규제·키맨 리스크는 제한적",
+       x = "발생 확률 →", y = "심각도 →",
+       caption = "버블 크기 = 종합 리스크 점수 | Alpha Hunter") +
+  theme_hunter()
+```
+
+# 매수 시나리오
+
+```{r}
+#| label: chart7-scenario
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+scenario_df <- data.frame(
+  scenario = factor(c("손절가", "현재가", "1차 목표", "컨센서스 목표", "최적 시나리오"),
+                    levels = c("손절가", "현재가", "1차 목표", "컨센서스 목표", "최적 시나리오")),
+  price = c(45000, 54700, 65000, 79941, 100000),
+  color_group = c("loss", "current", "target1", "target2", "best")
+)
+
+scenario_df$return_pct <- round((scenario_df$price / 54700 - 1) * 100, 1)
+
+ggplot(scenario_df, aes(x = scenario, y = price, fill = color_group)) +
+  geom_col(width = 0.55) +
+  geom_text(aes(label = paste0(format(price, big.mark = ","), "원\n(",
+                                ifelse(return_pct >= 0, "+", ""), return_pct, "%)")),
+            vjust = -0.3, color = "#e4e4ec", size = 3.3, family = kfont) +
+  scale_fill_manual(values = c("loss" = c_red, "current" = c_gray,
+                                "target1" = c_blue, "target2" = c_green,
+                                "best" = c_amber),
+                    guide = "none") +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.2))) +
+  labs(title = "매수/목표/손절가 시나리오",
+       subtitle = "현재가 54,700원 기준 | 컨센서스 목표 +46% 업사이드",
+       x = NULL, y = "주가 (원)",
+       caption = "손절가는 52주 최저가 근접 기준 | Alpha Hunter") +
+  theme_hunter()
+```
+
+# 카탈리스트 & 일정
+
+| 시기 | 카탈리스트 | 기대 효과 |
+|:---|:---|:---|
+| **2026 Q2** | 쿼드세이(MNRF) 미국 론칭 | 신규 매출원 확보, 미국 시장 진입 |
+| **2026 H2** | 브라질 메드시스템즈 연결 본격화 | 연간 +500억원 매출 기여 |
+| **2026 연간** | 볼뉴머 글로벌 2,000대 설치 목표 | MRF 시장 써마지 대항마 입지 |
+| **2026 Q2~** | 유럽 신규 국가(이탈리아·프랑스·영국) 진출 | 지역 다변화, 매출 안정성 제고 |
+| **상시** | AI 에너지 제어 기술 R&D | 차세대 제품 경쟁력 강화 |
+
+# 결론 & 투자 전략
+
+## 종합 평가
+
+클래시스는 **HIFU → MRF → MNRF 3대 플랫폼 전략**으로 에너지 기반 미용의료기기 시장에서 독보적 포지션을 구축했다. 2025년 영업이익률 54.8%는 동종업계 최고 수준이며, 2026년 매출 성장률 46% 가이던스는 플랫폼 확장과 브라질 연결 효과가 반영된 것이다.
+
+현재 Forward PER 15.3x는 상장 이후 최저 수준으로, PER밴드 하단(19x)마저 하회하고 있다. 2026년 EPS 성장률 49% 대비 PEG 비율은 0.31x로 극도로 매력적인 밸류에이션이다.
+
+## 매매 전략
+
+- **적정 매수 구간**: 52,000 ~ 56,000원 (현재가 인근)
+- **1차 목표가**: 65,000원 (+19%)
+- **컨센서스 목표가**: 79,941원 (+46%)
+- **최적 시나리오**: 100,000원 (+83%, PER 27x 회복 시)
+- **손절 기준**: 45,000원 (-18%, 52주 최저 하회 시)
+
+> **이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.**
