@@ -1,0 +1,815 @@
+---
+title: "반도체 기술 심층분석 — HBM 1세대~4세대 기술 진화"
+subtitle: "Alpha Hunter Tech Deep Dive #2 | 관련 종목: SK하이닉스, 한미반도체, PSK홀딩스, ISC"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-13"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      legend.position = "top",
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#6366f1"
+c_green <- "#22c55e"
+c_red <- "#ef4444"
+c_cyan <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray <- "#888888"
+c_text <- "#e4e4ec"
+```
+
+# 개요: 왜 HBM인가 {.unnumbered}
+
+::: {.callout-tip}
+## 핵심 메시지
+**HBM(High Bandwidth Memory)**은 AI 시대의 "메모리 고속도로"다. GPU/가속기가 아무리 빨라도, 메모리 대역폭이 병목이면 성능은 제자리다. HBM은 수천 개의 TSV(Through-Silicon Via)로 DRAM 다이를 수직 적층해 기존 DDR 대비 **10배 이상의 대역폭**을 제공한다. NVIDIA H200, B200부터 차세대 Rubin까지, AI 학습·추론 가속기의 핵심 부품이다.
+:::
+
+대규모 언어 모델(LLM)의 파라미터 수가 수조 개를 넘어서면서, GPU의 연산 능력만큼이나 **메모리 대역폭**이 AI 성능을 결정하는 핵심 병목으로 부상했다. HBM은 JEDEC이 2013년 표준을 제정한 이후, 4세대에 걸쳐 대역폭을 128 GB/s에서 2 TB/s 이상으로 **15배** 끌어올렸다. 이 보고서는 HBM의 기술 진화—TSV 미세화, 열설계 혁신, 본딩 기술, 패키징 통합—을 심층 분석하고, 투자 시사점을 도출한다.
+
+# HBM 세대별 기술 진화
+
+## 세대별 핵심 스펙 비교
+
+```{r}
+#| label: tbl-hbm-specs
+#| tbl-cap: "HBM 세대별 핵심 사양 비교"
+
+hbm_specs <- data.frame(
+  세대 = c("HBM1", "HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4"),
+  표준연도 = c("2013", "2016", "2018", "2022", "2024", "2025"),
+  양산시작 = c("2015", "2016", "2019", "2022", "2024", "2026"),
+  `대역폭_GBs` = c("128", "256", "460", "819", "1,229", "2,000+"),
+  `최대용량_GB` = c("4", "8", "16", "24", "36", "64"),
+  `적층수` = c("4", "8", "12", "16", "12", "16"),
+  `IO폭_bit` = c("1,024", "1,024", "1,024", "1,024", "1,024", "2,048"),
+  `채널수` = c("8", "8", "8", "16", "16", "32"),
+  `핀속도_Gbps` = c("1.0", "2.0", "3.6", "6.4", "9.8", "12.8"),
+  `전압_V` = c("1.2", "1.2", "1.2", "1.1", "1.1", "TBD"),
+  `범프피치_um` = c("55", "40", "36", "36", "30", "10")
+)
+
+names(hbm_specs) <- c("세대", "표준 연도", "양산 시작", "대역폭 (GB/s)", "최대 용량",
+                       "적층 수", "I/O 폭 (bit)", "채널 수", "핀 속도 (Gbps)", "전압 (V)", "범프 피치 (μm)")
+
+kable(hbm_specs, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 13) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  row_spec(1:6, background = "#111122", color = "#e4e4ec") |>
+  row_spec(6, bold = TRUE, background = "#1a2a1a", color = "#22c55e") |>
+  column_spec(1, bold = TRUE, color = "#f59e0b")
+```
+
+## 기술 진화 타임라인
+
+```{r}
+#| label: fig-timeline
+#| fig-cap: "HBM 세대별 기술 진화 타임라인 (2013–2026)"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+timeline <- data.frame(
+  gen = factor(c("HBM1", "HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4"),
+               levels = c("HBM1", "HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4")),
+  year_start = c(2013, 2016, 2018, 2022, 2024, 2025),
+  year_prod = c(2015, 2016, 2019, 2022, 2024, 2026),
+  bw = c(128, 256, 460, 819, 1229, 2000),
+  layers = c(4, 8, 12, 16, 12, 16),
+  key_product = c("AMD Fiji", "NVIDIA V100", "NVIDIA A100", "NVIDIA H100", "NVIDIA B200", "NVIDIA Rubin")
+)
+
+ggplot(timeline, aes(x = year_prod, y = bw)) +
+  geom_segment(aes(xend = year_prod, y = 0, yend = bw),
+               color = c_amber, linewidth = 1.2, alpha = 0.6) +
+  geom_point(aes(size = layers), color = c_amber, alpha = 0.9) +
+  geom_text(aes(label = gen), color = c_text, vjust = -2.5,
+            family = kfont, fontface = "bold", size = 4.5) +
+  geom_text(aes(label = paste0(bw, " GB/s")), color = c_cyan, vjust = -1,
+            family = kfont, size = 3.5) +
+  geom_text(aes(label = key_product), color = c_gray, vjust = 2.5,
+            family = kfont, size = 3, fontface = "italic") +
+  scale_size_continuous(range = c(5, 14), name = "적층 수 (Hi)") +
+  scale_x_continuous(breaks = 2013:2026) +
+  scale_y_continuous(labels = comma_format()) +
+  labs(
+    title = "HBM 세대별 대역폭 진화",
+    subtitle = "2013년 128 GB/s → 2026년 2,000 GB/s, 15배 이상 증가",
+    x = "양산 시작 연도", y = "대역폭 (GB/s)",
+    caption = "Source: JEDEC, SK Hynix, Samsung, Micron IR | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+## 주요 GPU/가속기별 HBM 탑재 현황
+
+```{r}
+#| label: fig-gpu-hbm
+#| fig-cap: "주요 AI 가속기별 HBM 탑재 용량과 대역폭"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+gpu_data <- data.frame(
+  product = factor(c("V100", "A100\n(40GB)", "A100\n(80GB)", "H100\n(SXM)", "H200", "B200", "MI300X", "MI325X"),
+                   levels = c("V100", "A100\n(40GB)", "A100\n(80GB)", "H100\n(SXM)", "H200", "B200", "MI300X", "MI325X")),
+  vendor = c("NVIDIA", "NVIDIA", "NVIDIA", "NVIDIA", "NVIDIA", "NVIDIA", "AMD", "AMD"),
+  capacity_gb = c(16, 40, 80, 80, 141, 180, 192, 256),
+  bw_gbs = c(900, 1555, 2039, 3352, 4800, 8000, 5300, 6000),
+  hbm_gen = c("HBM2", "HBM2E", "HBM2E", "HBM3", "HBM3E", "HBM3E", "HBM3", "HBM3E")
+)
+
+ggplot(gpu_data, aes(x = product)) +
+  geom_col(aes(y = capacity_gb, fill = "HBM 용량 (GB)"),
+           alpha = 0.85, width = 0.5) +
+  geom_line(aes(y = bw_gbs / 50, group = 1, color = "총 대역폭 (GB/s)"),
+            linewidth = 1.5) +
+  geom_point(aes(y = bw_gbs / 50, color = "총 대역폭 (GB/s)"), size = 3) +
+  geom_text(aes(y = capacity_gb, label = paste0(capacity_gb, "GB")),
+            vjust = -0.5, color = c_text, family = kfont, size = 3) +
+  scale_fill_manual(values = c("HBM 용량 (GB)" = c_blue)) +
+  scale_color_manual(values = c("총 대역폭 (GB/s)" = c_amber)) +
+  scale_y_continuous(
+    name = "HBM 용량 (GB)",
+    sec.axis = sec_axis(~ . * 50, name = "총 대역폭 (GB/s)",
+                        labels = comma_format())
+  ) +
+  labs(
+    title = "AI 가속기별 HBM 용량 & 대역폭 비교",
+    subtitle = "NVIDIA B200: 180GB HBM3E, 총 8 TB/s 대역폭",
+    x = NULL, fill = NULL, color = NULL,
+    caption = "Source: NVIDIA, AMD IR | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter() +
+  theme(legend.position = "top")
+```
+
+# TSV (Through-Silicon Via) 기술
+
+## TSV란 무엇인가
+
+TSV(Through-Silicon Via)는 실리콘 다이를 **수직으로 관통하는 미세 구멍**에 구리(Cu)를 채워넣어 상하 다이를 전기적으로 연결하는 기술이다. HBM의 핵심 혁신으로, 기존 와이어 본딩 대비:
+
+- **전기 경로 단축**: 수 mm → 수십 μm, 지연시간 대폭 감소
+- **병렬 연결**: 수천 개의 TSV로 1,024~2,048비트 동시 데이터 전송
+- **전력 효율**: 짧은 경로로 기생 커패시턴스 감소, 저전압 동작 가능
+
+::: {.callout-note}
+## TSV 핵심 수치
+- HBM2 기준 **다이당 5,000개 이상**의 TSV 관통
+- TSV 직경: 5~10 μm, 종횡비(Aspect Ratio) 10:1~20:1
+- HBM4에서는 TSV 수가 **수만 개**로 증가 (2,048비트 I/O)
+:::
+
+## 다이 두께 미세화 트렌드
+
+```{r}
+#| label: fig-die-thickness
+#| fig-cap: "HBM 세대별 다이 두께 및 범프 피치 미세화"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+tsv_data <- data.frame(
+  gen = factor(c("HBM1", "HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4"),
+               levels = c("HBM1", "HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4")),
+  die_um = c(75, 55, 50, 45, 40, 30),
+  bump_um = c(55, 40, 36, 36, 30, 10)
+)
+
+tsv_long <- tsv_data |>
+  pivot_longer(cols = c(die_um, bump_um), names_to = "metric", values_to = "value") |>
+  mutate(metric = ifelse(metric == "die_um", "다이 두께 (μm)", "범프 피치 (μm)"))
+
+ggplot(tsv_long, aes(x = gen, y = value, fill = metric)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = paste0(value, " μm")),
+            position = position_dodge(width = 0.7), vjust = -0.5,
+            color = c_text, family = kfont, size = 3.5) +
+  scale_fill_manual(values = c("다이 두께 (μm)" = c_blue, "범프 피치 (μm)" = c_amber)) +
+  labs(
+    title = "HBM 다이 두께 & 범프 피치 미세화 추이",
+    subtitle = "HBM4: 다이 30μm 박화, 범프 피치 10μm — 하이브리드 본딩 전환점",
+    x = NULL, y = "μm", fill = NULL,
+    caption = "Source: JEDEC, SK Hynix, Samsung, Micron 발표 자료 | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter()
+```
+
+# 본딩 기술: MR-MUF vs TC-NCF vs 하이브리드
+
+## 세 가지 본딩 방식 비교
+
+HBM 적층에서 다이를 물리적·전기적으로 접합하는 **본딩(Bonding)** 기술은 수율, 열방출, 비용을 좌우하는 핵심 공정이다.
+
+```{r}
+#| label: tbl-bonding
+#| tbl-cap: "HBM 본딩 기술 비교: MR-MUF vs TC-NCF vs 하이브리드"
+
+bonding <- data.frame(
+  항목 = c("방식", "주요 사용사", "수율", "열방출", "미세 피치 대응", "HBM4 적용", "장비 공급사"),
+  `MR_MUF` = c("대량 리플로우 + 몰디드 언더필",
+               "SK하이닉스 (독자 기술)",
+               "★★★★★ (TC-NCF 대비 ~20% 높음)",
+               "★★★★ (우수)",
+               "★★★ (30μm까지 검증)",
+               "HBM4 12-Hi 메인 공정",
+               "PSK홀딩스 (리플로우)"),
+  `TC_NCF` = c("열압착 + 비전도성 필름",
+               "삼성, 마이크론",
+               "★★★ (상대적 낮음)",
+               "★★★ (NCF 열전도율 한계)",
+               "★★★ (40μm 검증)",
+               "삼성 일부 사용 예정",
+               "한미반도체, ASMPT, 한화세미텍"),
+  `하이브리드` = c("Cu-to-Cu 직접 접합 (범프리스)",
+                 "차세대 (삼성 HBM4 채택 예정)",
+                 "★★★★ (공정 안정화 진행중)",
+                 "★★★★★ (금속 직접 접촉, 최우수)",
+                 "★★★★★ (10μm 이하 가능)",
+                 "16-Hi 이상 필수 기술",
+                 "BESI (Kinex), ASMPT")
+)
+
+names(bonding) <- c("항목", "MR-MUF", "TC-NCF", "하이브리드 본딩")
+
+kable(bonding, align = "l") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  row_spec(1:7, background = "#111122", color = "#e4e4ec") |>
+  column_spec(1, bold = TRUE, color = "#f59e0b", width = "12%") |>
+  column_spec(2, background = "#1a2a1a") |>
+  column_spec(4, background = "#1a1a2e", color = "#06b6d4")
+```
+
+::: {.callout-important}
+## 본딩 기술의 투자 시사점
+SK하이닉스의 **MR-MUF**는 현재 HBM 시장 지배의 핵심 무기다. 수율에서 TC-NCF 대비 약 20% 우위를 점하며, 이것이 50% 이상 시장 점유율의 기술적 기반이다. 그러나 **하이브리드 본딩**이 16-Hi 이상 적층에서 필수 기술로 부상하면서, BESI(장비), 삼성(조기 채택) 등이 새로운 수혜주로 떠오르고 있다.
+:::
+
+## SK하이닉스 MR-MUF 우위의 원천
+
+```{r}
+#| label: fig-yield-comparison
+#| fig-cap: "본딩 방식별 적층 수에 따른 예상 수율 비교"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+yield_data <- data.frame(
+  layers = rep(c(4, 8, 12, 16), 3),
+  method = rep(c("MR-MUF (SK하이닉스)", "TC-NCF (삼성/마이크론)", "하이브리드 본딩 (차세대)"), each = 4),
+  yield = c(
+    98, 93, 85, 72,
+    95, 82, 68, 50,
+    96, 90, 82, 75
+  )
+)
+
+yield_data$method <- factor(yield_data$method,
+                            levels = c("MR-MUF (SK하이닉스)", "TC-NCF (삼성/마이크론)", "하이브리드 본딩 (차세대)"))
+
+ggplot(yield_data, aes(x = factor(layers), y = yield, fill = method)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.85) +
+  geom_text(aes(label = paste0(yield, "%")),
+            position = position_dodge(width = 0.8), vjust = -0.5,
+            color = c_text, family = kfont, size = 3.2) +
+  scale_fill_manual(values = c(c_green, c_red, c_cyan)) +
+  scale_y_continuous(limits = c(0, 105), labels = function(x) paste0(x, "%")) +
+  labs(
+    title = "본딩 방식별 적층 수율 비교 (추정치)",
+    subtitle = "MR-MUF가 16-Hi에서도 70%+ 수율 유지 — SK하이닉스의 기술적 해자",
+    x = "적층 수 (Hi)", y = "수율 (%)", fill = NULL,
+    caption = "Note: 업계 발표 및 추정 기반, 실제 수율은 미공개 | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter()
+```
+
+# 열설계: HBM의 가장 뜨거운 도전
+
+## 전력과 열의 벽
+
+HBM 적층이 높아질수록 **열 문제**가 급격히 심각해진다. 16층 적층 시 중간 다이의 열이 빠져나갈 경로가 극히 제한되며, 정션 온도가 85°C를 초과하면 성능 저하(throttling)가 발생한다.
+
+```{r}
+#| label: fig-thermal
+#| fig-cap: "HBM 세대별 전력 소모 및 에너지 효율 변화"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+thermal_data <- data.frame(
+  gen = factor(c("HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4"),
+               levels = c("HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4")),
+  power_w = c(12, 16, 22, 28, 42),
+  efficiency_pjbit = c(8.5, 6.25, 5.0, 4.05, 2.5)
+)
+
+p1 <- ggplot(thermal_data) +
+  geom_col(aes(x = gen, y = power_w, fill = "스택당 전력 (W)"),
+           width = 0.5, alpha = 0.85) +
+  geom_line(aes(x = gen, y = efficiency_pjbit * 5, group = 1, color = "에너지 효율 (pJ/bit)"),
+            linewidth = 1.5) +
+  geom_point(aes(x = gen, y = efficiency_pjbit * 5, color = "에너지 효율 (pJ/bit)"), size = 4) +
+  geom_text(aes(x = gen, y = power_w, label = paste0(power_w, "W")),
+            vjust = -0.5, color = c_text, family = kfont, size = 3.5) +
+  geom_text(aes(x = gen, y = efficiency_pjbit * 5, label = paste0(efficiency_pjbit, " pJ/bit")),
+            vjust = -1.5, color = c_amber, family = kfont, size = 3) +
+  scale_fill_manual(values = c("스택당 전력 (W)" = c_red)) +
+  scale_color_manual(values = c("에너지 효율 (pJ/bit)" = c_amber)) +
+  scale_y_continuous(
+    name = "스택당 전력 소모 (W)",
+    sec.axis = sec_axis(~ . / 5, name = "에너지 효율 (pJ/bit)")
+  ) +
+  labs(
+    title = "HBM 세대별 전력 vs 에너지 효율",
+    subtitle = "절대 전력은 3.5배 증가하지만, 비트당 효율은 70% 개선",
+    x = NULL, fill = NULL, color = NULL,
+    caption = "Source: SK Hynix, Micron, 업계 추정 | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter() +
+  theme(legend.position = "top")
+
+print(p1)
+```
+
+## 열관리 솔루션 기술 구조
+
+::: {.callout-warning}
+## 16-Hi 적층의 열 장벽
+HBM4의 16층 적층은 **다이 두께 30μm** × 16 = 총 480μm의 실리콘 탑에서 42W 이상의 열을 방출해야 한다. 중간 다이의 열이 위아래 양쪽으로만 전도되며, 언더필(polymer)의 낮은 열전도율(0.3~0.5 W/mK)이 병목이다.
+:::
+
+**현재 개발 중인 열관리 기술:**
+
+1. **Thermal TSV**: 전기적으로 비활성이지만 열 전도용으로 배치되는 구리 기둥. 신호 TSV 사이에 배치하여 수직 열 경로를 확보
+2. **고열전도 TIM**: 5 W/mK 이상의 Thermal Interface Material로 다이 간 열 저항 감소
+3. **All-around Power TSV**: HBM3E에서 도입된 기술로, TSV 수를 6배 증가시켜 IR Drop 75% 감소
+4. **마이크로유체 냉각**: 칩 내부에 미세 채널을 가공해 냉각수를 순환시키는 연구 단계 기술
+5. **하이브리드 본딩**: Cu-to-Cu 직접 접촉으로 언더필 열저항을 근본적으로 제거
+
+# HBM4: 패러다임 전환
+
+## 분리 다이(Split-Die) 아키텍처
+
+HBM4는 HBM 역사상 가장 큰 아키텍처 변화를 가져온다: **베이스 다이(Logic Die)**와 **DRAM 다이의 공정 분리**다.
+
+```{r}
+#| label: fig-hbm4-arch
+#| fig-cap: "HBM3E vs HBM4 아키텍처 비교 — I/O 폭 및 채널 수"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+arch_data <- data.frame(
+  metric = factor(rep(c("I/O 폭 (bit)", "채널 수", "최대 용량 (GB)", "최대 대역폭\n(×100 GB/s)"), 2),
+                  levels = c("I/O 폭 (bit)", "채널 수", "최대 용량 (GB)", "최대 대역폭\n(×100 GB/s)")),
+  gen = rep(c("HBM3E", "HBM4"), each = 4),
+  value = c(1024, 16, 36, 12.29, 2048, 32, 64, 20.00)
+)
+
+ggplot(arch_data, aes(x = metric, y = value, fill = gen)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = ifelse(value >= 100, comma(value), value)),
+            position = position_dodge(width = 0.7), vjust = -0.5,
+            color = c_text, family = kfont, size = 3.5) +
+  scale_fill_manual(values = c("HBM3E" = c_blue, "HBM4" = c_green)) +
+  labs(
+    title = "HBM3E vs HBM4 핵심 스펙 비교",
+    subtitle = "HBM4: I/O 폭 2배, 채널 수 2배, 용량 1.8배 — 역대 최대 스펙 점프",
+    x = NULL, y = "값", fill = NULL,
+    caption = "Source: JEDEC, SK Hynix CES 2026 | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter()
+```
+
+### HBM4의 핵심 혁신
+
+| 혁신 포인트 | 상세 내용 |
+|:---|:---|
+| **베이스 다이 로직 공정 분리** | DRAM 다이는 기존 DRAM 공정, 베이스 다이는 TSMC 12nm 로직 공정으로 제조. 최초의 이종 공정 HBM |
+| **I/O 폭 2배 확장** | 1,024비트 → 2,048비트, 채널 수 16개 → 32개 |
+| **커스터마이징 가능** | 베이스 다이의 컨트롤 로직을 AI 워크로드에 맞춤 설계 가능 |
+| **NVIDIA Rubin 플랫폼 최초 탑재** | TSMC N3P 공정 기반 차세대 GPU와 최초 통합 |
+
+## HBM4 제조 파트너십
+
+```{r}
+#| label: fig-partnership
+#| fig-cap: "HBM4 제조 생태계: 주요 업체별 역할"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+partner_data <- data.frame(
+  company = c("SK하이닉스", "삼성전자", "마이크론", "TSMC", "BESI", "ASMPT",
+              "한미반도체", "PSK홀딩스", "ISC"),
+  role = c("HBM4 DRAM 다이\n양산 + MR-MUF", "HBM4 DRAM 다이\n양산 + 하이브리드",
+           "HBM4 DRAM 다이\n양산 + TC-NCF", "HBM4 베이스 다이\n12nm 로직 위탁",
+           "하이브리드 본더\n(Kinex)", "TC 본더\n+ 하이브리드",
+           "TC 본더\n(기존 주력)", "리플로우 장비\n(MR-MUF 핵심)", "HBM 테스트\n소켓"),
+  category = c("DRAM 제조", "DRAM 제조", "DRAM 제조", "로직 위탁",
+               "장비", "장비", "장비", "장비", "장비"),
+  importance = c(10, 7, 6, 9, 8, 7, 5, 7, 6),
+  market_share = c(57, 22, 21, 100, 50, 30, 15, 70, 65)
+)
+
+ggplot(partner_data, aes(x = reorder(company, importance), y = importance)) +
+  geom_segment(aes(xend = company, y = 0, yend = importance, color = category),
+               linewidth = 2.5, alpha = 0.7) +
+  geom_point(aes(size = market_share, color = category), alpha = 0.9) +
+  geom_text(aes(label = role), hjust = -0.1, color = c_gray,
+            family = kfont, size = 2.8, lineheight = 0.9) +
+  coord_flip() +
+  scale_color_manual(values = c("DRAM 제조" = c_amber, "로직 위탁" = c_green, "장비" = c_cyan)) +
+  scale_size_continuous(range = c(4, 12), name = "시장 점유율 (%)") +
+  labs(
+    title = "HBM4 제조 생태계 파트너십 맵",
+    subtitle = "SK하이닉스 + TSMC 동맹 vs 삼성 수직 통합 — 장비사도 재편",
+    x = NULL, y = "HBM4 핵심도 (10점 만점)", color = "구분",
+    caption = "Source: 업계 발표, TrendForce | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter() +
+  theme(
+    legend.position = "right",
+    plot.margin = margin(10, 80, 10, 12)
+  )
+```
+
+# HBM 시장 규모와 경쟁 구도
+
+## 시장 성장 전망
+
+```{r}
+#| label: fig-market-size
+#| fig-cap: "글로벌 HBM 시장 규모 추이 및 전망 (2020–2030)"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+market_data <- data.frame(
+  year = 2020:2030,
+  size_b = c(0.8, 1.2, 1.8, 3.0, 10.0, 25.0, 38.0, 50.0, 62.0, 78.0, 100.0),
+  type = c(rep("실적", 5), rep("전망", 6))
+)
+
+ggplot(market_data, aes(x = year, y = size_b)) +
+  geom_area(fill = c_amber, alpha = 0.15) +
+  geom_col(aes(fill = type), width = 0.6, alpha = 0.8) +
+  geom_text(aes(label = paste0("$", size_b, "B")), vjust = -0.5,
+            color = c_text, family = kfont, size = 3.2) +
+  scale_fill_manual(values = c("실적" = c_amber, "전망" = c_cyan)) +
+  scale_x_continuous(breaks = 2020:2030) +
+  scale_y_continuous(labels = dollar_format(suffix = "B")) +
+  annotate("text", x = 2024, y = 50, label = "AI 빅뱅\n(ChatGPT 이후)",
+           color = c_red, family = kfont, size = 3.5, fontface = "bold") +
+  annotate("segment", x = 2024, xend = 2024, y = 45, yend = 12,
+           arrow = arrow(length = unit(0.2, "cm")), color = c_red) +
+  labs(
+    title = "글로벌 HBM 시장 규모 (2020–2030)",
+    subtitle = "2023년 $3B → 2030년 $100B 전망, CAGR 65%+ — AI가 촉발한 초성장",
+    x = NULL, y = "시장 규모 (USD)", fill = NULL,
+    caption = "Source: TrendForce, Bloomberg, Precedence Research 종합 | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## 시장 점유율 변화
+
+```{r}
+#| label: fig-market-share
+#| fig-cap: "HBM 제조사별 시장 점유율 변화 (2023–2025)"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+share_data <- data.frame(
+  year = rep(c("2023", "2024", "2025 H1"), each = 3),
+  company = rep(c("SK하이닉스", "삼성전자", "마이크론"), 3),
+  share = c(
+    53, 40, 7,
+    54, 39, 7,
+    62, 17, 21
+  )
+)
+
+share_data$company <- factor(share_data$company, levels = c("SK하이닉스", "삼성전자", "마이크론"))
+share_data$year <- factor(share_data$year, levels = c("2023", "2024", "2025 H1"))
+
+ggplot(share_data, aes(x = year, y = share, fill = company)) +
+  geom_col(position = "stack", width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = paste0(share, "%")),
+            position = position_stack(vjust = 0.5),
+            color = "#ffffff", family = kfont, size = 4, fontface = "bold") +
+  scale_fill_manual(values = c("SK하이닉스" = c_green, "삼성전자" = c_blue, "마이크론" = c_amber)) +
+  labs(
+    title = "HBM 시장 점유율 변화",
+    subtitle = "2025년 대역변: 마이크론이 삼성을 제치고 2위 등극 (21% vs 17%)",
+    x = NULL, y = "점유율 (%)", fill = NULL,
+    caption = "Source: TrendForce, 2025 H1 | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter()
+```
+
+::: {.callout-caution}
+## 2025년 대역변: 마이크론의 역습
+2025년 상반기 기준 마이크론(21%)이 삼성(17%)을 제치고 HBM 시장 2위로 부상했다. 마이크론은 HBM3E 12-Hi에서 "경쟁사 대비 30% 낮은 전력"을 무기로 NVIDIA 대량 수주에 성공했다. 삼성은 TC-NCF 수율 문제로 HBM3E 양산이 지연되며 점유율이 급락했다.
+:::
+
+# 한국 HBM 밸류체인 수혜주
+
+## 핵심 수혜 기업 분석
+
+```{r}
+#| label: tbl-korean-supply
+#| tbl-cap: "한국 HBM 밸류체인 핵심 기업"
+
+kor_supply <- data.frame(
+  종목 = c("SK하이닉스 (000660)", "한미반도체 (093240)", "PSK홀딩스 (031980)", "ISC (095340)", "우닉IPS (240810)"),
+  포지션 = c("HBM DRAM 제조 1위", "TC 본더 장비", "리플로우 장비", "HBM 테스트 소켓", "증착/식각 장비"),
+  `HBM관련성` = c("★★★★★ 직접 제조", "★★★★ SK하이닉스 독점 공급→ASMPT 경쟁",
+                 "★★★★★ MR-MUF 리플로우 3사 모두 공급",
+                 "★★★★ HBM 검증용 테스트 소켓", "★★★ 간접 수혜"),
+  `핵심강점` = c("MR-MUF 독자 기술, 62% M/S", "TC 본더 원조, 가격 경쟁력",
+               "유일하게 SK/삼성/마이크론 3사 동시 납품",
+               "미세 피치 테스트 소켓 기술", "DRAM 증착 장비 내재화"),
+  `리스크` = c("DRAM 사이클, 중국 규제", "ASMPT에 SK하이닉스 물량 이탈",
+             "HBM 시장 성장 둔화 시 장비 투자 감소",
+             "HBM 검증 빈도 변동", "범용 장비 경쟁 심화")
+)
+
+kable(kor_supply, align = "l") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  row_spec(1:5, background = "#111122", color = "#e4e4ec") |>
+  column_spec(1, bold = TRUE, color = "#f59e0b", width = "18%") |>
+  row_spec(3, background = "#1a2a1a")
+```
+
+::: {.callout-tip}
+## 투자 포인트: PSK홀딩스에 주목
+**PSK홀딩스**는 HBM 리플로우 장비 분야에서 **SK하이닉스, 삼성, 마이크론 3사 모두에 납품**하는 유일한 한국 장비사다. MR-MUF 공정의 핵심인 리플로우 장비를 독점적으로 공급하며, HBM 시장 성장이 곧 PSK의 성장으로 직결된다. 2030년 매출 1조 원 목표를 제시했다.
+:::
+
+## 장비 시장 규모 전망
+
+```{r}
+#| label: fig-equipment-market
+#| fig-cap: "HBM 관련 장비 시장 규모 전망 (2024–2028)"
+#| fig-width: 10
+#| fig-height: 5.5
+#| lightbox: true
+
+equip_data <- data.frame(
+  segment = factor(c("TC/하이브리드\n본더", "웨이퍼\n그라인딩", "리플로우\n장비", "테스트\n소켓/핸들러"),
+                   levels = c("TC/하이브리드\n본더", "웨이퍼\n그라인딩", "리플로우\n장비", "테스트\n소켓/핸들러")),
+  size_2024 = c(800, 450, 200, 350),
+  size_2028 = c(2200, 850, 550, 650),
+  cagr = c(29, 17, 29, 17)
+)
+
+equip_long <- equip_data |>
+  select(segment, size_2024, size_2028) |>
+  pivot_longer(cols = c(size_2024, size_2028), names_to = "year", values_to = "size") |>
+  mutate(year = ifelse(year == "size_2024", "2024", "2028"))
+
+ggplot(equip_long, aes(x = segment, y = size, fill = year)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = paste0("$", size, "M")),
+            position = position_dodge(width = 0.7), vjust = -0.5,
+            color = c_text, family = kfont, size = 3.5) +
+  scale_fill_manual(values = c("2024" = c_blue, "2028" = c_green)) +
+  scale_y_continuous(labels = dollar_format(suffix = "M")) +
+  labs(
+    title = "HBM 관련 장비 시장 규모 전망",
+    subtitle = "하이브리드 본더 시장 CAGR 29% — 2028년 $2.2B 돌파 전망",
+    x = NULL, y = "시장 규모 (USD)", fill = NULL,
+    caption = "Source: TrendForce, BESI IR | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter()
+```
+
+# CoWoS 패키징과 HBM의 통합
+
+## CoWoS: AI 칩의 지붕
+
+HBM이 메모리의 "수직 고속도로"라면, **CoWoS(Chip-on-Wafer-on-Substrate)**는 GPU와 HBM을 **수평으로 연결하는 플랫폼**이다. TSMC가 독점 공급하는 이 기술 없이는 HBM을 GPU에 통합할 수 없다.
+
+```{r}
+#| label: fig-cowos-capacity
+#| fig-cap: "TSMC CoWoS 월간 생산 능력 확장 추이"
+#| fig-width: 10
+#| fig-height: 5
+#| lightbox: true
+
+cowos_data <- data.frame(
+  period = factor(c("2023 말", "2024 말", "2025 말", "2026 말"),
+                  levels = c("2023 말", "2024 말", "2025 말", "2026 말")),
+  capacity_k = c(15, 40, 75, 130),
+  growth = c(NA, 167, 88, 73)
+)
+
+ggplot(cowos_data, aes(x = period, y = capacity_k)) +
+  geom_col(fill = c_purple, alpha = 0.8, width = 0.5) +
+  geom_text(aes(label = paste0(capacity_k, "K\n웨이퍼/월")),
+            vjust = -0.3, color = c_text, family = kfont, size = 4, fontface = "bold") +
+  geom_text(aes(label = ifelse(is.na(growth), "", paste0("+", growth, "%"))),
+            vjust = 1.5, color = c_green, family = kfont, size = 3.5) +
+  scale_y_continuous(limits = c(0, 150)) +
+  labs(
+    title = "TSMC CoWoS 생산 능력 확장 로드맵",
+    subtitle = "2023년 15K → 2026년 130K 웨이퍼/월 — 3년 만에 8.7배 확장",
+    x = NULL, y = "월간 생산 능력 (천 웨이퍼)",
+    caption = "Source: TSMC, TrendForce | Alpha Hunter Tech Deep Dive"
+  ) +
+  theme_hunter()
+```
+
+::: {.callout-note}
+## CoWoS 로드맵 — 더 커지는 인터포저
+- **현재 (CoWoS-S/R)**: 5.5 레티클 크기, HBM 6~8 스택 통합
+- **2027 (CoWoS-L)**: 9.5 레티클, **HBM5 12 스택** 수용
+- **2028**: 14 레티클, HBM5 **20 스택** 통합 가능
+- CoWoS 기판 핵심 공급사: **Ibiden, Shinko Electric** (일본)
+:::
+
+# 기술 구조도: HBM 스택의 단면
+
+## HBM 적층 구조 개요
+
+```
+┌─────────────────────────────────────────────────┐
+│                   Heat Spreader                  │  ← 열 방출판
+├─────────────────────────────────────────────────┤
+│     DRAM Die #16 (30μm)  ─── Core Die           │  ← 최상단 다이
+│  ░░░░░░░░░ Micro-bump / Hybrid Bond ░░░░░░░░░░  │
+│     DRAM Die #15 (30μm)                          │
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+│              ⋮  (반복)  ⋮                        │
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+│     DRAM Die #2 (30μm)                           │
+│  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
+│     DRAM Die #1 (30μm)                           │
+│  ████████████████████████████████████████████████│  ← TSV 관통
+│     Base Die (Logic) — TSMC 12nm                 │  ← HBM4 혁신: 로직 다이 분리
+├─────────────────────────────────────────────────┤
+│          Silicon Interposer (CoWoS)              │  ← GPU와 연결
+│     │         │          │         │             │
+│   [GPU]    [HBM#1]    [HBM#2]   [HBM#N]         │
+├─────────────────────────────────────────────────┤
+│              Organic Substrate                   │
+└─────────────────────────────────────────────────┘
+```
+
+**핵심 요소 설명:**
+
+- **DRAM Die**: 24Gb~32Gb 용량의 DRAM 칩. HBM4에서 30μm까지 박화
+- **TSV (Through-Silicon Via)**: 각 다이를 수직 관통하는 Cu 전극, 다이당 5,000~수만 개
+- **Micro-bump / 하이브리드 본드**: 다이 간 접합. 30μm 피치(HBM3E) → 10μm(HBM4)
+- **Base Die**: HBM4에서 분리된 로직 다이. TSMC 12nm 공정, 제어 회로 내장
+- **Silicon Interposer**: GPU와 HBM을 연결하는 2.5D 실리콘 기판 (CoWoS)
+- **Underfill**: 다이 사이를 채우는 수지. MR-MUF(몰디드 언더필) vs NCF(비전도성 필름)
+
+# 투자 시사점
+
+## 섹터별 수혜 등급
+
+```{r}
+#| label: fig-beneficiary
+#| fig-cap: "HBM 기술 진화에 따른 밸류체인별 수혜 강도"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+beneficiary <- data.frame(
+  company = c("SK하이닉스", "TSMC", "NVIDIA", "BESI", "마이크론",
+              "PSK홀딩스", "삼성전자", "ISC", "한미반도체", "ASMPT"),
+  benefit_score = c(10, 9.5, 9, 8.5, 8, 7.5, 6.5, 7, 5, 7.5),
+  risk_score = c(3, 2, 2.5, 4, 4, 5, 5.5, 5, 7, 4),
+  category = c("DRAM 제조", "패키징", "수요(GPU)", "장비", "DRAM 제조",
+               "장비", "DRAM 제조", "장비", "장비", "장비"),
+  note = c("M/S 62%\nMR-MUF", "CoWoS 독점\n130K/월", "AI 수요\n독점",
+           "하이브리드 본더\n1위", "전력 효율\n30% 우위",
+           "리플로우 3사\n모두 납품", "점유율 하락\n17%→?", "테스트 소켓\n미세피치",
+           "ASMPT 경쟁\n점유율 위험", "TC본더\nSK향 수주")
+)
+
+ggplot(beneficiary, aes(x = risk_score, y = benefit_score)) +
+  geom_point(aes(color = category, size = benefit_score), alpha = 0.85) +
+  geom_text(aes(label = company), vjust = -1.3, color = c_text,
+            family = kfont, size = 3.5, fontface = "bold") +
+  geom_text(aes(label = note), vjust = 1.8, color = c_gray,
+            family = kfont, size = 2.5, lineheight = 0.9) +
+  geom_hline(yintercept = 7.5, linetype = "dashed", color = c_amber, alpha = 0.5) +
+  geom_vline(xintercept = 4.5, linetype = "dashed", color = c_red, alpha = 0.5) +
+  annotate("text", x = 2.5, y = 10.2, label = "고수혜 · 저리스크\n(최선호)",
+           color = c_green, family = kfont, size = 3.5, fontface = "bold") +
+  annotate("text", x = 6, y = 10.2, label = "고수혜 · 고리스크",
+           color = c_amber, family = kfont, size = 3.5) +
+  annotate("text", x = 6, y = 5.5, label = "저수혜 · 고리스크\n(회피)",
+           color = c_red, family = kfont, size = 3.5, fontface = "bold") +
+  scale_color_manual(values = c("DRAM 제조" = c_amber, "패키징" = c_green,
+                                "수요(GPU)" = c_cyan, "장비" = c_purple)) +
+  scale_size_continuous(range = c(5, 14), guide = "none") +
+  scale_x_continuous(limits = c(1, 8)) +
+  scale_y_continuous(limits = c(4, 11)) +
+  labs(
+    title = "HBM 밸류체인 수혜-리스크 매트릭스",
+    subtitle = "좌상단(고수혜·저리스크) 기업이 최선호: SK하이닉스, TSMC, NVIDIA",
+    x = "리스크 수준 →", y = "수혜 강도 →", color = "구분",
+    caption = "Alpha Hunter Tech Deep Dive | 2026.05 기준 분석"
+  ) +
+  theme_hunter() +
+  theme(legend.position = "right")
+```
+
+## 핵심 투자 결론
+
+::: {.callout-tip}
+## Alpha Hunter 투자 시사점 5가지
+
+1. **SK하이닉스 (000660)**: HBM 시장 62% 점유, MR-MUF 기술 해자. 2025년 매출 97조 원, HBM 매출 2배 이상 성장. AI 수요 지속 시 **최우선 수혜주**
+
+2. **PSK홀딩스 (031980)**: HBM 리플로우 장비 유일한 3사 동시 납품사. HBM 시장 성장률 = PSK 성장률. 소형주 히든젬 후보
+
+3. **BESI (BESI.AS)**: 하이브리드 본딩 장비 시장의 절대 강자. HBM4 16-Hi 이상에서 하이브리드 본딩이 필수가 되면 **폭발적 성장** 전망
+
+4. **한미반도체 (093240)**: TC 본더 원조이나, ASMPT에 SK하이닉스 물량 이탈 리스크. 특허 분쟁 해소 여부가 관건. **고리스크·고리턴**
+
+5. **마이크론 (MU)**: 전력 효율 30% 우위로 삼성을 제치고 2위 등극. HBM4에서도 경쟁력 유지 시 **재평가 여지** 큼
+:::
+
+## 리스크 요인
+
+- **DRAM 사이클**: HBM도 결국 DRAM이다. 과잉 투자 → 가격 하락 사이클 위험
+- **Goldman Sachs 경고**: 2026년 HBM ASP 두 자릿수 하락 가능성 제기
+- **중국 제재**: NVIDIA의 중국向 HBM 탑재 제품 수출 규제 강화 시 수요 감소
+- **기술 전환 리스크**: 하이브리드 본딩 전환 과정에서 기존 MR-MUF/TC-NCF 장비사의 위상 변동
+
+---
+
+::: {.callout-note}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+
+**참고 자료**: JEDEC HBM 표준, SK Hynix / Samsung / Micron IR 자료, TrendForce, Bloomberg, Precedence Research, SemiEngineering, PatSnap, IEEE IEDM 2025, BESI IR
+:::
