@@ -1,0 +1,560 @@
+---
+title: "중국 히든젬 스크리닝 보고서 — Week 20"
+subtitle: "Alpha Hunter Hidden Gem Week 20 — 이번 주 조건 충족 종목 없음 (SEPA + 펀더멘탈 동시 통과 0건)"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-15"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+library(jsonlite)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+
+data <- fromJSON("data/cn_w20_data.json")
+```
+
+# 스크리닝 결론 {.unnumbered}
+
+::: {.callout-important}
+## 이번 주 중국 히든젬: 조건 충족 종목 없음
+
+yfinance 기반 정량 스크리닝 결과, 홍콩/중국ADR 중 **SEPA 트렌드 템플릿 전 조건 + 펀더멘탈 필터**를 동시에 통과하는 종목이 없습니다. Alpha Hunter는 조건을 완화하여 억지로 종목을 선정하지 않습니다.
+:::
+
+| 항목 | 내용 |
+|:---|:---|
+| **대상 시장** | 홍콩 상장 + 미국 ADR (중국 기업) |
+| **스크리닝 기준** | 매출성장 >20% · OPM >15% · 시총 $2B~$30B · SEPA 8/8 |
+| **스크리닝 일자** | 2026-05-15 |
+| **후보 스캔** | 40+ 종목 (EV/반도체/바이오/핀테크/소비재/교육) |
+| **매출성장 >20% 통과** | 8개 종목 |
+| **SEPA + 펀더멘탈 동시 통과** | **0개** |
+| **기존 추천 (W18~W19)** | FUTU ⚠️ 하락추세 · SIMO ✓ 상승지속 |
+
+# 스크리닝 프로세스
+
+## STEP 1: 유니버스 구성
+
+중국 ADR (NASDAQ/NYSE) + 홍콩 주요 상장 40+ 종목을 대상으로 yfinance 데이터를 수집했습니다.
+
+**섹터별 커버리지:**
+
+- 전기차(EV): NIO, XPEV, LI
+- 반도체: SIMO (기추천), GCT
+- 바이오/헬스케어: LEGN, ZLAB, BGNE
+- 핀테크: FUTU (기추천), TIGR, QFIN, FINV
+- 소비재: MNSO, YUMC, LKNCY, VIPS
+- 테크/클라우드: KC, BILI, TME, BEKE
+- 교육: TAL, EDU, GOTU
+- 기타: ZTO, YMM, WB, VNET
+
+## STEP 2: 정량 필터 결과
+
+```{r}
+#| label: screening-table
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+screening <- data.frame(
+  ticker = c("SIMO", "NIO", "LEGN", "FUTU", "XPEV", "MNSO", "TAL", "KC", "LKNCY"),
+  name = c("Silicon Motion", "NIO", "Legend Biotech", "Futu Holdings", "XPeng", "MINISO", "TAL Education", "Kingsoft Cloud", "Luckin Coffee"),
+  rev_g = c(105.5, 75.9, 56.4, 53.1, 38.2, 32.7, 31.5, 23.7, 35.3),
+  opm = c(15.3, 1.5, -16.3, 69.1, 0.1, 14.9, 9.0, -2.4, 6.0),
+  sepa = c(7, 6, 4, 2, 1, 0, 2, 6, 2),
+  status = c("W19 기추천", "OPM/ROE 미달", "적자+SEPA", "W18 기추천↓", "적자+SEPA", "SEPA 미달", "OPM 미달", "적자+SEPA근접", "OPM 미달")
+)
+
+screening$ticker <- factor(screening$ticker, levels = rev(screening$ticker))
+
+ggplot(screening, aes(x = rev_g, y = ticker)) +
+  geom_segment(aes(xend = 0, yend = ticker), color = "#2a2a4a", linewidth = 0.5) +
+  geom_point(aes(color = ifelse(sepa >= 6, c_green, ifelse(sepa >= 4, c_amber, c_red))),
+             size = 5) +
+  geom_text(aes(label = paste0(rev_g, "%")), hjust = -0.3,
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  geom_text(aes(label = paste0("OPM ", opm, "% | SEPA ", sepa, "/7"),
+                x = rev_g + 18),
+            color = "#aaaaaa", size = 3, family = kfont) +
+  geom_vline(xintercept = 20, linetype = "dashed", color = c_amber, alpha = 0.5) +
+  annotate("text", x = 20, y = 0.5, label = "20% 기준선",
+           color = c_amber, size = 3, family = kfont, hjust = -0.1) +
+  scale_color_identity() +
+  scale_x_continuous(limits = c(0, 150), labels = function(x) paste0(x, "%")) +
+  labs(title = "중국 히든젬 스크리닝 — 매출성장률 + SEPA 점수",
+       subtitle = "녹색: SEPA 6+/7 | 주황: 4-5/7 | 적색: 3이하",
+       x = "매출성장률 YoY", y = NULL,
+       caption = "데이터: yfinance | 2026-05-15 기준") +
+  theme_hunter() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+## STEP 3: SEPA 트렌드 템플릿 상세
+
+```{r}
+#| label: sepa-heatmap
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+# SEPA condition heatmap for top candidates
+sepa_data <- data.frame(
+  ticker = rep(c("KC", "NIO", "SIMO", "FUTU", "LEGN"), each = 7),
+  condition = rep(c("1.P>150&200", "2.150>200", "3.200상승", "4.50>150&200", "5.P>50", "6.30%>저점", "7.25%<고점"), 5),
+  pass = c(
+    # KC
+    TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # NIO
+    TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # SIMO (all pass)
+    TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # FUTU
+    FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE,
+    # LEGN
+    TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE
+  )
+)
+
+sepa_data$condition <- factor(sepa_data$condition,
+  levels = c("7.25%<고점", "6.30%>저점", "5.P>50", "4.50>150&200", "3.200상승", "2.150>200", "1.P>150&200"))
+sepa_data$ticker <- factor(sepa_data$ticker, levels = c("SIMO", "KC", "NIO", "LEGN", "FUTU"))
+
+ggplot(sepa_data, aes(x = ticker, y = condition, fill = pass)) +
+  geom_tile(color = "#1a1a2e", linewidth = 1) +
+  geom_text(aes(label = ifelse(pass, "✓", "✗")),
+            size = 5, family = kfont,
+            color = ifelse(sepa_data$pass, "#10b981", "#ef4444")) +
+  scale_fill_manual(values = c("TRUE" = "#1a3a2e", "FALSE" = "#3a1a1a"),
+                    labels = c("TRUE" = "통과", "FALSE" = "미달"),
+                    name = "SEPA") +
+  labs(title = "SEPA 트렌드 템플릿 — 종목별 조건 충족 히트맵",
+       subtitle = "8개 조건 전부 통과해야 Stage 2 진입 (RS 랭킹은 별도 확인)",
+       x = NULL, y = NULL,
+       caption = "SIMO: W19 기추천(통과) | KC·NIO: 조건2 미달 | FUTU: 하락추세") +
+  theme_hunter() +
+  theme(legend.position = "right",
+        panel.grid = element_blank())
+```
+
+::: {.callout-note}
+## 핵심 발견
+
+- **SIMO** (W19 기추천): 유일하게 SEPA 7/7 통과. 이미 W19 보고서에서 상세 분석 완료.
+- **KC (Kingsoft Cloud)**: 6/7로 가장 근접. 150일선($13.24)이 200일선($13.64)을 아직 돌파하지 못함 (조건 2 미달). 영업적자(-2.4%)도 해소 필요.
+- **NIO**: 6/7 SEPA이나 ROE -118.7%, OPM 1.5%로 펀더멘탈 심각한 미달.
+- **FUTU** (W18 기추천): 52주 고점 $175 대비 -19% 하락 중. SEPA 2/7로 Stage 4 진입 우려.
+:::
+
+# 가장 근접한 후보: KC (Kingsoft Cloud)
+
+```{r}
+#| label: kc-sepa-chart
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 7
+
+kc <- data[["KC"]]
+if (!is.null(kc) && !is.null(kc$prices)) {
+  prices_df <- kc$prices
+  prices_df$date <- as.Date(prices_df$date)
+  prices_df$close <- as.numeric(prices_df$close)
+  prices_df$sma50 <- as.numeric(prices_df$sma50)
+  prices_df$sma150 <- as.numeric(prices_df$sma150)
+  prices_df$sma200 <- as.numeric(prices_df$sma200)
+
+  ggplot(prices_df, aes(x = date)) +
+    geom_line(aes(y = close, color = "주가"), linewidth = 1) +
+    geom_line(aes(y = sma50, color = "50일선"), linewidth = 0.7, linetype = "solid", na.rm = TRUE) +
+    geom_line(aes(y = sma150, color = "150일선"), linewidth = 0.7, linetype = "dashed", na.rm = TRUE) +
+    geom_line(aes(y = sma200, color = "200일선"), linewidth = 0.7, linetype = "dotted", na.rm = TRUE) +
+    annotate("rect", xmin = max(prices_df$date) - 30, xmax = max(prices_df$date),
+             ymin = 12.5, ymax = 14.5, fill = c_amber, alpha = 0.1) +
+    annotate("text", x = max(prices_df$date) - 15, y = 13.5,
+             label = "150/200\n크로스오버\n임박 구간",
+             color = c_amber, size = 3, family = kfont) +
+    geom_hline(yintercept = kc$high52 * 0.75, linetype = "dotted", color = c_red, alpha = 0.5) +
+    geom_hline(yintercept = kc$low52 * 1.30, linetype = "dotted", color = c_green, alpha = 0.5) +
+    scale_color_manual(values = c("주가" = "#e4e4ec", "50일선" = c_cyan,
+                                  "150일선" = c_amber, "200일선" = c_purple),
+                       name = NULL) +
+    scale_x_date(date_labels = "%Y-%m", date_breaks = "2 months") +
+    labs(title = "KC (Kingsoft Cloud) — SEPA 트렌드 템플릿 차트",
+         subtitle = paste0("SEPA 6/7 | 조건 2 미달: 150일선($", kc$sma150, ") < 200일선($", kc$sma200, ") — 크로스오버 임박"),
+         x = NULL, y = "주가 (USD)",
+         caption = "⚠️ 추천 아님 — SEPA 미통과 + 영업적자 | 데이터: yfinance") +
+    theme_hunter()
+}
+```
+
+| 항목 | KC (Kingsoft Cloud) |
+|:---|:---|
+| **티커** | KC (NASDAQ) |
+| **업종** | 클라우드 컴퓨팅 / AI 인프라 |
+| **시총** | $5.1B |
+| **매출성장** | +23.7% YoY |
+| **영업이익률** | -2.4% (적자 축소 중) |
+| **ROE** | -12.7% |
+| **SEPA 점수** | 6/7 (조건2 미달) |
+| **미통과 사유** | 150SMA < 200SMA + 영업적자 |
+| **모니터링 포인트** | 150/200일선 골든크로스 임박 ($0.40 차이) |
+
+::: {.callout-warning}
+## KC 미추천 사유
+
+1. **SEPA 조건 2 미달**: 150일선($13.24) < 200일선($13.64). 다만 갭이 $0.40으로 매우 좁아 1~2주 내 크로스오버 가능성 있음.
+2. **영업적자**: OPM -2.4%. 클라우드 인프라 투자로 적자이나, 전년 대비 개선 추세.
+3. **ROE 음수**: -12.7%. 흑자 전환 전까지 투자 부적합.
+4. 향후 흑자 전환 + SEPA 크로스오버 확인 시 재검토 대상.
+:::
+
+# 중국 산업 트렌드 분석
+
+## 전기차 (EV)
+
+```{r}
+#| label: ev-comparison
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+ev_data <- data.frame(
+  company = c("NIO", "XPeng", "Li Auto", "BYD"),
+  rev_growth = c(75.9, 38.2, -35.0, -11.8),
+  opm = c(1.5, 0.1, -1.4, 6.5),
+  mcap_b = c(15.7, 15.4, 19.7, 95.0),
+  deliveries_q1 = c(42, 95, 93, 416),
+  stringsAsFactors = FALSE
+)
+
+ev_data$company <- factor(ev_data$company, levels = ev_data$company[order(ev_data$rev_growth)])
+
+ggplot(ev_data, aes(x = company, y = rev_growth, fill = ifelse(rev_growth > 0, c_green, c_red))) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = paste0(rev_growth, "%"),
+                y = ifelse(rev_growth > 0, rev_growth + 3, rev_growth - 3)),
+            color = "#e4e4ec", size = 4, family = kfont) +
+  geom_text(aes(label = paste0("OPM ", opm, "%"), y = 0),
+            color = c_amber, size = 3, family = kfont, vjust = -1) +
+  scale_fill_identity() +
+  geom_hline(yintercept = 20, linetype = "dashed", color = c_amber, alpha = 0.5) +
+  coord_flip() +
+  labs(title = "중국 EV 빅4 — Q1 2026 매출성장률 비교",
+       subtitle = "NIO +75.9% 성장 회복 vs Li Auto/BYD 역성장 | OPM 기준 전사 적자 수준",
+       x = NULL, y = "매출성장률 YoY (%)",
+       caption = "BYD는 시총 $95B으로 히든젬 범위 초과 | 데이터: yfinance") +
+  theme_hunter()
+```
+
+**EV 트렌드 요약:**
+
+- **NIO**: 4월 딜리버리 29,356대 (+22.8% YoY). ONVO 브랜드 확장으로 매출 +75.9% 급성장. 하지만 **ROE -118.7%**, 누적 적자 지속. 5/21 Q1 실적발표 예정.
+- **XPeng**: Mona M03 성공으로 판매 급증. 매출 +38.2%. 하지만 OPM 0.1%로 겨우 손익분기.
+- **Li Auto**: 경쟁 심화로 역성장 -35%. MEGA 모델 부진.
+- 중국 EV 시장은 가격 전쟁 지속. **마진 없는 성장**이 핵심 리스크.
+
+## 반도체
+
+```{r}
+#| label: semi-trend
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+semi_data <- data.frame(
+  category = c("NAND 컨트롤러\n(SIMO)", "AI 클라우드\n(KC)", "CAR-T\n(LEGN)", "디지털 브로커\n(FUTU)", "커피 체인\n(LKNCY)"),
+  opportunity = c(9, 7, 8, 6, 5),
+  risk = c(5, 7, 6, 9, 4),
+  sepa = c(7, 6, 4, 2, 2),
+  stringsAsFactors = FALSE
+)
+
+semi_data$category <- factor(semi_data$category, levels = semi_data$category)
+
+ggplot(semi_data, aes(x = risk, y = opportunity)) +
+  geom_point(aes(size = sepa, color = factor(sepa >= 6)), alpha = 0.8) +
+  geom_text(aes(label = category), hjust = -0.15, vjust = 0.5,
+            color = "#e4e4ec", size = 3.2, family = kfont) +
+  scale_size_continuous(range = c(4, 12), name = "SEPA 점수") +
+  scale_color_manual(values = c("TRUE" = c_green, "FALSE" = c_red),
+                     labels = c("6+ 통과", "미달"), name = "SEPA") +
+  scale_x_continuous(limits = c(3, 11)) +
+  scale_y_continuous(limits = c(4, 10)) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = "#2a2a4a") +
+  geom_vline(xintercept = 7, linetype = "dashed", color = "#2a2a4a") +
+  annotate("text", x = 5, y = 9.5, label = "고기회/저리스크", color = c_green, size = 3, family = kfont) +
+  annotate("text", x = 9, y = 9.5, label = "고기회/고리스크", color = c_amber, size = 3, family = kfont) +
+  annotate("text", x = 5, y = 4.5, label = "저기회/저리스크", color = c_gray, size = 3, family = kfont) +
+  annotate("text", x = 9, y = 4.5, label = "저기회/고리스크", color = c_red, size = 3, family = kfont) +
+  labs(title = "중국 히든젬 후보 — 기회 vs 리스크 매트릭스",
+       subtitle = "SEPA 점수 기반 버블 크기 | 우상단 = 고기회·고리스크",
+       x = "리스크 (1-10)", y = "기회 (1-10)",
+       caption = "주관적 평가 포함 | Alpha Hunter × Chimera AI") +
+  theme_hunter()
+```
+
+**반도체 트렌드:**
+
+- **미중 반도체 갈등 심화**: 2025~2026 미국의 대중 수출 통제 확대. NVIDIA H20 중국 판매 제한, ASML DUV 장비 규제.
+- **중국 국산화 가속**: SMIC 7nm 양산, Huawei HiSilicon 자체 설계 확대. 하지만 EUV 없이는 5nm 이하 불가.
+- **SIMO (W19 추천)**: NAND 컨트롤러 1위로 미중 양쪽 수혜. 대만 R&D + 미국 상장으로 지정학 리스크 상대적 경감.
+- HBM/AI 반도체 수요 폭발이지만, 중국 기업이 직접 수혜받는 상장종목은 제한적.
+
+## 바이오/헬스케어
+
+- **LEGN (Legend Biotech)**: CAR-T 치료제 Carvykti 매출 +56.4%. J&J 파트너십. 하지만 여전히 영업적자 (-16.3%), SEPA 4/7.
+- **ZLAB (Zai Lab)**: 중국 바이오텍 라이선스 인모델. 매출 +17%. 적자 지속.
+- 중국 바이오는 FDA 승인 파이프라인 기반 성장 중이나, **높은 R&D 비용으로 대부분 적자 상태**.
+
+# 정치 리스크 대시보드
+
+```{r}
+#| label: political-risk
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 7
+
+risk_data <- data.frame(
+  risk = c("VIE 구조\n(변동이익실체)", "미중 기술\n갈등", "ADR\n상장폐지 위험", "중국 국내\n규제 리스크", "대만해협\n지정학", "환율\n(위안화 약세)", "데이터\n안보법", "부동산\n경기 침체"),
+  severity = c(8, 9, 5, 6, 7, 5, 7, 8),
+  trend = c("→", "↑", "↓", "→", "↑", "→", "↑", "→"),
+  impact = c("FUTU,NIO,XPEV\n모든 ADR", "반도체,AI\nKC,SIMO", "감소 추세\nHFCA 준수", "핀테크,교육\nFUTU,TAL", "대만 연계\nSIMO", "수출주\n전체", "클라우드,핀테크\nKC,FUTU", "내수주\nMNSO,LKNCY"),
+  stringsAsFactors = FALSE
+)
+
+risk_data$risk <- factor(risk_data$risk, levels = rev(risk_data$risk))
+
+ggplot(risk_data, aes(x = severity, y = risk)) +
+  geom_segment(aes(xend = 0, yend = risk), color = "#2a2a4a", linewidth = 0.5) +
+  geom_point(aes(color = severity), size = 6) +
+  geom_text(aes(label = severity), color = "#1a1a2e", size = 3.5, fontface = "bold", family = kfont) +
+  geom_text(aes(label = paste0(trend, " ", impact), x = severity + 0.8),
+            color = "#aaaaaa", size = 2.5, hjust = 0, family = kfont) +
+  scale_color_gradient2(low = c_green, mid = c_amber, high = c_red, midpoint = 6,
+                        name = "심각도") +
+  scale_x_continuous(limits = c(0, 14), breaks = 1:10) +
+  labs(title = "중국 투자 정치 리스크 대시보드",
+       subtitle = "심각도 1-10 | ↑ 악화중 · → 보합 · ↓ 완화중",
+       x = "리스크 심각도", y = NULL,
+       caption = "2026-05-15 기준 | Alpha Hunter 주관적 평가") +
+  theme_hunter() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+## VIE 구조 리스크
+
+**변동이익실체(VIE)**: 대부분 중국 ADR은 실제 중국 사업체가 아닌 케이맨 제도 법인의 주식을 매수하는 구조입니다.
+
+- FUTU, NIO, XPEV, KC 등 주요 중국 ADR은 **VIE 구조**를 통해 상장
+- 중국 정부가 VIE를 무효화할 경우 주주 권리 소멸 위험
+- 2026년 현재 VIE 무효화 가능성은 낮으나, 미중 관계 악화 시 리스크 재부각 가능
+
+## 미중 갈등 현황
+
+```{r}
+#| label: us-china-timeline
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+timeline <- data.frame(
+  event = c("CHIPS Act\n시행 확대", "NVIDIA H20\n중국 판매제한", "SMIC 7nm\n양산 확인", "ADR 감사\n접근권 확보", "관세 145%\n부과 후 유예"),
+  date = as.Date(c("2025-03-01", "2025-07-01", "2025-10-01", "2026-01-15", "2026-04-15")),
+  impact = c(7, 8, 6, -3, 9),
+  type = c("제재", "제재", "국산화", "완화", "제재"),
+  stringsAsFactors = FALSE
+)
+
+ggplot(timeline, aes(x = date, y = abs(impact))) +
+  geom_segment(aes(xend = date, yend = 0), color = "#2a2a4a", linewidth = 0.5) +
+  geom_point(aes(color = type), size = 5) +
+  geom_text(aes(label = event), vjust = -1.2, color = "#e4e4ec",
+            size = 3, family = kfont) +
+  scale_color_manual(values = c("제재" = c_red, "국산화" = c_amber, "완화" = c_green),
+                     name = "유형") +
+  scale_x_date(date_labels = "%Y.%m", date_breaks = "3 months") +
+  labs(title = "미중 기술 갈등 타임라인",
+       subtitle = "적색: 대중 제재 | 주황: 중국 국산화 | 녹색: 관계 완화",
+       x = NULL, y = "영향도",
+       caption = "주요 이벤트 기반 정리 | 2026-05-15 기준") +
+  theme_hunter()
+```
+
+**2026년 미중 상황:**
+
+- **관세**: 2026년 4월 미국 대중 관세 145% 부과 → 90일 유예 → 협상 진행 중. 불확실성 최고조.
+- **반도체 제재**: AI 칩 수출 통제 확대. 중국 AI 인프라 성장에 제동.
+- **ADR 감사**: HFCA 준수로 상장폐지 리스크는 감소했으나, 완전 해소 아님.
+- **데이터 안보법**: 중국 데이터의 해외 이전 규제 강화. 클라우드(KC), 핀테크(FUTU) 직접 영향.
+
+# 기존 워치리스트 업데이트
+
+```{r}
+#| label: watchlist-update
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 7
+
+# SIMO and FUTU price charts side by side
+simo <- data[["SIMO"]]
+futu <- data[["FUTU"]]
+
+if (!is.null(simo) && !is.null(futu)) {
+  simo_prices <- simo$prices
+  simo_prices$date <- as.Date(simo_prices$date)
+  simo_prices$close <- as.numeric(simo_prices$close)
+  simo_prices$sma50 <- as.numeric(simo_prices$sma50)
+  simo_prices$sma200 <- as.numeric(simo_prices$sma200)
+  simo_prices$ticker <- "SIMO"
+
+  futu_prices <- futu$prices
+  futu_prices$date <- as.Date(futu_prices$date)
+  futu_prices$close <- as.numeric(futu_prices$close)
+  futu_prices$sma50 <- as.numeric(futu_prices$sma50)
+  futu_prices$sma200 <- as.numeric(futu_prices$sma200)
+  futu_prices$ticker <- "FUTU"
+
+  combined <- rbind(simo_prices, futu_prices)
+
+  ggplot(combined, aes(x = date)) +
+    geom_line(aes(y = close, color = "주가"), linewidth = 0.8) +
+    geom_line(aes(y = sma50, color = "50일선"), linewidth = 0.5, na.rm = TRUE) +
+    geom_line(aes(y = sma200, color = "200일선"), linewidth = 0.5, linetype = "dashed", na.rm = TRUE) +
+    facet_wrap(~ticker, scales = "free_y", ncol = 1) +
+    scale_color_manual(values = c("주가" = "#e4e4ec", "50일선" = c_cyan, "200일선" = c_purple),
+                       name = NULL) +
+    scale_x_date(date_labels = "%Y-%m", date_breaks = "2 months") +
+    labs(title = "기존 중국 워치리스트 — SIMO vs FUTU 추이",
+         subtitle = "SIMO: Stage 2 유지 ✓ | FUTU: 50일선 이탈, Stage 3~4 전환 ⚠️",
+         x = NULL, y = "주가 (USD)",
+         caption = "SIMO @$242.71 워치 → $263.85 (+8.7%) | FUTU @$154.51 워치 → $141.51 (-8.4%)") +
+    theme_hunter()
+}
+```
+
+| 종목 | 추가일 | 추가가 | 현재가 | 수익률 | SEPA | 상태 |
+|:---|:---|:---|:---|:---|:---|:---|
+| **SIMO** (W19) | 2026-05-08 | $242.71 | $263.85 | **+8.7%** | 7/7 ✓ | Stage 2 유지 |
+| **FUTU** (W18) | 2026-05-01 | $154.51 | $141.51 | **-8.4%** | 2/7 ✗ | ⚠️ 하락추세 |
+
+::: {.callout-warning}
+## FUTU 경고
+
+FUTU는 W18 추천 이후 -8.4% 하락. 50일선 이탈, SEPA 2/7로 Stage 3~4 전환 중. 펀더멘탈(매출 +53%, OPM 69%)은 양호하나 **가격 추세가 악화**. 미중 관세 불확실성 + 중국 핀테크 규제 영향. 손절가 $120 도달 전까지 워치리스트 유지하되, Stage 2 복귀 확인 전 진입 보류.
+:::
+
+# 이번 주 미통과 요약
+
+```{r}
+#| label: summary-radar
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 7
+
+# Summary of why no pick: radar-style comparison
+summary_df <- data.frame(
+  metric = rep(c("매출성장", "영업이익률", "SEPA 점수", "ROE", "밸류에이션"), 4),
+  ticker = rep(c("KC", "NIO", "LEGN", "LKNCY"), each = 5),
+  score = c(
+    # KC: rev 23.7, opm -2.4, sepa 6/7, roe -12.7, val neutral
+    5, 2, 8, 2, 5,
+    # NIO: rev 75.9, opm 1.5, sepa 6/7, roe -118, val bad
+    10, 2, 8, 1, 2,
+    # LEGN: rev 56.4, opm -16, sepa 4/7, roe -25, val ok
+    8, 1, 5, 2, 5,
+    # LKNCY: rev 35.3, opm 6, sepa 2/7, roe 22.8, val good
+    6, 4, 3, 7, 7
+  ),
+  stringsAsFactors = FALSE
+)
+
+summary_df$metric <- factor(summary_df$metric,
+  levels = c("매출성장", "영업이익률", "SEPA 점수", "ROE", "밸류에이션"))
+
+ggplot(summary_df, aes(x = metric, y = score, fill = ticker, group = ticker)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = c_green, alpha = 0.5) +
+  annotate("text", x = 5.3, y = 7.3, label = "통과 기준선",
+           color = c_green, size = 3, family = kfont) +
+  scale_fill_manual(values = c("KC" = c_cyan, "NIO" = c_blue, "LEGN" = c_purple, "LKNCY" = c_amber),
+                    name = NULL) +
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 10, 2)) +
+  labs(title = "W20 중국 후보 — 5대 기준 점수 비교",
+       subtitle = "모든 기준에서 7점 이상 필요 | 어떤 종목도 전 항목 통과 못함",
+       x = NULL, y = "점수 (1-10)",
+       caption = "모든 종목이 최소 2개 기준에서 미달 | Alpha Hunter 평가") +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+```
+
+# 다음 주 모니터링 포인트
+
+1. **KC (Kingsoft Cloud)**: 150일선/200일선 크로스오버 여부 확인. 흑자 전환 시 재검토.
+2. **NIO Q1 실적** (5/21): 마진 개선 여부가 핵심. OPM 5%+ 달성 시 관심 상향.
+3. **SIMO**: W19 워치리스트 유지. Q2 가이던스 $393~$411M 달성 여부.
+4. **FUTU**: 하락추세 지속 시 워치리스트 제거 검토 (손절가 $120).
+5. **미중 관세 협상**: 90일 유예 기간(~7월) 내 합의 가능성. 중국 ADR 전반에 영향.
+
+# 면책 문구 {.unnumbered}
+
+::: {.callout-note}
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다. 모든 투자 결정은 개인의 판단과 책임 하에 이루어져야 합니다.
+:::
+
+*Alpha Hunter × Chimera AI | Week 20 China Screening Report | 2026-05-15*
