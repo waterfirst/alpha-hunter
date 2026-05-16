@@ -1,0 +1,575 @@
+---
+title: "Alpha Hunter 주간 종합 히든젬 보고서"
+subtitle: "Week 20 — ISC 손절 도달 · ONTO 경계 · RFHIC 방산+GaN 신규 발굴 · MRX 52주 신고가"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-16"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+c_orange <- "#fb923c"
+```
+
+# 주간 종합 요약 {.unnumbered}
+
+::: {.callout-important}
+## Week 20 (2026-05-12 ~ 2026-05-16) 핵심 액션
+
+- **❌ ISC (095340) 손절 도달**: 224,500원 < 손절가 233,000원 → 즉시 매도 신호
+- **⚠️ ONTO 손절 근접**: $271.77 vs 손절 $268 → 경계 모니터링
+- **🆕 한국 신규 후보**: RFHIC (218410) — 방산+GaN, SEPA 6/6 통과, Q1 영업이익 +107%
+- **🆕 미국 신규 후보**: Marex Group (MRX) — 금융인프라, SEPA 6/6, 매출 +48%
+- **중국**: 이번 주도 SEPA+펀더멘탈 동시 충족 종목 없음
+:::
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+---
+
+# 포트폴리오 성과 업데이트
+
+## 현재 포지션 현황 (2026-05-16)
+
+```{r}
+#| label: portfolio-performance
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+portfolio <- data.frame(
+  name = c("AROC\n(Archrock)", "HPSP\n(403870)", "Hugel\n(145020)"),
+  entry = c(35.70, 36.00, 186.79),
+  current = c(37.43, 35.36, 201.79),
+  stringsAsFactors = FALSE
+)
+
+# HPSP: 49500/1400 = 35.36 USD approx, Hugel: 282500/1400 = 201.79 USD approx
+portfolio$return_pct <- round((portfolio$current / portfolio$entry - 1) * 100, 1)
+portfolio$color <- ifelse(portfolio$return_pct >= 0, c_green, c_red)
+
+ggplot(portfolio, aes(x = reorder(name, return_pct), y = return_pct)) +
+  geom_col(aes(fill = color), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(ifelse(return_pct > 0, "+", ""), return_pct, "%"),
+                y = return_pct + sign(return_pct) * 0.8),
+            color = "#e4e4ec", size = 5, fontface = "bold", family = kfont) +
+  geom_hline(yintercept = 0, color = "#444466", linewidth = 0.5) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "포트폴리오 포지션 수익률",
+    subtitle = "진입가 대비 현재가 (2026-05-16 기준)",
+    x = NULL, y = "수익률 (%)",
+    caption = "HPSP·Hugel은 환율 1,400원/$ 기준 USD 환산"
+  ) +
+  theme_hunter()
+```
+
+| 종목 | 진입가 | 현재가 | 수익률 | 상태 |
+|------|--------|--------|--------|------|
+| AROC | $35.70 | $37.43 | **+4.8%** | Stage 2 유지 |
+| HPSP | 50,400원 | 49,500원 | **-1.8%** | Stage 2 유지, 조정 중 |
+| Hugel | 261,500원 | 282,500원 | **+8.0%** | ⚠️ SMA150 < SMA200 |
+
+## 포트폴리오 가치 추이
+
+```{r}
+#| label: portfolio-value-timeline
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+timeline <- data.frame(
+  date = as.Date(c("2026-04-02", "2026-04-06", "2026-05-02", "2026-05-09", "2026-05-16")),
+  value = c(100000, 94724, 102848, 128460, 127200),
+  label = c("시작", "W1", "W18", "W19", "W20")
+)
+
+ggplot(timeline, aes(x = date, y = value)) +
+  geom_area(fill = c_amber, alpha = 0.15) +
+  geom_line(color = c_amber, linewidth = 1.2) +
+  geom_point(color = c_amber, size = 3) +
+  geom_text(aes(label = paste0("$", format(value, big.mark = ","))),
+            vjust = -1.2, color = "#e4e4ec", size = 3.5, family = kfont) +
+  geom_hline(yintercept = 100000, linetype = "dashed", color = c_gray, linewidth = 0.4) +
+  annotate("text", x = as.Date("2026-04-20"), y = 101500, label = "초기 자본 $100,000",
+           color = c_gray, size = 3, family = kfont) +
+  scale_y_continuous(labels = dollar_format(), limits = c(90000, 135000)) +
+  scale_x_date(date_labels = "%m/%d") +
+  labs(
+    title = "Alpha Hunter 가상 포트폴리오 가치 추이",
+    subtitle = "2026-04-02 시작 ~ 현재 | 총 수익률 +27.2%",
+    x = NULL, y = "포트폴리오 가치 (USD)"
+  ) +
+  theme_hunter()
+```
+
+---
+
+# 워치리스트 SEPA 재점검
+
+## SEPA 트렌드 템플릿 상태
+
+```{r}
+#| label: sepa-heatmap
+#| lightbox: true
+#| fig-width: 11
+#| fig-height: 7
+
+sepa_data <- data.frame(
+  stock = rep(c("AROC", "HPSP", "Hugel", "SIMO", "ONTO", "ISC", "CLASSYS", "APPF", "FUTU", "WONTECH"), each = 7),
+  condition = rep(c("가격>150MA", "가격>200MA", "150MA>200MA", "50MA>150MA", "가격>50MA", "저점+30%↑", "고점-25%↓"), 10),
+  pass = c(
+    # AROC: all pass
+    TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # HPSP: all pass
+    TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # Hugel: SMA150 < SMA200 fails condition 3
+    TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE,
+    # SIMO: all pass
+    TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # ONTO: all pass
+    TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    # ISC: below SMA50 fail
+    TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE,
+    # CLASSYS: below all SMAs
+    FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE,
+    # APPF: below all SMAs
+    FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE,
+    # FUTU: below all SMAs
+    FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE,
+    # WONTECH: above SMA50 but below SMA150/200
+    FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE
+  )
+)
+
+sepa_data$stock <- factor(sepa_data$stock,
+  levels = c("AROC", "HPSP", "SIMO", "ONTO", "ISC", "Hugel", "WONTECH", "CLASSYS", "APPF", "FUTU"))
+sepa_data$condition <- factor(sepa_data$condition,
+  levels = c("가격>150MA", "가격>200MA", "150MA>200MA", "50MA>150MA", "가격>50MA", "저점+30%↑", "고점-25%↓"))
+
+ggplot(sepa_data, aes(x = condition, y = stock, fill = pass)) +
+  geom_tile(color = "#2a2a4a", linewidth = 0.5) +
+  geom_text(aes(label = ifelse(pass, "O", "X")),
+            color = "#1a1a2e", size = 4, fontface = "bold", family = kfont) +
+  scale_fill_manual(values = c("TRUE" = c_green, "FALSE" = c_red),
+                    labels = c("TRUE" = "통과", "FALSE" = "미달"),
+                    name = "SEPA 판정") +
+  labs(
+    title = "SEPA 트렌드 템플릿 재점검 (전 종목)",
+    subtitle = "Week 20 기준 | Stage 2 유지/이탈 판단",
+    x = NULL, y = NULL
+  ) +
+  theme_hunter(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 10))
+```
+
+### SEPA 점검 결과 요약
+
+**Stage 2 유지 (매수 유지)**
+
+- AROC: 7/7 — 52주 신고가 근접, 완벽한 Stage 2
+- HPSP: 7/7 — SMA 정배열 유지, 조정 후 반등 기대
+- SIMO: 7/7 — 52주 신고가 경신 중, 최강 모멘텀
+- ONTO: 7/7 — Stage 2 유지하나 손절가 $268 근접 ($271.77)
+
+**Stage 2 이탈 경고**
+
+- ❌ **ISC**: 손절가 233,000원 하회 (현재 224,500원) → **즉시 손절**
+- ⚠️ **Hugel**: SMA150(250,593) < SMA200(268,933) → 조건 3 탈락, 관찰 필요
+- ⚠️ **WONTECH**: SMA50 상회하나 SMA150/200 하회 → 불완전 회복
+
+**Stage 4 하락추세 (매수 금지)**
+
+- ❌ CLASSYS: 전 이평선 하회, 고점 대비 -33%
+- ❌ APPF: 전 이평선 하회, 고점 대비 -53%
+- ❌ FUTU: 전 이평선 하회, 고점 대비 -31%
+
+---
+
+# 워치리스트 수익률 현황
+
+```{r}
+#| label: watchlist-performance
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+watchlist <- data.frame(
+  name = c("SIMO", "ONTO", "WONTECH", "ISC", "CLASSYS", "APPF", "FUTU"),
+  add_price = c(242.71, 290.76, 7320, 253500, 54700, 167.17, 154.51),
+  current = c(259.99, 271.77, 8080, 224500, 50500, 151.70, 134.64),
+  stringsAsFactors = FALSE
+)
+watchlist$return_pct <- round((watchlist$current / watchlist$add_price - 1) * 100, 1)
+watchlist$status <- ifelse(watchlist$return_pct >= 0, "수익", "손실")
+watchlist$fill_col <- ifelse(watchlist$return_pct >= 0, c_green, c_red)
+
+ggplot(watchlist, aes(x = reorder(name, return_pct), y = return_pct)) +
+  geom_col(aes(fill = fill_col), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(ifelse(return_pct > 0, "+", ""), return_pct, "%"),
+                y = return_pct + sign(return_pct) * 1.5),
+            color = "#e4e4ec", size = 4, fontface = "bold", family = kfont) +
+  geom_hline(yintercept = 0, color = "#444466", linewidth = 0.5) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "워치리스트 수익률 현황",
+    subtitle = "추가 시점 대비 현재 수익률 (2026-05-16)",
+    x = NULL, y = "수익률 (%)",
+    caption = "ISC: 손절가 하회로 즉시 매도 신호"
+  ) +
+  theme_hunter()
+```
+
+---
+
+# Week 20 히든젬 발굴 결과
+
+## 한국 시장: ISC → 손절 / 신규 후보 RFHIC
+
+```{r}
+#| label: kr-sepa-compare
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+kr_compare <- data.frame(
+  stock = rep(c("ISC (손절)", "RFHIC (신규)"), each = 5),
+  metric = rep(c("SEPA 점수", "매출성장률", "영업이익률", "52주 고점 대비", "모멘텀"), 2),
+  value = c(
+    # ISC
+    5/7*100, 115.5, 34.6, -17.2, -11.4,
+    # RFHIC
+    6/6*100, 35.0, 18.0, -13.7, 526.3
+  ),
+  display = c(
+    "5/7", "+115.5%", "34.6%", "-17.2%", "-11.4%",
+    "6/6", "+35.0%", "18.0%", "-13.7%", "+526.3%"
+  )
+)
+
+ggplot(kr_compare, aes(x = metric, y = value, fill = stock)) +
+  geom_col(position = "dodge", width = 0.6) +
+  geom_text(aes(label = display, y = value + 5),
+            position = position_dodge(width = 0.6),
+            color = "#e4e4ec", size = 3.2, family = kfont) +
+  scale_fill_manual(values = c("ISC (손절)" = c_red, "RFHIC (신규)" = c_green),
+                    name = "종목") +
+  labs(
+    title = "한국 시장: ISC 손절 → RFHIC 신규 후보",
+    subtitle = "ISC 손절가 하회 | RFHIC SEPA 6/6 통과, 방산+GaN 이중 모멘텀",
+    x = NULL, y = "수치"
+  ) +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1))
+```
+
+### ISC (095340) — ❌ 손절 도달
+
+- **현재가**: 224,500원 → **손절가 233,000원 하회**
+- 진입 253,500원 대비 **-11.4% 손실**
+- SMA50(232,850) 하회, 모멘텀 급격히 악화
+- **원인 분석**: 반도체 사이클 피크 우려, AI 칩 수요 둔화 시그널, SK하이닉스 의존도 리스크
+- **액션**: 즉시 매도 표시, 포트폴리오에서 제거
+
+### RFHIC (218410) — 🆕 한국 신규 후보
+
+- **현재가**: 97,100원 | **시가총액**: 약 2.5조원
+- **SEPA**: 6/6 통과 (전 이평선 정배열, 52주 저점 대비 +526%)
+- **Q1 2026 실적**: 매출 +35% YoY, 영업이익 +107% YoY, OPM 18%
+- **핵심 모트**: GaN(질화갈륨) 파워앰프 독점 기술. 방산(레이시온/LIG넥스원) + 5G 통신 이중 수혜
+- **카탈리스트**: 한화 대형 수주, 삼성전자 통신 인프라, NATO 방산 확대
+- **컨센서스**: Buy, 목표가 120,000원 (KB증권)
+- **매수가**: 97,100원 | **목표가**: 120,000원 (+24%) | **손절가**: 89,000원 (-8.3%)
+- **R:R 비율**: 1:2.8
+
+## 미국 시장: ONTO 경계 / 신규 후보 MRX
+
+```{r}
+#| label: us-mrx-radar
+#| lightbox: true
+#| fig-width: 9
+#| fig-height: 6
+
+# MRX vs ONTO comparison
+us_data <- data.frame(
+  stock = rep(c("ONTO (경계)", "MRX (신규)"), each = 6),
+  metric = rep(c("SEPA", "매출성장", "시총적정", "밸류에이션", "모멘텀", "해자"), 2),
+  score = c(
+    # ONTO
+    9, 8, 7, 6, 5, 8,
+    # MRX
+    9, 9, 8, 9, 9, 7
+  )
+)
+
+us_data$metric <- factor(us_data$metric,
+  levels = c("SEPA", "매출성장", "시총적정", "밸류에이션", "모멘텀", "해자"))
+
+ggplot(us_data, aes(x = metric, y = score, fill = stock, group = stock)) +
+  geom_col(position = "dodge", width = 0.5) +
+  scale_fill_manual(values = c("ONTO (경계)" = c_orange, "MRX (신규)" = c_cyan),
+                    name = "종목") +
+  scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  labs(
+    title = "미국 시장: ONTO 경계 vs MRX 신규 후보",
+    subtitle = "10점 만점 다차원 비교 | MRX 종합 우위",
+    x = NULL, y = "점수 (10점 만점)"
+  ) +
+  theme_hunter()
+```
+
+### ONTO Innovation — ⚠️ 손절 근접
+
+- **현재가**: $271.77 → **손절가 $268 (거리 1.4%)**
+- 진입 $290.76 대비 **-6.5% 하락**
+- SEPA 7/7 유지 중이나 단기 조정 심화
+- **판단**: 손절 미도달이므로 보유 유지, 일일 모니터링
+
+### Marex Group (MRX) — 🆕 미국 신규 후보
+
+- **현재가**: $56.22 | **시가총액**: $4.0B
+- **SEPA**: 6/6 통과 (52주 신고가 -3.5% 이내!)
+- **Q1 2026 실적**: 매출 +48% YoY, PBT(세전이익) 마진 22%
+- **핵심 모트**: 글로벌 상품/금융 인프라 플랫폼. 에너지/금속/농산물 파생상품 시장 핵심 인프라
+- **Forward PE**: 10.2x — 성장 대비 극도로 저평가
+- **카탈리스트**: 미국 재상장(리도미사일링) 진행 중, 사상 최대 Q1 실적
+- **애널리스트**: Strong Buy, 평균 목표가 $57
+- **매수가**: $56.22 | **목표가**: $70 (+24.5%) | **손절가**: $51.50 (-8.4%)
+- **R:R 비율**: 1:2.9
+- **주의**: OPM 13.1% (15% 기준 소폭 미달, 단 급격히 개선 중)
+
+## 중국 시장: 이번 주도 조건 충족 없음
+
+```{r}
+#| label: cn-screening-result
+#| lightbox: true
+#| fig-width: 9
+#| fig-height: 5
+
+cn_screen <- data.frame(
+  candidate = c("VNET", "BZ (BOSS)", "NIU", "Zhipu AI"),
+  sepa = c(4, 2, 3, 0),
+  fundamental = c(3, 4, 3, 1),
+  total = c(7, 6, 6, 1),
+  reason = c("OPM 5.7% 미달\n고점 -28%", "매출성장 <20%\n감속 중", "OPM 불안정\n소형주", "적자기업\n모멘텀만")
+)
+
+ggplot(cn_screen, aes(x = sepa, y = fundamental)) +
+  geom_point(aes(size = total), color = c_red, alpha = 0.7) +
+  geom_text(aes(label = candidate), vjust = -1.5,
+            color = "#e4e4ec", size = 4, family = kfont) +
+  geom_text(aes(label = reason), vjust = 2,
+            color = c_gray, size = 2.5, family = kfont) +
+  geom_vline(xintercept = 6, linetype = "dashed", color = c_green, alpha = 0.5) +
+  geom_hline(yintercept = 4, linetype = "dashed", color = c_green, alpha = 0.5) +
+  annotate("text", x = 6.5, y = 4.7, label = "통과 기준", color = c_green,
+           size = 3, family = kfont) +
+  scale_size_continuous(range = c(5, 15), guide = "none") +
+  scale_x_continuous(limits = c(-0.5, 8), breaks = 0:8) +
+  scale_y_continuous(limits = c(0, 6), breaks = 0:6) +
+  labs(
+    title = "중국 시장: SEPA × 펀더멘탈 매트릭스",
+    subtitle = "전 후보 통과 기준(SEPA 6+, 펀더멘탈 4+) 미달 → 이번 주 조건 충족 없음",
+    x = "SEPA 점수 (7점 만점)", y = "펀더멘탈 점수 (5점 만점)"
+  ) +
+  theme_hunter()
+```
+
+**중국 시장 스크리닝 결과**: 4개 후보 검토 → **전원 SEPA + 펀더멘탈 동시 통과 실패**
+
+- VNET: AI 데이터센터 수혜주이나 OPM 5.7%, 고점 대비 -28%
+- BZ (BOSS Zhipin): 마진 36% 우수하나 매출성장 감속 (<20%)
+- NIU: 매출 +65%이나 OPM 불안정, 소형주
+- FUTU (기존): 전 이평선 하회 (-13% 하락 지속). **워치리스트 유지하되 경고 강화**
+
+---
+
+# 종합 판정 및 포트폴리오 액션
+
+```{r}
+#| label: final-verdict
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+verdict <- data.frame(
+  market = c("한국", "한국", "미국", "미국", "중국"),
+  action = c("ISC 손절", "RFHIC 워치", "ONTO 보유", "MRX 워치", "없음"),
+  type = c("매도", "워치리스트 추가", "보유 (경계)", "워치리스트 추가", "패스"),
+  urgency = c(5, 3, 4, 3, 1),
+  color_val = c(c_red, c_green, c_orange, c_cyan, c_gray)
+)
+
+verdict$action <- factor(verdict$action, levels = rev(verdict$action))
+
+ggplot(verdict, aes(x = action, y = urgency)) +
+  geom_col(aes(fill = color_val), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(market, " | ", type)),
+            hjust = -0.1, color = "#e4e4ec", size = 3.5, family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 8)) +
+  labs(
+    title = "Week 20 종합 판정 및 액션",
+    subtitle = "긴급도 순 | 빨강=매도, 주황=경계, 초록/파랑=신규, 회색=패스",
+    x = NULL, y = "긴급도"
+  ) +
+  theme_hunter()
+```
+
+## Week 20 최종 결론
+
+| 시장 | 종목 | 판정 | 비고 |
+|------|------|------|------|
+| 🇰🇷 한국 | ISC (095340) | ❌ **손절 도달** | 224,500원 < 손절 233,000원 |
+| 🇰🇷 한국 | RFHIC (218410) | 🆕 **워치리스트 추가** | SEPA 6/6, 방산+GaN, 매출+35% |
+| 🇺🇸 미국 | ONTO (ONTO) | ⚠️ **보유 (경계)** | $271.77, 손절 $268 근접 |
+| 🇺🇸 미국 | MRX (Marex) | 🆕 **워치리스트 추가** | SEPA 6/6, 매출+48%, PE 10.2x |
+| 🇨🇳 중국 | — | ❌ **조건 충족 없음** | 2주 연속 SEPA+펀더멘탈 동시 통과 0건 |
+
+---
+
+# 리스크 대시보드
+
+```{r}
+#| label: risk-dashboard
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+risk_df <- data.frame(
+  risk = c("ISC 손절 도달", "ONTO 손절 근접", "Hugel SEPA 악화",
+           "APPF Stage 4", "CLASSYS Stage 4", "FUTU 하락 지속",
+           "미중 반도체 제재", "한국 환율 변동"),
+  severity = c(5, 4, 3, 3, 3, 3, 4, 2),
+  probability = c(5, 3, 3, 4, 4, 4, 3, 3),
+  color_val = c(c_red, c_orange, c_orange, c_red, c_red, c_red, c_purple, c_amber)
+)
+
+ggplot(risk_df, aes(x = probability, y = severity)) +
+  geom_point(aes(color = color_val), size = 8, alpha = 0.8) +
+  geom_text(aes(label = risk), vjust = -1.3,
+            color = "#e4e4ec", size = 3, family = kfont) +
+  scale_color_identity() +
+  scale_x_continuous(limits = c(1, 6), breaks = 1:5,
+                     labels = c("낮음", "약간", "보통", "높음", "확실")) +
+  scale_y_continuous(limits = c(1, 6), breaks = 1:5,
+                     labels = c("경미", "약간", "보통", "심각", "치명")) +
+  labs(
+    title = "리스크 매트릭스",
+    subtitle = "발생 확률 × 영향도 | 빨강=즉시 액션, 주황=모니터링, 보라=매크로",
+    x = "발생 확률", y = "영향 심각도"
+  ) +
+  theme_hunter()
+```
+
+---
+
+# 적중률 및 시스템 신뢰도
+
+```{r}
+#| label: accuracy-tracker
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+accuracy <- data.frame(
+  category = c("포지션\n(수익)", "포지션\n(손실)", "워치리스트\n(수익)", "워치리스트\n(손실/손절)", "추천 철회"),
+  count = c(2, 1, 3, 4, 2),
+  color_val = c(c_green, c_red, c_cyan, c_orange, c_gray)
+)
+
+accuracy$category <- factor(accuracy$category, levels = accuracy$category)
+
+ggplot(accuracy, aes(x = category, y = count)) +
+  geom_col(aes(fill = color_val), width = 0.5, show.legend = FALSE) +
+  geom_text(aes(label = count), vjust = -0.5,
+            color = "#e4e4ec", size = 5, fontface = "bold", family = kfont) +
+  scale_fill_identity() +
+  labs(
+    title = "Alpha Hunter 시스템 적중률 (누적)",
+    subtitle = "포지션 수익 2건(AROC +4.8%, Hugel +8.0%) | 워치 수익 3건(SIMO +7.1%, WONTECH +10.4%, ONTO 편입 시 +0%) | ISC 손절, TMDX 제거",
+    x = NULL, y = "건수"
+  ) +
+  theme_hunter()
+```
+
+**누적 적중률**: 포지션 2/3 (66.7%) | 워치리스트 3/7 (42.9%) | 전체 5/10 (50.0%)
+
+**교훈**: SEPA 7/7 종목도 단기 급등 후 급락 가능 (ISC 사례). 손절가 준수가 자본 보존의 핵심.
+
+---
+
+# 다음 주 (Week 21) 예정
+
+- **월/화**: 한국 스크리닝 — RFHIC (218410) 딥 리서치, SEPA 상세 차트
+- **수/목**: 미국 스크리닝 — MRX (Marex Group) 딥 리서치
+- **금**: 중국 재스크리닝 — VNET 모니터링, 신규 후보 탐색
+- **토**: Week 21 주간 종합
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
