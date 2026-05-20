@@ -1,0 +1,856 @@
+---
+title: "반도체 기술 심층분석 — 어드밴스드 패키징 (CoWoS, FOWLP, 2.5D/3D)"
+subtitle: "Alpha Hunter Tech Deep Dive #3 | 관련 종목: ONTO Innovation, ISC, ASE, Amkor"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-20"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      legend.position = "top",
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#6366f1"
+c_green <- "#22c55e"
+c_red <- "#ef4444"
+c_cyan <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray <- "#888888"
+c_text <- "#e4e4ec"
+c_orange <- "#fb923c"
+c_pink <- "#ec4899"
+```
+
+# 개요: 왜 어드밴스드 패키징인가 {.unnumbered}
+
+::: {.callout-tip}
+## 핵심 메시지
+**어드밴스드 패키징**은 무어의 법칙이 물리적 한계에 부딪힌 시대의 새로운 성능 확장 축이다. 트랜지스터를 더 작게 만드는 대신, 여러 칩(chiplet)을 하나의 패키지 안에 **2.5D/3D로 통합**함으로써 성능, 대역폭, 전력효율을 동시에 달성한다. NVIDIA Blackwell, AMD MI300, Apple M4 Ultra 모두 어드밴스드 패키징 없이는 존재할 수 없다. AI 가속기 수요가 폭발하면서, CoWoS 생산능력은 2024년 35K wafer/월에서 2026년 130K wafer/월로 **3.7배** 증가할 전망이다.
+:::
+
+반도체 산업은 **"More Moore"**(미세공정 축소)에서 **"More than Moore"**(이종 칩 통합)로 패러다임이 전환되고 있다. 어드밴스드 패키징은 이 전환의 핵심 기술이다. 서로 다른 공정 노드로 제작된 칩렛(로직, 메모리, I/O, 아날로그)을 실리콘 인터포저나 RDL(Redistribution Layer)을 통해 하나의 패키지로 통합하여, 모놀리식 SoC의 수율 한계와 비용 문제를 동시에 해결한다.
+
+이 보고서는 어드밴스드 패키징의 핵심 기술—**CoWoS(2.5D)**, **FOWLP/FOPLP**, **3D SoIC**, **EMIB**—의 원리와 진화, 공급망 구조, 시장 전망을 심층 분석하고, 알파 헌터가 주목하는 관련 종목의 기술적 맥락을 제공한다.
+
+# 패키징 기술 진화 타임라인
+
+## 와이어본딩에서 3D 적층까지
+
+전통적인 반도체 패키징은 칩과 기판을 금선(wire bond)으로 연결하는 단순 구조였다. 하지만 AI 시대의 고대역폭·저지연 요구는 완전히 새로운 패키징 패러다임을 요구한다.
+
+```{r}
+#| label: fig-timeline
+#| fig-cap: "어드밴스드 패키징 기술 진화 타임라인 (2000~2029)"
+#| fig-width: 12
+#| fig-height: 7
+#| lightbox: true
+
+timeline_data <- data.frame(
+  year = c(2000, 2004, 2008, 2011, 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2026, 2028, 2029),
+  tech = c("Flip Chip BGA", "WLP 도입", "PoP (Package-on-Package)",
+           "TSV 양산 시작", "CoWoS-S 발표", "FOWLP (InFO)",
+           "CoWoS-S 양산\n(HBM2 탑재)", "EMIB 양산\n(Intel)",
+           "SoIC 발표\n(3D 본딩)", "CoWoS-L 도입\n(LSI 하이브리드)",
+           "CoWoS-L 양산\n(Blackwell)", "CoPoS 파일럿\n(유리 인터포저)",
+           "SoW-X\n(64 HBM)", "CoPoS 양산\n(패널레벨)"),
+  category = c("전통", "전통", "전통",
+                "2.5D", "2.5D", "Fan-Out",
+                "2.5D", "Bridge",
+                "3D", "2.5D",
+                "2.5D", "차세대",
+                "차세대", "차세대"),
+  y_pos = c(1, 2, 1, 3, 4, 2, 3, 2, 4, 3, 4, 3, 4, 3)
+)
+
+cat_colors <- c("전통" = c_gray, "2.5D" = c_amber, "Fan-Out" = c_cyan,
+                "Bridge" = c_green, "3D" = c_purple, "차세대" = c_red)
+
+ggplot(timeline_data, aes(x = year, y = y_pos)) +
+  geom_segment(aes(x = 2000, xend = 2029, y = 0, yend = 0),
+               color = "#444444", linewidth = 1.5) +
+  geom_segment(aes(xend = year, yend = 0, color = category),
+               linewidth = 0.8, linetype = "dashed", alpha = 0.6) +
+  geom_point(aes(color = category), size = 4.5) +
+  geom_text(aes(label = tech, color = category),
+            size = 3, hjust = 0.5, vjust = -0.8,
+            family = kfont, lineheight = 0.85) +
+  geom_text(aes(label = year, y = -0.3),
+            size = 2.5, color = "#888888", family = kfont) +
+  scale_color_manual(values = cat_colors, name = "기술 분류") +
+  scale_x_continuous(breaks = seq(2000, 2029, 2)) +
+  coord_cartesian(ylim = c(-0.8, 5.5)) +
+  labs(title = "어드밴스드 패키징 기술 진화 로드맵",
+       subtitle = "와이어본딩 → 2.5D → 3D → 유리 인터포저까지, 30년간의 대전환",
+       x = NULL, y = NULL,
+       caption = "출처: TSMC, Intel, JEDEC, SemiWiki 종합") +
+  theme_hunter() +
+  theme(axis.text.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line(color = "#2a2a4a", linewidth = 0.2))
+```
+
+## 기술 분류 체계
+
+어드밴스드 패키징은 칩간 연결 방향에 따라 크게 세 가지로 분류된다:
+
+- **2.5D 패키징**: XY 평면 확장. 실리콘 인터포저(CoWoS) 또는 RDL(InFO)을 통해 칩렛을 나란히 배치
+- **3D 패키징**: Z축 적층. TSV를 통해 칩을 수직으로 쌓음 (SoIC, HBM)
+- **Bridge 패키징**: 기판 내 소형 실리콘 브릿지로 칩렛 연결 (EMIB)
+
+```{r}
+#| label: tbl-pkg-compare
+#| tbl-cap: "주요 어드밴스드 패키징 기술 비교"
+
+pkg_compare <- data.frame(
+  기술 = c("CoWoS-S", "CoWoS-L", "CoWoS-R", "InFO (FOWLP)", "FOPLP", "EMIB", "Foveros", "SoIC"),
+  개발사 = c("TSMC", "TSMC", "TSMC", "TSMC", "Samsung/ASE", "Intel", "Intel", "TSMC"),
+  차원 = c("2.5D", "2.5D", "2.5D", "2.5D", "2.5D", "2.5D", "3D", "3D"),
+  인터포저 = c("실리콘 (풀)", "LSI+RDL 하이브리드", "RDL 기반", "RDL 기반", "패널 RDL", "실리콘 브릿지", "실리콘", "Direct Bond"),
+  `배선폭_um` = c("0.4~2", "0.4~10", "2~10", "2~10", ">10", "2~5", "0.4~2", "0.4~1"),
+  `HBM지원` = c("O", "O (12+)", "제한적", "X", "X", "O", "O", "O"),
+  비용 = c("최고", "높음", "중간", "중간", "낮음", "중간", "높음", "최고"),
+  주요적용 = c("H100, MI300", "Blackwell B200", "AI ASIC", "iPhone AP", "PMIC, 센서", "Ponte Vecchio", "Meteor Lake", "차세대 HPC")
+)
+
+kable(pkg_compare, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 13) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE, color = "#f59e0b")
+```
+
+
+# CoWoS: AI 시대의 핵심 패키징
+
+## CoWoS의 원리
+
+CoWoS(Chip-on-Wafer-on-Substrate)는 TSMC가 2012년 발표한 2.5D 패키징 기술이다. 핵심 구조는 다음과 같다:
+
+1. **실리콘 인터포저**: 수만 개의 TSV(Through-Silicon Via)가 관통하는 얇은 실리콘 웨이퍼
+2. **칩 배치 (Chip-on-Wafer)**: 로직 다이와 HBM을 인터포저 위에 나란히 배치
+3. **기판 연결 (on-Substrate)**: 인터포저를 유기 기판에 접합하여 외부 인터페이스 제공
+
+::: {.callout-note}
+## CoWoS의 핵심 가치
+GPU-HBM 간 데이터 전송에서 **수천 개의 병렬 배선**을 제공하여, 기존 PCB 배선 대비 **10배 이상의 대역폭**과 **1/5의 전력소모**를 달성한다. NVIDIA H100의 GPU-HBM3 간 대역폭 3.35TB/s는 CoWoS 없이는 불가능하다.
+:::
+
+## CoWoS 변종 비교
+
+```{r}
+#| label: fig-cowos-variants
+#| fig-cap: "CoWoS 변종별 핵심 특성 비교 (레이더 차트 스타일)"
+#| fig-width: 10
+#| fig-height: 7
+#| lightbox: true
+
+variants <- data.frame(
+  variant = rep(c("CoWoS-S", "CoWoS-L", "CoWoS-R"), each = 5),
+  metric = rep(c("배선밀도", "HBM 지원\n(스택수)", "비용효율", "패키지\n크기", "생산성"), 3),
+  score = c(
+    # CoWoS-S: 높은 밀도, 높은 HBM, 낮은 비용효율, 중간 크기, 중간 생산성
+    9, 8, 3, 6, 5,
+    # CoWoS-L: 높은 밀도, 최고 HBM, 중간 비용효율, 최대 크기, 중간 생산성
+    8, 10, 5, 9, 6,
+    # CoWoS-R: 중간 밀도, 낮은 HBM, 높은 비용효율, 중간 크기, 높은 생산성
+    5, 4, 8, 6, 8
+  )
+)
+
+variants$metric <- factor(variants$metric,
+                          levels = c("배선밀도", "HBM 지원\n(스택수)", "비용효율", "패키지\n크기", "생산성"))
+
+var_colors <- c("CoWoS-S" = c_amber, "CoWoS-L" = c_cyan, "CoWoS-R" = c_green)
+
+ggplot(variants, aes(x = metric, y = score, fill = variant)) +
+  geom_col(position = position_dodge(width = 0.75), width = 0.65, alpha = 0.85) +
+  geom_text(aes(label = score, color = variant),
+            position = position_dodge(width = 0.75), vjust = -0.5,
+            size = 3.5, fontface = "bold", family = kfont) +
+  scale_fill_manual(values = var_colors, name = "CoWoS 변종") +
+  scale_color_manual(values = var_colors, guide = "none") +
+  scale_y_continuous(limits = c(0, 12), breaks = seq(0, 10, 2)) +
+  labs(title = "CoWoS 변종별 특성 비교 (10점 척도)",
+       subtitle = "CoWoS-S: 고성능 표준 | CoWoS-L: 차세대 대형 | CoWoS-R: 비용 최적화",
+       x = NULL, y = "점수 (10점 만점)",
+       caption = "출처: TSMC Tech Symposium 2026, SemiWiki 종합 정리") +
+  theme_hunter() +
+  theme(axis.text.x = element_text(size = 11, lineheight = 0.9))
+```
+
+### CoWoS-S → CoWoS-L 전환의 핵심
+
+- **CoWoS-S**: 단일 실리콘 인터포저로 레티클 1~2개 크기. H100, MI300에 사용. 대형화에 한계
+- **CoWoS-L**: LSI(Local Silicon Interconnect) + RDL 하이브리드 구조. 칩간 고밀도 연결이 필요한 부분에만 실리콘을 사용하고, 나머지는 RDL로 연결. **5.5 레티클 크기**까지 확장 가능하여 12개 이상의 HBM 스택 탑재 가능
+- **CoWoS-R**: 실리콘 인터포저 없이 RDL만으로 구성. 비용이 낮지만 배선 밀도 한계. AI ASIC, 네트워크 칩 등 비용 민감 시장 타깃
+
+## CoWoS 생산능력 확장 추이
+
+```{r}
+#| label: fig-cowos-capacity
+#| fig-cap: "TSMC CoWoS 월간 생산능력 확장 추이 (2022~2027E)"
+#| fig-width: 11
+#| fig-height: 7
+#| lightbox: true
+
+capacity_data <- data.frame(
+  period = c("2022 H2", "2023 H1", "2023 H2", "2024 H1", "2024 H2",
+             "2025 H1", "2025 H2", "2026 H1", "2026 H2", "2027E"),
+  wafers_k = c(10, 15, 20, 28, 35, 50, 75, 95, 130, 170),
+  type = c(rep("실적", 6), rep("전망", 4))
+)
+
+capacity_data$period <- factor(capacity_data$period, levels = capacity_data$period)
+
+ggplot(capacity_data, aes(x = period, y = wafers_k)) +
+  geom_col(aes(fill = type), width = 0.65, alpha = 0.85) +
+  geom_text(aes(label = paste0(wafers_k, "K")),
+            vjust = -0.5, color = c_text, size = 3.8, fontface = "bold",
+            family = kfont) +
+  geom_hline(yintercept = 35, linetype = "dashed", color = c_red, alpha = 0.5) +
+  annotate("text", x = 2, y = 40, label = "2024H2 수준 (35K)",
+           color = c_red, size = 3, family = kfont) +
+  scale_fill_manual(values = c("실적" = c_amber, "전망" = c_cyan), name = "") +
+  scale_y_continuous(limits = c(0, 200), breaks = seq(0, 200, 25),
+                     labels = function(x) paste0(x, "K")) +
+  labs(title = "TSMC CoWoS 월간 생산능력 (Wafer/월)",
+       subtitle = "2024 대비 2026년 말 3.7배 증가 전망 — AI 수요가 드라이버",
+       x = NULL, y = "월간 생산능력 (Wafer 기준)",
+       caption = "출처: TrendForce, SemiWiki, TSMC IR (2026.05)") +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 35, hjust = 1, size = 10))
+```
+
+::: {.callout-warning}
+## 공급 병목 지속
+2026년에도 CoWoS 수요는 공급을 초과할 전망이다. 글로벌 연간 CoWoS 수요는 2024년 37만 wafer → 2025년 67만 wafer → 2026년 **100만 wafer**로 급증하지만, TSMC 자체 연간 capa는 약 78만~93만 wafer 수준. OSAT 파트너(Amkor, SPIL)에 24~27만 wafer를 외주 위탁하여 gap을 메우고 있다.
+:::
+
+
+# FOWLP/FOPLP: 비용 혁신의 축
+
+## Fan-Out 패키징의 원리
+
+Fan-Out Wafer Level Packaging(FOWLP)은 칩을 몰드 수지(EMC)로 재구성한 뒤, **RDL(Redistribution Layer)**로 I/O를 팬아웃하여 패키지를 구성하는 기술이다.
+
+- **기존 WLP(Fan-In)**: 칩 면적 = 패키지 면적 → I/O 수 제한
+- **Fan-Out**: 칩 주변에 RDL을 확장하여 더 많은 I/O 확보, 인터포저 불필요
+
+TSMC의 **InFO(Integrated Fan-Out)**가 대표적이며, Apple A시리즈/M시리즈 AP에 채택되어 iPhone/iPad의 박형화에 기여했다.
+
+## FOPLP (Fan-Out Panel Level Packaging)
+
+FOWLP의 진화형으로, 원형 웨이퍼(300mm) 대신 **대형 직사각형 패널**(~600×600mm)에서 패키징을 수행한다.
+
+```{r}
+#| label: fig-wafer-vs-panel
+#| fig-cap: "웨이퍼 vs 패널 면적 활용률 비교"
+#| fig-width: 10
+#| fig-height: 6
+#| lightbox: true
+
+panel_data <- data.frame(
+  format = c("300mm 웨이퍼\n(FOWLP)", "510×515mm 패널\n(FOPLP)", "600×600mm 패널\n(차세대 FOPLP)"),
+  area_cm2 = c(707, 2627, 3600),
+  usable_pct = c(78, 92, 95),
+  usable_area = c(707*0.78, 2627*0.92, 3600*0.95)
+)
+
+panel_data$format <- factor(panel_data$format, levels = panel_data$format)
+
+p1 <- ggplot(panel_data, aes(x = format)) +
+  geom_col(aes(y = area_cm2, fill = "전체 면적"), width = 0.55, alpha = 0.4) +
+  geom_col(aes(y = usable_area, fill = "유효 면적"), width = 0.55, alpha = 0.85) +
+  geom_text(aes(y = usable_area,
+                label = paste0(round(usable_area), " cm²\n(", usable_pct, "%)")),
+            vjust = -0.3, color = c_text, size = 3.5, family = kfont, lineheight = 0.9) +
+  scale_fill_manual(values = c("전체 면적" = c_gray, "유효 면적" = c_cyan), name = "") +
+  scale_y_continuous(limits = c(0, 4200), labels = comma) +
+  labs(title = "웨이퍼 vs 패널: 유효 면적 비교",
+       subtitle = "패널 전환 시 유효 면적 최대 6.2배 확대 → 단가 대폭 절감",
+       x = NULL, y = "면적 (cm²)",
+       caption = "출처: Yole, Samsung Electro-Mechanics IR") +
+  theme_hunter()
+
+p1
+```
+
+패널 레벨 패키징의 핵심 가치는 **비용 절감**이다:
+
+- 원형 웨이퍼의 가장자리 손실(~22%) vs 직사각형 패널(~5%)
+- 600×600mm 패널은 300mm 웨이퍼 대비 유효 면적 **6배 이상**
+- 비용 절감 효과: 패키지당 **30~50%** 원가 절감 가능
+
+Samsung, ASE, Amkor 등이 FOPLP 양산을 확대 중이며, 주로 PMIC(전력관리IC), 센서, 중저가 AP에 적용 중이다.
+
+
+# 3D 패키징: Z축의 혁명
+
+## SoIC (System on Integrated Chips)
+
+TSMC의 SoIC는 진정한 **3D 적층** 기술이다. CoWoS가 칩을 나란히 배치하는 2.5D라면, SoIC는 칩을 **수직으로 쌓는다**.
+
+핵심 특징:
+
+- **Direct Bond**: 마이크로 범프 없이 Cu-Cu 직접 본딩 → 범프 피치 극소화 (~1μm)
+- **Face-to-Face / Face-to-Back**: 칩 방향에 따른 유연한 적층 구조
+- **Hybrid Bonding**: 산화막(SiO₂) + 구리(Cu) 동시 접합으로 초미세 피치 실현
+
+```{r}
+#| label: fig-bonding-evolution
+#| fig-cap: "칩간 접합 기술 진화: 범프 피치 축소 추이"
+#| fig-width: 11
+#| fig-height: 6.5
+#| lightbox: true
+
+bonding_data <- data.frame(
+  tech = c("솔더 범프\n(C4)", "마이크로 범프\n(μBump)", "Cu 필라\n(Fine Pitch)",
+           "하이브리드 본딩\nGen1", "하이브리드 본딩\nGen2", "하이브리드 본딩\nGen3"),
+  pitch_um = c(150, 40, 20, 9, 3, 1),
+  year = c(2005, 2012, 2018, 2022, 2025, 2028),
+  density_k = c(0.044, 0.625, 2.5, 12.3, 111, 1000),
+  generation = c("전통", "전통", "미세", "하이브리드", "하이브리드", "하이브리드")
+)
+
+gen_colors <- c("전통" = c_gray, "미세" = c_amber, "하이브리드" = c_cyan)
+
+ggplot(bonding_data, aes(x = year, y = pitch_um)) +
+  geom_line(color = c_amber, linewidth = 1.2, alpha = 0.7) +
+  geom_point(aes(color = generation), size = 5) +
+  geom_text(aes(label = paste0(tech, "\n", pitch_um, "μm")),
+            vjust = -1.2, size = 3, family = kfont, color = c_text,
+            lineheight = 0.85) +
+  scale_color_manual(values = gen_colors, name = "세대") +
+  scale_y_log10(breaks = c(1, 3, 9, 20, 40, 150),
+                labels = c("1", "3", "9", "20", "40", "150")) +
+  scale_x_continuous(breaks = seq(2005, 2028, 3)) +
+  labs(title = "칩간 접합 피치 축소 추이 (로그 스케일)",
+       subtitle = "20년간 피치 150배 축소 → 연결 밀도 1000배 증가",
+       x = "연도", y = "범프 피치 (μm, 로그 스케일)",
+       caption = "출처: TSMC, IMEC, Yole Développement") +
+  theme_hunter()
+```
+
+## 3D 적층의 도전과제
+
+3D 패키징은 높은 성능을 제공하지만, 해결해야 할 기술적 과제가 있다:
+
+- **열 관리**: 칩 적층 시 발열 밀도 급증. 중간 다이 방열 경로 확보 필요
+- **Known Good Die (KGD)**: 적층 전 모든 다이의 양품 검증 필수 → **검사 장비 수요 급증**
+- **Warpage (휨)**: 이종 재료 열팽창 계수 차이로 웨이퍼 휨 발생
+- **TSV 스트레스**: 실리콘 관통 비아 주변 기계적 응력으로 회로 특성 변화
+
+::: {.callout-important}
+## 투자 시사점: 검사 장비의 중요성
+3D 적층에서 한 다이라도 불량이면 전체 스택이 폐기된다. **KGD 검증률이 수율을 결정**하며, 이는 곧 **계측/검사 장비(ONTO Innovation, KLA, ISC)**의 전략적 가치가 급등함을 의미한다.
+:::
+
+
+# 차세대: CoPoS와 유리 인터포저
+
+## 실리콘에서 유리로
+
+현재 CoWoS의 실리콘 인터포저는 두 가지 한계가 있다:
+
+1. **크기 제한**: 실리콘 웨이퍼 기반이므로 레티클 크기에 제약
+2. **비용**: 실리콘 인터포저 자체가 고가의 반도체 공정 필요
+
+**CoPoS(Chip-on-Panel-on-Substrate)**는 실리콘 인터포저를 **유리 인터포저(TGV: Through-Glass Via)**로 대체한다.
+
+```{r}
+#| label: fig-glass-vs-silicon
+#| fig-cap: "실리콘 vs 유리 인터포저 특성 비교"
+#| fig-width: 10
+#| fig-height: 6.5
+#| lightbox: true
+
+interposer_data <- data.frame(
+  metric = rep(c("열팽창 계수\n(CTE) 매칭", "전기적\n절연성", "비용\n경쟁력",
+                 "대면적\n확장성", "배선\n미세화", "공급망\n성숙도"), 2),
+  material = rep(c("실리콘 인터포저 (TSV)", "유리 인터포저 (TGV)"), each = 6),
+  score = c(
+    # 실리콘: CTE 좋음, 절연 보통, 비용 나쁨, 대면적 나쁨, 배선 최고, 성숙 높음
+    8, 5, 3, 4, 10, 9,
+    # 유리: CTE 좋음, 절연 최고, 비용 좋음, 대면적 좋음, 배선 중간, 성숙 낮음
+    7, 10, 8, 9, 6, 3
+  )
+)
+
+mat_colors <- c("실리콘 인터포저 (TSV)" = c_amber, "유리 인터포저 (TGV)" = c_cyan)
+
+ggplot(interposer_data, aes(x = metric, y = score, fill = material)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = score, color = material),
+            position = position_dodge(width = 0.7), vjust = -0.5,
+            size = 3.5, fontface = "bold", family = kfont) +
+  scale_fill_manual(values = mat_colors, name = "") +
+  scale_color_manual(values = mat_colors, guide = "none") +
+  scale_y_continuous(limits = c(0, 12), breaks = seq(0, 10, 2)) +
+  labs(title = "실리콘 vs 유리 인터포저 — 항목별 특성 비교",
+       subtitle = "유리는 비용/대면적에서 우위, 실리콘은 배선 미세화/공급망에서 우위",
+       x = NULL, y = "점수 (10점 만점)",
+       caption = "출처: TSMC, Corning, IMEC 발표 자료 종합") +
+  theme_hunter() +
+  theme(axis.text.x = element_text(size = 10, lineheight = 0.9))
+```
+
+## CoPoS 타임라인
+
+- **2026**: TSMC 파일럿 라인 가동 (Tainan AP8 fab)
+- **2027~2028**: 제한적 양산 시작
+- **2029**: 본격 양산 — SoW-X (64 HBM 스택) 적용 목표
+
+유리 인터포저 기술이 상용화되면, 패키지 크기 제약이 대폭 완화되어 **웨이퍼 스케일** AI 가속기의 실현이 가까워진다.
+
+
+# 경쟁 구도: TSMC vs Intel vs Samsung
+
+## 패키징 기술 포트폴리오 비교
+
+```{r}
+#| label: fig-company-portfolio
+#| fig-cap: "3대 파운드리 어드밴스드 패키징 포트폴리오 비교"
+#| fig-width: 11
+#| fig-height: 7
+#| lightbox: true
+
+portfolio_data <- data.frame(
+  company = rep(c("TSMC", "Intel", "Samsung"), each = 4),
+  tech_area = rep(c("2.5D 인터포저", "3D 적층", "Fan-Out", "Bridge"), 3),
+  maturity = c(
+    # TSMC
+    10, 7, 9, 3,
+    # Intel
+    5, 8, 4, 9,
+    # Samsung
+    6, 5, 7, 4
+  ),
+  tech_name = c(
+    "CoWoS-S/L/R", "SoIC", "InFO", "-",
+    "Co-EMIB", "Foveros Direct", "EMIB-T", "EMIB",
+    "I-Cube4", "X-Cube", "FOPLP", "MDI"
+  )
+)
+
+comp_colors <- c("TSMC" = c_amber, "Intel" = c_blue, "Samsung" = c_green)
+
+ggplot(portfolio_data, aes(x = tech_area, y = maturity, fill = company)) +
+  geom_col(position = position_dodge(width = 0.75), width = 0.65, alpha = 0.85) +
+  geom_text(aes(label = paste0(tech_name, "\n(", maturity, ")"), color = company),
+            position = position_dodge(width = 0.75), vjust = -0.3,
+            size = 2.8, family = kfont, lineheight = 0.85) +
+  scale_fill_manual(values = comp_colors, name = "기업") +
+  scale_color_manual(values = comp_colors, guide = "none") +
+  scale_y_continuous(limits = c(0, 13), breaks = seq(0, 10, 2)) +
+  labs(title = "3대 파운드리 어드밴스드 패키징 기술 성숙도",
+       subtitle = "TSMC: 2.5D/Fan-Out 압도적 | Intel: Bridge/3D 차별화 | Samsung: FOPLP 비용 경쟁",
+       x = NULL, y = "기술 성숙도 (10점 만점)",
+       caption = "출처: 각사 Tech Symposium, TechInsights, Yole (2026.05)") +
+  theme_hunter()
+```
+
+### TSMC의 압도적 지배
+
+TSMC는 CoWoS 시장의 **80% 이상**을 점유하고 있다. NVIDIA, AMD, Broadcom, Google, Amazon 등 주요 AI 가속기 기업이 모두 TSMC의 CoWoS를 사용한다. 이는 선단 로직 공정(3nm, 2nm)과 패키징을 한 곳에서 해결할 수 있는 **수직 통합**의 강점이다.
+
+### Intel의 차별화 전략
+
+Intel은 EMIB(Embedded Multi-die Interconnect Bridge)로 차별화한다. 대형 실리콘 인터포저 대신 기판에 **소형 실리콘 브릿지를 내장**하여 칩렛을 연결한다.
+
+- 패널 활용률: EMIB **~90%** vs CoWoS 인터포저 **~60%**
+- 비용: CoWoS 대비 **30~40%** 절감
+- 한계: 배선 밀도가 CoWoS보다 낮아 최고성능 AI 가속기에는 부적합
+
+CoWoS 공급 부족으로 TSMC에서 용량을 확보하지 못한 기업들이 Intel의 EMIB 패키징을 대안으로 검토하고 있다.
+
+
+# 시장 규모와 성장 전망
+
+## 어드밴스드 패키징 시장 성장
+
+```{r}
+#| label: fig-market-size
+#| fig-cap: "어드밴스드 패키징 시장 규모 전망 (2022~2030)"
+#| fig-width: 11
+#| fig-height: 7
+#| lightbox: true
+
+market_data <- data.frame(
+  year = 2022:2030,
+  total_pkg = c(68.5, 75.2, 84.3, 95.0, 104.2, 114.0, 125.0, 137.0, 146.4),
+  adv_pkg = c(24.0, 28.5, 34.2, 42.5, 52.0, 63.0, 73.0, 82.0, 85.9),
+  `25d_3d` = c(4.5, 5.8, 7.5, 9.5, 11.5, 14.8, 19.0, 24.5, 30.0)
+)
+
+market_long <- market_data |>
+  pivot_longer(cols = c(total_pkg, adv_pkg, `X25d_3d`),
+               names_to = "segment", values_to = "value") |>
+  mutate(segment = case_when(
+    segment == "total_pkg" ~ "전체 패키징",
+    segment == "adv_pkg" ~ "어드밴스드 패키징",
+    segment == "X25d_3d" ~ "2.5D/3D 패키징"
+  ))
+
+seg_colors <- c("전체 패키징" = c_gray, "어드밴스드 패키징" = c_amber, "2.5D/3D 패키징" = c_cyan)
+
+ggplot(market_long, aes(x = year, y = value, color = segment)) +
+  geom_line(linewidth = 1.3) +
+  geom_point(size = 3) +
+  geom_text(data = market_long |> filter(year %in% c(2022, 2026, 2030)),
+            aes(label = paste0("$", value, "B")),
+            vjust = -1, size = 3.2, family = kfont, fontface = "bold") +
+  scale_color_manual(values = seg_colors, name = "") +
+  scale_x_continuous(breaks = 2022:2030) +
+  scale_y_continuous(labels = dollar_format(prefix = "$", suffix = "B")) +
+  labs(title = "어드밴스드 패키징 시장 규모 전망",
+       subtitle = "2.5D/3D 패키징 CAGR 26.5% — 전체 패키징 시장 성장의 핵심 동력",
+       x = "연도", y = "시장 규모 (USD Billion)",
+       caption = "출처: Mordor Intelligence, Yole, GMI Insights (2026)") +
+  theme_hunter()
+```
+
+## CoWoS 수요 vs 공급 갭
+
+```{r}
+#| label: fig-supply-demand
+#| fig-cap: "CoWoS 연간 수요 vs 공급 전망 (2023~2027E, 천 Wafer)"
+#| fig-width: 11
+#| fig-height: 7
+#| lightbox: true
+
+sd_data <- data.frame(
+  year = 2023:2027,
+  demand = c(180, 370, 670, 1000, 1400),
+  supply_tsmc = c(160, 300, 540, 780, 1100),
+  supply_osat = c(10, 30, 90, 240, 350)
+)
+
+sd_data$supply_total <- sd_data$supply_tsmc + sd_data$supply_osat
+sd_data$gap <- sd_data$demand - sd_data$supply_total
+
+sd_long <- sd_data |>
+  select(year, demand, supply_tsmc, supply_osat) |>
+  pivot_longer(cols = -year, names_to = "type", values_to = "value") |>
+  mutate(type = case_when(
+    type == "demand" ~ "글로벌 수요",
+    type == "supply_tsmc" ~ "TSMC 자체 공급",
+    type == "supply_osat" ~ "OSAT 외주 공급"
+  ))
+
+sd_long$type <- factor(sd_long$type, levels = c("글로벌 수요", "TSMC 자체 공급", "OSAT 외주 공급"))
+
+type_colors <- c("글로벌 수요" = c_red, "TSMC 자체 공급" = c_amber, "OSAT 외주 공급" = c_cyan)
+
+ggplot() +
+  geom_col(data = sd_long |> filter(type != "글로벌 수요"),
+           aes(x = year, y = value, fill = type),
+           position = "stack", width = 0.45, alpha = 0.85) +
+  geom_line(data = sd_long |> filter(type == "글로벌 수요"),
+            aes(x = year, y = value, color = type),
+            linewidth = 1.5) +
+  geom_point(data = sd_long |> filter(type == "글로벌 수요"),
+             aes(x = year, y = value, color = type), size = 4) +
+  geom_text(data = sd_data,
+            aes(x = year, y = demand,
+                label = ifelse(gap > 0, paste0("Gap: ", gap, "K"), "충족")),
+            vjust = -1, color = c_red, size = 3.5, fontface = "bold",
+            family = kfont) +
+  scale_fill_manual(values = c("TSMC 자체 공급" = c_amber, "OSAT 외주 공급" = c_cyan), name = "") +
+  scale_color_manual(values = c("글로벌 수요" = c_red), name = "") +
+  scale_x_continuous(breaks = 2023:2027) +
+  scale_y_continuous(limits = c(0, 1600), labels = function(x) paste0(x, "K")) +
+  labs(title = "CoWoS 수요 vs 공급 — 공급 부족 지속 전망",
+       subtitle = "NVIDIA 60%+, Broadcom 15%, AMD 11% 차지 | OSAT 외주 비중 확대",
+       x = "연도", y = "연간 물량 (천 Wafer)",
+       caption = "출처: TrendForce, 36Kr, Longbridge (2026.05)") +
+  theme_hunter()
+```
+
+::: {.callout-note}
+## CoWoS 수요 배분 (2026년 전망)
+- **NVIDIA**: ~60% (Blackwell, Rubin용 CoWoS-L 중심)
+- **Broadcom**: ~15% (Google TPU, 네트워크 ASIC)
+- **AMD**: ~11% (MI350 가속기)
+- **기타**: ~14% (Amazon Trainium, Microsoft Maia, Meta MTIA 등)
+:::
+
+
+# 공급망 밸류체인과 수혜 기업
+
+## 어드밴스드 패키징 밸류체인
+
+```{r}
+#| label: tbl-value-chain
+#| tbl-cap: "어드밴스드 패키징 밸류체인별 핵심 기업"
+
+vc_data <- data.frame(
+  단계 = c("설계 (EDA/IP)", "웨이퍼 팹\n(인터포저)", "재료\n(서브스트레이트)",
+           "재료\n(본딩소재)", "장비\n(리소/식각)", "장비\n(본딩)",
+           "장비\n(검사/계측)", "OSAT\n(후공정)", "테스트\n(소켓/인터페이스)"),
+  `핵심기업` = c("Cadence, Synopsys", "TSMC, Samsung", "Ibiden, Shinko, 삼성전기",
+                 "Henkel, Namics", "ASML, TEL, Lam", "BESI, K&S, ASMPT",
+                 "ONTO, KLA, Camtek", "ASE, Amkor, SPIL", "ISC, Cohu, Teradyne"),
+  `핵심역할` = c("칩렛 파티셔닝, 인터커넥트 시뮬레이션",
+                 "TSV 식각, RDL 형성, 인터포저 제조",
+                 "ABF 기판, FC-BGA 공급",
+                 "언더필, NCF, 하이브리드 본딩 소재",
+                 "TSV/RDL 패터닝, 인터포저 공정",
+                 "플립칩 본딩, TCB, 하이브리드 본딩",
+                 "오버레이 검사, 3D 계측, 웨이퍼 인스펙션",
+                 "다이 어태치, 몰딩, 테스트",
+                 "번인 소켓, 테스트 인터페이스"),
+  `성장동력` = c("칩렛 설계 복잡도 증가", "CoWoS capa 확장 직접 수혜",
+                 "FC-BGA 대형화, 층수 증가", "NCF/하이브리드 본딩 소재 전환",
+                 "TSV 고종횡비, RDL 미세화", "TCB → 하이브리드 본딩 전환",
+                 "KGD 필수, 3D 계측 신규 수요", "CoWoS 외주 수요 급증",
+                 "HBM 테스트, 칩렛 병렬 테스트")
+)
+
+kable(vc_data, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE, color = "#f59e0b") |>
+  row_spec(c(7, 9), bold = TRUE, background = "#2a2a4a")
+```
+
+
+# 핵심 성능 지표: 세대별 비교
+
+```{r}
+#| label: fig-kpi-bandwidth
+#| fig-cap: "어드밴스드 패키징 세대별 칩간 대역폭 진화"
+#| fig-width: 11
+#| fig-height: 6.5
+#| lightbox: true
+
+bw_data <- data.frame(
+  generation = c("Wire Bond\n(전통)", "Flip Chip\n(C4)", "FOWLP\n(InFO)",
+                 "CoWoS-S\n(HBM2E)", "CoWoS-L\n(HBM3E)", "SoIC+CoWoS\n(차세대)"),
+  bandwidth_gbps = c(1, 50, 200, 1229, 4000, 10000),
+  year = c(2000, 2005, 2016, 2022, 2026, 2029)
+)
+
+bw_data$generation <- factor(bw_data$generation, levels = bw_data$generation)
+
+ggplot(bw_data, aes(x = generation, y = bandwidth_gbps)) +
+  geom_col(fill = c_amber, width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = ifelse(bandwidth_gbps >= 1000,
+                                paste0(bandwidth_gbps/1000, " TB/s"),
+                                paste0(bandwidth_gbps, " GB/s"))),
+            vjust = -0.5, color = c_text, size = 3.8, fontface = "bold",
+            family = kfont) +
+  scale_y_log10(breaks = c(1, 10, 100, 1000, 10000),
+                labels = c("1 GB/s", "10 GB/s", "100 GB/s", "1 TB/s", "10 TB/s")) +
+  labs(title = "패키징 기술별 칩간 최대 대역폭 (로그 스케일)",
+       subtitle = "와이어본딩 → CoWoS: 대역폭 10,000배 증가. 패키징이 성능을 결정하는 시대",
+       x = NULL, y = "칩간 대역폭 (로그 스케일)",
+       caption = "출처: TSMC, JEDEC, Hot Chips 33~36 종합") +
+  theme_hunter() +
+  theme(axis.text.x = element_text(size = 10, lineheight = 0.9))
+```
+
+
+# 기술 구조도 해설
+
+## CoWoS-L 구조 상세
+
+CoWoS-L은 현재 가장 주목받는 어드밴스드 패키징 기술이다. NVIDIA Blackwell B200에 적용되었으며, 그 구조를 단계별로 해설한다:
+
+**Layer 1 — 유기 기판 (Organic Substrate)**
+
+- FC-BGA(Flip-Chip Ball Grid Array) 기판
+- 외부 PCB와의 전기적/물리적 연결 담당
+- 층수 증가 추세: 12L → 16L → 20L+
+
+**Layer 2 — 하이브리드 인터포저**
+
+- LSI(Local Silicon Interconnect): GPU-HBM 간 고밀도 영역 (~0.4μm L/S)
+- RDL(Redistribution Layer): 비핵심 영역 연결 (~2~10μm L/S)
+- 5.5 레티클 크기까지 확장 가능 → 98% 이상 수율 달성 (2026)
+
+**Layer 3 — 칩렛 어레이**
+
+- 중앙: GPU/가속기 다이 (3nm/2nm 공정)
+- 주변: HBM4 스택 × 12개 이상 (36~48GB 용량)
+- I/O 다이, SerDes 등 기능별 칩렛 통합 가능
+
+**Layer 4 — 히트싱크/TIM**
+
+- TDP 1000W+ 대응
+- Thermal Interface Material(TIM) + Vapor Chamber
+
+::: {.callout-tip}
+## 핵심 인사이트
+CoWoS-L의 '하이브리드' 접근법이 혁신적인 이유는 **비용과 성능의 최적 균형**을 달성하기 때문이다. 실리콘 인터포저를 필요한 곳에만 사용하고 나머지는 저비용 RDL로 처리하여, CoWoS-S 대비 **대형화는 3배, 비용은 1.5배**에 불과하다.
+:::
+
+
+# 투자 시사점
+
+## 수혜 기업 분석
+
+```{r}
+#| label: fig-beneficiary
+#| fig-cap: "어드밴스드 패키징 수혜 강도별 기업 분류"
+#| fig-width: 11
+#| fig-height: 7
+#| lightbox: true
+
+beneficiary_data <- data.frame(
+  company = c("TSMC", "ONTO Innovation", "ISC", "ASE", "Amkor",
+              "BESI", "Ibiden", "삼성전기", "KLA", "ASMPT"),
+  exposure_pct = c(95, 85, 80, 75, 70, 65, 60, 55, 50, 45),
+  growth_rate = c(25, 42, 38, 30, 28, 35, 22, 18, 20, 25),
+  market_cap_b = c(1050, 11, 1.5, 22, 7, 5, 8, 6, 95, 4),
+  category = c("파운드리", "장비", "테스트", "OSAT", "OSAT",
+               "장비", "재료", "재료", "장비", "장비")
+)
+
+cat_colors2 <- c("파운드리" = c_amber, "장비" = c_cyan, "테스트" = c_green,
+                 "OSAT" = c_purple, "재료" = c_orange)
+
+ggplot(beneficiary_data, aes(x = exposure_pct, y = growth_rate)) +
+  geom_point(aes(size = log10(market_cap_b) * 3, color = category), alpha = 0.8) +
+  geom_text(aes(label = company), vjust = -1.3, size = 3.3,
+            color = c_text, family = kfont, fontface = "bold") +
+  scale_color_manual(values = cat_colors2, name = "카테고리") +
+  scale_size_continuous(range = c(4, 18), guide = "none") +
+  scale_x_continuous(limits = c(35, 100), breaks = seq(40, 100, 10)) +
+  scale_y_continuous(limits = c(10, 50), breaks = seq(10, 50, 5)) +
+  labs(title = "어드밴스드 패키징 수혜 강도 vs 매출 성장률",
+       subtitle = "버블 크기 = 시가총액 (로그) | 우상단이 가장 매력적인 포지션",
+       x = "어드밴스드 패키징 매출 비중 (%)",
+       y = "YoY 매출 성장률 (%)",
+       caption = "출처: 각사 IR, TechInsights, Alpha Hunter 자체 분석 (2026.05)") +
+  theme_hunter()
+```
+
+## Alpha Hunter 히든젬과의 연결
+
+### ONTO Innovation (ONTO) — 계측/검사의 핵심
+
+- **3D 계측**: CoWoS 인터포저의 TSV 깊이/직경, 범프 높이 측정
+- **오버레이 검사**: 칩렛 배치 정밀도 검증
+- **웨이퍼 인스펙션**: KGD 확보를 위한 다이 레벨 불량 검출
+- Week 20 보고서에서 SEPA 7/7 통과, 매출성장률 42% 확인
+
+### ISC (095340) — 테스트 소켓의 글로벌 1위
+
+- **번인 소켓**: HBM 스택, AI 가속기 패키지의 신뢰성 테스트
+- **Test Socket**: 다양한 패키지 타입(BGA, LGA, QFN)에 대응
+- **칩렛 시대**: 테스트 포인트 수 급증 → 소켓 수요 비례 증가
+- Week 20 보고서에서 SEPA 7/7 통과, 글로벌 M/S 30%+ 확인
+
+::: {.callout-important}
+## 핵심 투자 논리
+어드밴스드 패키징 시장이 연 25%+ 성장하면서, **"패키징 공정의 눈"**(검사/계측)과 **"패키징의 관문"**(테스트 소켓)의 전략적 가치가 동반 상승한다. CoWoS capa가 3.7배 늘면, 검사 장비와 테스트 소켓 수요도 최소 3배 이상 증가한다. ONTO와 ISC는 이 구조적 성장의 직접 수혜주다.
+:::
+
+## 중장기 투자 체크리스트
+
+```{r}
+#| label: tbl-checklist
+#| tbl-cap: "어드밴스드 패키징 투자 체크리스트"
+
+checklist <- data.frame(
+  체크항목 = c("CoWoS capa 확장 속도 (TSMC IR 분기별 확인)",
+               "OSAT 외주 비중 변화 (Amkor, ASE 실적)",
+               "HBM4 양산 일정 (SK하이닉스, Samsung 발표)",
+               "CoPoS/유리 인터포저 파일럿 진행 상황",
+               "하이브리드 본딩 장비 수주 (BESI, ASMPT)",
+               "Intel EMIB 채택 확대 여부 (Foundry 고객 확보)",
+               "패키지 기판 수급 (Ibiden, Shinko 가동률)",
+               "KGD 수율 트렌드 (ONTO, KLA 실적 가이던스)"),
+  모니터링주기 = c("분기", "분기", "반기", "반기", "분기", "반기", "분기", "분기"),
+  현재상태 = c("확장 가속 중", "비중 증가 (24%)", "2026H2 양산 예정",
+               "2026 파일럿 가동", "수주 증가 중", "고객 확보 진행",
+               "타이트 지속", "양호 (>95%)"),
+  투자영향 = c("긍정 — 장비/재료 수요 직결", "긍정 — Amkor 매출 성장",
+               "긍정 — 테스트 복잡도 증가", "중립 — 2028 이후 영향",
+               "긍정 — 장비주 수혜", "제한적 — TSMC 대체 아직 소규모",
+               "긍정 — 기판 업체 마진 개선", "긍정 — ONTO/ISC 실적 가이던스")
+)
+
+kable(checklist, align = "c") |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = TRUE, font_size = 12) |>
+  row_spec(0, bold = TRUE, color = "#f59e0b", background = "#1a1a2e") |>
+  column_spec(1, bold = TRUE, width = "30%")
+```
+
+
+# 리스크 요인
+
+1. **지정학적 리스크**: TSMC의 대만 집중 (CoWoS capa의 90%+ 대만). 미중 갈등 시 글로벌 AI 공급망 혼란
+2. **기술 전환 리스크**: CoPoS(유리 인터포저)가 예상보다 빠르게 상용화되면 실리콘 인터포저 관련 투자 회수 어려움
+3. **수요 변동 리스크**: AI 투자 사이클 둔화 시 CoWoS 수요 급감 가능. 과잉 capa 구축 리스크
+4. **경쟁 심화**: Intel EMIB, Samsung I-Cube의 기술 성숙으로 TSMC 독점 약화 가능성
+5. **비용 상승**: 어드밴스드 패키징 비용이 전체 칩 비용의 40~60% 차지 → 비용 전가 한계
+
+
+# 결론
+
+::: {.callout-tip}
+## 보고서 요약
+어드밴스드 패키징은 **무어의 법칙 이후 시대의 성능 확장 엔진**이다. CoWoS를 중심으로 2.5D/3D 패키징 시장은 2026~2030년 CAGR 25%+ 성장이 예상되며, AI 가속기 수요가 핵심 동력이다. 투자자는 패키징 capa 확장의 **직접 수혜주**(TSMC, Amkor) 뿐 아니라, 공정 복잡도 증가에 따른 **필수 인프라**(ONTO Innovation의 계측, ISC의 테스트 소켓)에도 주목해야 한다. 특히 KGD 검증과 칩렛 테스트는 3D 적층 시대의 **수율 지킴이**로서, 패키징 투자 사이클의 가장 확실한 수혜 영역이다.
+:::
+
+
+---
+
+::: {.callout-caution}
+## 면책 조항
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
