@@ -1,0 +1,536 @@
+---
+title: "Krystal Biotech (KRYS) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 21 — 유전자 치료 독점 플랫폼, VYJUVEK 폭풍 성장"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-21"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      legend.position = "top",
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#6366f1"
+c_green <- "#22c55e"
+c_red <- "#ef4444"
+c_cyan <- "#06b6d4"
+c_gray <- "#888888"
+c_text <- "#e4e4ec"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | Krystal Biotech, Inc. (KRYS, NASDAQ) |
+| **업종** | Healthcare / Biotechnology — 유전자 치료제 |
+| **핵심 사업** | VYJUVEK (수포성 표피박리증 유전자 치료제) + 파이프라인 |
+| **시총** | $8.9B (약 12.5조원) |
+| **현재가** | $302.05 |
+| **PER (TTM/Fwd)** | 40.5x / 30.0x |
+| **PSR** | 21.3x |
+| **배당수익률** | 0% |
+| **컨센서스** | Strong Buy (Buy 9 / Hold 1 / Sell 0) |
+| **목표가** | $241 ~ $399 (평균 $323) |
+
+::: {.callout-tip}
+## 핵심 투자 포인트
+**세계 최초 FDA 승인 유전자 치료제 VYJUVEK 독점.** Q1 2026 매출 $116.4M (+32% YoY), 영업이익률 46%, 현금 $1B, 부채 거의 Zero. 52주 저점 $122 → 현재 $302 (+146% 상승). SEPA 7/7 Stage 2 상승 추세 확인. **2026년 KB803(안과), KB801(낭포성섬유증) 2개 파이프라인 임상 데이터 발표 예정** — 파이프라인 성공 시 TAM 10배 확장.
+:::
+
+## 사업 요약
+
+Krystal Biotech는 **세계 최초이자 유일한 FDA 승인 유전자 치료제(VYJUVEK)** 을 보유한 상업화 단계 바이오텍이다.
+
+- **VYJUVEK** — 수포성 표피박리증(DEB) 치료를 위한 유전자 치료제. 2023년 FDA 승인 후 폭발적 성장
+- **Q1 2026 매출 $116.4M** — YoY +32%, QoQ +9% 가속 성장. 미국 $87.5M + 해외 $28.9M
+- **95% 매출총이익률** — 바이오텍 중 최상위. 영업이익률 46%
+- **현금 $1.0B, 부채 $10M** — 사실상 무부채. 파이프라인 투자 여력 충분
+- **파이프라인 확장** — KB803(안과 DEB), KB801(낭포성섬유증), KB407, KB111 등 다수 진행
+- **이탈리아·스페인 출시 예정** — H2 2026 유럽 확장으로 매출 가속 기대
+
+## 투자 논리: AROC 성공패턴 적용
+
+AROC 성공패턴(인프라독점 + 가동률 + 배당 + 성장)을 Krystal Biotech에 대입하면:
+
+- **인프라 독점**: 세계 유일 FDA 승인 유전자 치료제. 경쟁사 부재. 특허 장벽 강력
+- **가동률**: VYJUVEK 환자 수 지속 증가. 미국 시장 포화 전 유럽·일본 확장으로 자연 성장
+- **주주환원**: 아직 배당 없으나, 현금 $1B+로 자사주매입 또는 향후 배당 가능성
+- **성장**: 매출 +32% YoY 가속, EPS +52.5% 성장, 2개 파이프라인 데이터 2026년 예정
+
+# 차트 분석
+
+## SEPA 트렌드 템플릿 (Stage 2 상승 추세)
+
+```{r}
+#| label: fig-sepa
+#| fig-cap: "KRYS SEPA 트렌드 템플릿 — 모든 이평선 위에서 Stage 2 상승 추세 확인 ✅ 7/7 PASS"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+prices <- data.frame(
+  date = as.Date(c(
+    "2025-05-21","2025-06-02","2025-06-16","2025-07-01","2025-07-15","2025-08-01",
+    "2025-08-15","2025-09-02","2025-09-15","2025-10-01","2025-10-15","2025-11-03",
+    "2025-11-17","2025-12-01","2025-12-15","2026-01-02","2026-01-13","2026-02-02",
+    "2026-02-17","2026-03-02","2026-03-16","2026-04-01","2026-04-14","2026-05-01",
+    "2026-05-07","2026-05-14","2026-05-20"
+  )),
+  close = c(
+    126.68, 125.36, 133.04, 139.01, 147.73, 156.98,
+    150.27, 149.00, 155.71, 179.61, 192.99, 197.85,
+    208.25, 215.11, 242.98, 246.91, 291.93, 282.27,
+    287.84, 258.81, 250.16, 258.91, 270.00, 266.04,
+    296.70, 316.30, 302.05
+  )
+)
+
+ma_data <- data.frame(
+  date = as.Date(c(
+    "2025-10-01","2025-11-03","2025-12-01","2026-01-02","2026-02-02",
+    "2026-03-02","2026-04-01","2026-05-01","2026-05-20"
+  )),
+  ma50 = c(155, 175, 197, 222, 265, 273, 262, 267, 299),
+  ma150 = c(138, 142, 150, 162, 182, 204, 220, 240, 260),
+  ma200 = c(134, 137, 143, 153, 170, 190, 208, 228, 247)
+)
+
+ggplot() +
+  geom_line(data = prices, aes(x = date, y = close), color = c_text, linewidth = 1.2) +
+  geom_point(data = prices[nrow(prices),], aes(x = date, y = close),
+             color = c_amber, size = 3) +
+  geom_line(data = ma_data, aes(x = date, y = ma50), color = c_cyan, linewidth = 0.8, linetype = "solid") +
+  geom_line(data = ma_data, aes(x = date, y = ma150), color = c_amber, linewidth = 0.8, linetype = "dashed") +
+  geom_line(data = ma_data, aes(x = date, y = ma200), color = c_red, linewidth = 0.8, linetype = "dotted") +
+  annotate("text", x = as.Date("2026-05-20"), y = 299, label = "50MA", color = c_cyan, hjust = -0.2, family = kfont, size = 3.5) +
+  annotate("text", x = as.Date("2026-05-20"), y = 260, label = "150MA", color = c_amber, hjust = -0.2, family = kfont, size = 3.5) +
+  annotate("text", x = as.Date("2026-05-20"), y = 247, label = "200MA", color = c_red, hjust = -0.2, family = kfont, size = 3.5) +
+  annotate("label", x = as.Date("2025-07-01"), y = 290,
+           label = "SEPA 7/7 PASS\nStage 2 상승 추세",
+           fill = "#22c55e33", color = c_green, family = kfont, size = 4, fontface = "bold",
+           label.padding = unit(0.5, "lines")) +
+  annotate("text", x = as.Date("2026-05-20"), y = 302,
+           label = "$302.05", color = c_amber, hjust = -0.2, family = kfont, size = 4, fontface = "bold") +
+  scale_y_continuous(labels = dollar_format(), breaks = seq(120, 320, 30)) +
+  labs(
+    title = "KRYS SEPA 트렌드 템플릿 — Stage 2 상승 추세 확인",
+    subtitle = "현재가 > 50MA > 150MA > 200MA (모두 상승 중) | 52주 저점 대비 +138%",
+    x = NULL, y = "주가 (USD)",
+    caption = "50MA(실선) / 150MA(점선) / 200MA(점선) | Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+::: {.callout-note}
+## SEPA 체크리스트 (7/7 ✅)
+1. ✅ 현재가($302) > 150MA($260) > 200MA($247)
+2. ✅ 150MA > 200MA
+3. ✅ 200MA 4개월 이상 상승 추세
+4. ✅ 50MA($299) > 150MA($260) > 200MA($247)
+5. ✅ 현재가 > 50MA
+6. ✅ 52주 저점($122.80) × 1.30 = $159.64 < $302 (+138%)
+7. ✅ 52주 고점($319.48) × 0.75 = $239.61 < $302 (-5.4%)
+:::
+
+## 주가 추이 (52주) + 52주 고/저점 위치
+
+```{r}
+#| label: fig-price52w
+#| fig-cap: "KRYS 52주 주가 추이 — 저점 $123에서 +146% 상승, 고점 $319 대비 -5.4%"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+all_prices <- data.frame(
+  date = as.Date(c(
+    "2025-05-21","2025-05-30","2025-06-06","2025-06-13","2025-06-20","2025-06-27",
+    "2025-07-03","2025-07-11","2025-07-18","2025-07-25","2025-08-01","2025-08-04",
+    "2025-08-08","2025-08-15","2025-08-22","2025-08-29","2025-09-05","2025-09-12",
+    "2025-09-19","2025-09-26","2025-10-03","2025-10-10","2025-10-17","2025-10-24",
+    "2025-10-31","2025-11-07","2025-11-14","2025-11-21","2025-11-28","2025-12-05",
+    "2025-12-12","2025-12-19","2025-12-26","2026-01-02","2026-01-09","2026-01-16",
+    "2026-01-23","2026-01-30","2026-02-06","2026-02-13","2026-02-20","2026-02-27",
+    "2026-03-06","2026-03-13","2026-03-20","2026-03-27","2026-04-02","2026-04-10",
+    "2026-04-17","2026-04-24","2026-05-01","2026-05-08","2026-05-14","2026-05-20"
+  )),
+  close = c(
+    126.68, 125.96, 136.94, 137.07, 132.46, 138.88,
+    143.08, 148.17, 147.49, 147.61, 156.98, 134.94,
+    138.66, 150.27, 150.49, 147.70, 150.27, 143.68,
+    163.57, 167.82, 183.36, 181.47, 190.23, 186.13,
+    197.51, 197.93, 206.16, 212.02, 218.00, 234.13,
+    244.65, 240.80, 252.17, 246.91, 261.41, 285.04,
+    281.53, 279.24, 272.74, 276.45, 261.80, 275.64,
+    253.69, 247.26, 251.68, 245.39, 260.95, 259.00,
+    274.21, 272.52, 266.04, 305.71, 316.30, 302.05
+  )
+)
+
+high_52w <- 319.48
+low_52w <- 122.80
+current <- 302.05
+
+ggplot(all_prices, aes(x = date, y = close)) +
+  geom_area(fill = "#6366f133", alpha = 0.5) +
+  geom_line(color = c_blue, linewidth = 1) +
+  geom_hline(yintercept = high_52w, linetype = "dashed", color = c_red, linewidth = 0.6) +
+  geom_hline(yintercept = low_52w, linetype = "dashed", color = c_green, linewidth = 0.6) +
+  annotate("text", x = as.Date("2025-06-01"), y = high_52w + 5,
+           label = paste0("52주 고점 $", high_52w), color = c_red, family = kfont, size = 3.5) +
+  annotate("text", x = as.Date("2025-06-01"), y = low_52w - 5,
+           label = paste0("52주 저점 $", low_52w), color = c_green, family = kfont, size = 3.5) +
+  annotate("point", x = as.Date("2026-05-20"), y = current, color = c_amber, size = 4) +
+  annotate("text", x = as.Date("2026-05-20"), y = current + 10,
+           label = paste0("$", current, "\n고점 대비 -5.4%"),
+           color = c_amber, family = kfont, size = 3.5, fontface = "bold") +
+  scale_y_continuous(labels = dollar_format(), breaks = seq(100, 340, 40)) +
+  labs(
+    title = "KRYS 52주 주가 추이",
+    subtitle = "저점 $123 → 현재 $302 (+146%) | 고점 $319 대비 -5.4%",
+    x = NULL, y = "주가 (USD)",
+    caption = "데이터: Yahoo Finance | Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+## 실적 추이 (매출/영업이익 분기별)
+
+```{r}
+#| label: fig-earnings
+#| fig-cap: "KRYS 분기 실적 — 매출 4분기 연속 가속, 영업이익률 40%+ 유지"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+quarterly <- data.frame(
+  quarter = factor(c("Q2'25","Q3'25","Q4'25","Q1'26"), levels = c("Q2'25","Q3'25","Q4'25","Q1'26")),
+  revenue = c(96, 98, 107, 116.4),
+  op_income = c(39, 41, 44, 54),
+  op_margin = c(40.6, 41.8, 41.1, 46.4)
+)
+
+ggplot(quarterly) +
+  geom_col(aes(x = quarter, y = revenue), fill = c_blue, width = 0.35, position = position_nudge(x = -0.18)) +
+  geom_col(aes(x = quarter, y = op_income), fill = c_green, width = 0.35, position = position_nudge(x = 0.18)) +
+  geom_text(aes(x = quarter, y = revenue + 3, label = paste0("$", revenue, "M")),
+            color = c_blue, family = kfont, size = 3.5, fontface = "bold",
+            position = position_nudge(x = -0.18)) +
+  geom_text(aes(x = quarter, y = op_income + 3, label = paste0("$", op_income, "M")),
+            color = c_green, family = kfont, size = 3.5, fontface = "bold",
+            position = position_nudge(x = 0.18)) +
+  geom_text(aes(x = quarter, y = 5, label = paste0("OPM ", op_margin, "%")),
+            color = c_amber, family = kfont, size = 3, fontface = "bold") +
+  annotate("segment", x = 0.82, xend = 4.18, y = 120, yend = 120, color = "#2a2a4a", linewidth = 0.3) +
+  scale_y_continuous(labels = dollar_format(suffix = "M"), expand = expansion(mult = c(0.02, 0.12))) +
+  labs(
+    title = "KRYS 분기 실적 — 매출 & 영업이익",
+    subtitle = "파란색: 매출 | 초록색: 영업이익 | Q1'26 영업이익률 46.4%로 최고치 경신",
+    x = NULL, y = "금액 (USD M)",
+    caption = "데이터: SEC Filing | Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+## 밸류에이션 비교 (동종업종)
+
+```{r}
+#| label: fig-valuation
+#| fig-cap: "KRYS 밸류에이션 비교 — 유일하게 흑자인 유전자 치료 바이오텍"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+peers <- data.frame(
+  company = c("KRYS\nKrystal Bio", "TGTX\nTG Thera", "INSM\nInsmed", "RARE\nUltragenyx", "HIMS\nHims&Hers"),
+  fwd_pe = c(30.0, 14.6, 266.9, 24.2, 17.9),
+  op_margin = c(46.1, 17.0, -65.5, -102.2, -7.9),
+  rev_growth = c(31.9, 69.6, 229.6, -2.2, 3.8),
+  is_krys = c(TRUE, FALSE, FALSE, FALSE, FALSE)
+)
+
+peers$company <- factor(peers$company, levels = peers$company)
+
+p1 <- ggplot(peers, aes(x = company, y = op_margin, fill = is_krys)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = paste0(op_margin, "%"),
+                y = ifelse(op_margin >= 0, op_margin + 5, op_margin - 8)),
+            color = c_text, family = kfont, size = 3.5, fontface = "bold") +
+  geom_hline(yintercept = 0, color = c_gray, linewidth = 0.5) +
+  scale_fill_manual(values = c("TRUE" = c_amber, "FALSE" = c_blue), guide = "none") +
+  scale_y_continuous(labels = percent_format(scale = 1)) +
+  labs(
+    title = "영업이익률 비교 — KRYS만 유일하게 고수익",
+    subtitle = "유전자 치료/바이오텍 동종업종 | 대부분 적자, KRYS만 46% 영업이익률",
+    x = NULL, y = "영업이익률 (%)",
+    caption = "데이터: Yahoo Finance | Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+
+print(p1)
+```
+
+## 워런 버핏 해자 레이더 차트
+
+```{r}
+#| label: fig-moat
+#| fig-cap: "KRYS 해자(Moat) 분석 — FDA 독점 승인 + 특허 + 무부채 = 철벽 해자"
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat <- data.frame(
+  category = c("기술 해자\n(독점 특허)", "전환비용\n(환자 전환 불가)", "규제 해자\n(FDA 독점)", 
+               "수익성\n(OPM 46%)", "재무건전성\n(현금 $1B)", "성장성\n(매출 +32%)"),
+  score = c(95, 85, 98, 90, 95, 80)
+)
+
+n <- nrow(moat)
+angles <- seq(0, 2*pi, length.out = n + 1)[1:n]
+
+moat$x <- moat$score * cos(angles - pi/2)
+moat$y <- moat$score * sin(angles - pi/2)
+
+grid_data <- do.call(rbind, lapply(c(20, 40, 60, 80, 100), function(r) {
+  a <- seq(0, 2*pi, length.out = 100)
+  data.frame(x = r * cos(a), y = r * sin(a), r = r)
+}))
+
+spoke_data <- data.frame(
+  x = 100 * cos(angles - pi/2),
+  y = 100 * sin(angles - pi/2)
+)
+
+poly_data <- rbind(moat[, c("x", "y")], moat[1, c("x", "y")])
+
+label_r <- 110
+moat$lx <- label_r * cos(angles - pi/2)
+moat$ly <- label_r * sin(angles - pi/2)
+
+ggplot() +
+  geom_path(data = grid_data, aes(x = x, y = y, group = r), color = "#2a2a4a", linewidth = 0.3) +
+  geom_segment(data = spoke_data, aes(x = 0, y = 0, xend = x, yend = y), color = "#2a2a4a", linewidth = 0.3) +
+  geom_polygon(data = poly_data, aes(x = x, y = y), fill = "#f59e0b33", color = c_amber, linewidth = 1) +
+  geom_point(data = moat, aes(x = x, y = y), color = c_amber, size = 3) +
+  geom_text(data = moat, aes(x = lx, y = ly, label = category), 
+            color = c_text, family = kfont, size = 3.5, fontface = "bold") +
+  geom_text(data = moat, aes(x = x * 0.85, y = y * 0.85, label = score), 
+            color = c_amber, family = kfont, size = 4, fontface = "bold") +
+  coord_fixed() +
+  labs(
+    title = "KRYS 해자(Moat) 레이더 차트",
+    subtitle = "규제 해자(98점) + 기술 해자(95점) + 재무건전성(95점) = 철벽 방어",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid.major = element_blank())
+```
+
+## 피터 린치 스토리 점수
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "KRYS 피터 린치 스토리 분석 — 14/16점, 'Fast Grower' 유형"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+lynch <- data.frame(
+  factor = c(
+    "이해 가능한 사업?", "독점적 지위?", "매출 성장 20%+?",
+    "기관 소유 적절?", "내부자 매수?", "부채비율 낮음?",
+    "이익률 개선?", "PEG < 2?"
+  ),
+  score = c(2, 2, 2, 1.5, 1, 2, 2, 1.5),
+  max_score = rep(2, 8),
+  detail = c(
+    "유전자 결함 → 유전자 주입 치료. 단순 명쾌",
+    "FDA 독점 승인. 경쟁사 부재",
+    "매출 +32% YoY, 4분기 연속 가속",
+    "기관 소유 85%. 적절한 수준",
+    "내부자 보유 높으나 최근 매수 제한적",
+    "부채 $10M, 현금 $1B. 사실상 무부채",
+    "영업이익률 40% → 46% 개선 중",
+    "PEG 1.61 — 적정 수준"
+  )
+)
+
+lynch$factor <- factor(lynch$factor, levels = rev(lynch$factor))
+
+ggplot(lynch) +
+  geom_col(aes(x = factor, y = max_score), fill = "#2a2a4a", width = 0.6) +
+  geom_col(aes(x = factor, y = score), fill = c_amber, width = 0.6) +
+  geom_text(aes(x = factor, y = score + 0.1, label = paste0(score, "/", max_score)),
+            color = c_text, family = kfont, size = 3.5, fontface = "bold", hjust = 0) +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 2.5), breaks = seq(0, 2, 0.5)) +
+  annotate("label", x = 1.5, y = 1.8,
+           label = "총점: 14/16\nFast Grower 유형",
+           fill = "#1a1a2e", color = c_amber, family = kfont, size = 4.5, fontface = "bold",
+           label.padding = unit(0.5, "lines")) +
+  labs(
+    title = "피터 린치 스토리 점수 — 14/16점",
+    subtitle = "'한 문장으로 설명할 수 있는 사업' + '독점적 지위' + '급성장' = Fast Grower",
+    x = NULL, y = "점수",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+## 리스크 팩터 대시보드
+
+```{r}
+#| label: fig-risk
+#| fig-cap: "KRYS 리스크 팩터 — 밸류에이션 고평가가 유일한 약점"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+risk <- data.frame(
+  factor = c("밸류에이션\n(PSR 21x)", "파이프라인\n(임상 실패 위험)", "경쟁 진입\n(경쟁사 등장)",
+             "매출 집중\n(단일 제품 의존)", "거시경제\n(금리/인플레)", "유동성\n(Beta 0.5)"),
+  level = c(75, 55, 25, 65, 30, 20),
+  color = c(c_red, c_amber, c_green, c_amber, c_green, c_green)
+)
+
+risk$factor <- factor(risk$factor, levels = rev(risk$factor))
+
+ggplot(risk, aes(x = factor, y = level, fill = color)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = paste0(level, "%")), hjust = -0.2,
+            color = c_text, family = kfont, size = 4, fontface = "bold") +
+  coord_flip() +
+  scale_fill_identity() +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 25),
+                     labels = c("낮음", "", "보통", "", "높음")) +
+  geom_vline(xintercept = seq(0.5, 6.5, 1), color = "#2a2a4a", linewidth = 0.2) +
+  labs(
+    title = "KRYS 리스크 팩터 대시보드",
+    subtitle = "밸류에이션 부담(PSR 21x)과 단일 제품 의존이 주요 리스크 | 경쟁·유동성 리스크는 낮음",
+    x = NULL, y = "리스크 수준",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+## 매수/목표/손절가 시나리오 (R:R 비율)
+
+```{r}
+#| label: fig-scenario
+#| fig-cap: "KRYS 매수 시나리오 — Risk:Reward = 1:3.2, 하방 -8.2% vs 상방 +26.3%"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+scenarios <- data.frame(
+  label = c("손절가\n(-8.2%)", "매수가\n(현재)", "목표가 1\n(+10.6%)", "목표가 2\n(+26.3%)"),
+  price = c(277, 302, 334, 381.5),
+  type = c("stop", "entry", "target1", "target2"),
+  color = c(c_red, c_amber, c_cyan, c_green)
+)
+
+ggplot(scenarios, aes(x = reorder(label, price), y = price)) +
+  geom_col(aes(fill = color), width = 0.5) +
+  geom_text(aes(label = paste0("$", price)),
+            vjust = -0.5, color = c_text, family = kfont, size = 4.5, fontface = "bold") +
+  scale_fill_identity() +
+  scale_y_continuous(labels = dollar_format(), limits = c(0, 420),
+                     breaks = seq(0, 400, 100)) +
+  annotate("label", x = 3.5, y = 100,
+           label = "Risk:Reward = 1:3.2\n손절폭 $25 vs 목표폭 $79.5\nR:R 충족 ✅",
+           fill = "#1a1a2e", color = c_green, family = kfont, size = 4, fontface = "bold",
+           label.padding = unit(0.5, "lines")) +
+  labs(
+    title = "KRYS 매수 시나리오",
+    subtitle = "진입 $302 | 손절 $277 (-8.2%) | 목표1 $334 (+10.6%) | 목표2 $381.5 (+26.3%)",
+    x = NULL, y = "주가 (USD)",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+# 카탈리스트 & 타임라인
+
+| 시기 | 카탈리스트 | 임팩트 |
+|:---|:---|:---|
+| **2026 H2** | 이탈리아·스페인 VYJUVEK 출시 | 유럽 매출 +50% 기대 |
+| **2026 Q4** | KB803 (안과 DEB) IOLITE 임상 top-line 데이터 | 성공 시 TAM 5x 확장 |
+| **2026 Q4** | KB801 (낭포성섬유증) 완전 등록 → 데이터 | 블록버스터 잠재력 |
+| **2027** | KB407/KB111 FDA 플랫폼 기술 지정 활용 | 파이프라인 가속 |
+
+# 리스크 요인
+
+1. **밸류에이션 부담**: PSR 21x, Forward PE 30x. 성장 지속이 필수. 성장 둔화 시 멀티플 압축 리스크
+2. **단일 제품 의존**: 매출 100%가 VYJUVEK. 파이프라인 실패 시 성장 스토리 훼손
+3. **파이프라인 리스크**: KB803, KB801 임상 실패 가능성. 유전자 치료 특성상 안전성 이슈 돌발 가능
+4. **시장 규모 한계**: DEB 환자 수가 제한적(미국 ~2.5만명). 현재 침투율이 높아질수록 성장 둔화
+
+# 결론
+
+::: {.callout-important}
+## 투자 판단
+
+**Krystal Biotech (KRYS)는 SEPA 7/7 Stage 2 상승 추세에 있는 유전자 치료 독점 플랫폼이다.**
+
+- 세계 유일 FDA 승인 유전자 치료제 VYJUVEK 보유
+- Q1 2026 매출 $116.4M (+32% YoY), 영업이익률 46%
+- 현금 $1B, 부채 거의 Zero — 바이오텍 중 최강 재무
+- 2026년 2개 파이프라인 데이터 발표 → TAM 대폭 확장 가능성
+- Strong Buy 컨센서스 (9명), 목표가 평균 $323
+
+**매수가 $302 | 목표가 $381.5 | 손절가 $277 | R:R = 1:3.2**
+:::
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
