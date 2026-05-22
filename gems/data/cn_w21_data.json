@@ -1,0 +1,25 @@
+{
+  "screening_date": "2026-05-22",
+  "total_screened": 86,
+  "fundamental_pass": 11,
+  "sepa_pass": 1,
+  "sepa_pass_already_covered": true,
+  "candidates": [
+    {"ticker":"SIMO","name":"Silicon Motion","rev_growth":105.5,"sepa":"8/8","status":"W19에서 기분석","mcap_b":8.94,"price":263.51},
+    {"ticker":"ZTO","name":"ZTO Express","rev_growth":22.0,"sepa":"7/8","fail":"50SMA 아래","mcap_b":17.51,"price":22.83},
+    {"ticker":"NIO","name":"NIO Inc.","rev_growth":112.2,"sepa":"4/8","fail":"영업손실, 이평선 역배열","mcap_b":14.03,"price":5.6},
+    {"ticker":"LEGN","name":"Legend Biotech","rev_growth":56.5,"sepa":"3/8","fail":"하락추세, 영업손실","mcap_b":5.2,"price":27.99},
+    {"ticker":"FUTU","name":"Futu Holdings","rev_growth":53.1,"sepa":"0/8","fail":"전면 하락추세","mcap_b":17.36,"price":123.86},
+    {"ticker":"XPEV","name":"XPeng Inc.","rev_growth":38.2,"sepa":"0/8","fail":"전면 하락추세","mcap_b":14.94,"price":15.63},
+    {"ticker":"MNSO","name":"MINISO","rev_growth":32.7,"sepa":"0/8","fail":"52주 최저","mcap_b":4.28,"price":13.74},
+    {"ticker":"TAL","name":"TAL Education","rev_growth":31.5,"sepa":"3/8","fail":"이평선 아래","mcap_b":6.13,"price":10.07},
+    {"ticker":"KC","name":"Kingsoft Cloud","rev_growth":23.7,"sepa":"3/8","fail":"이평선 역배열","mcap_b":4.08,"price":13.63},
+    {"ticker":"GDS","name":"GDS Holdings","rev_growth":23.6,"sepa":"4/8","fail":"50SMA/200SMA 아래","mcap_b":7.05,"price":35.16}
+  ],
+  "sepa_full_results": {
+    "SIMO": {"score":"8/8","price":263.51,"sma50":167.73,"sma150":125.98,"sma200":115.58,"w52h":269.87,"w52l":60.10,"rs":10.91},
+    "ZTO": {"score":"7/8","price":22.83,"sma50":24.62,"sma150":22.29,"sma200":21.43,"w52h":25.88,"w52l":16.50,"rs":1.26},
+    "NIO": {"score":"4/8","price":5.60,"sma50":6.08,"sma150":5.64,"sma200":5.82,"w52h":7.89,"w52l":3.41,"rs":1.46},
+    "GDS": {"score":"4/8","price":35.16,"sma50":42.47,"sma150":39.63,"sma200":38.76,"w52h":47.52,"w52l":23.69,"rs":0.64}
+  }
+}

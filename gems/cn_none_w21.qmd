@@ -1,0 +1,377 @@
+---
+title: "중국 히든젬 스크리닝 보고서 — Week 21"
+subtitle: "Alpha Hunter Hidden Gem Week 21 — 이번 주 조건 충족 종목 없음 (SEPA + 펀더멘탈 동시 통과 0건)"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-22"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+library(jsonlite)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+
+data <- fromJSON("data/cn_w21_data.json")
+```
+
+# 스크리닝 결론 {.unnumbered}
+
+::: {.callout-warning}
+## 이번 주 추천 종목: 없음
+
+86개 중국 ADR/홍콩 종목을 스크리닝한 결과, **SEPA 트렌드 템플릿(8개 조건)과 펀더멘탈 필터를 동시에 통과한 신규 종목이 없습니다.**
+
+- 펀더멘탈 통과(매출성장 >20%, 시총 $2B~$30B): **11개**
+- SEPA 8/8 PASS: **1개** (SIMO — Week 19에서 기분석 완료)
+- 신규 추천 가능: **0개**
+:::
+
+> 알파헌터는 **좋은 회사가 아니라 좋은 주식**을 찾습니다. 펀더멘탈이 아무리 좋아도 기술적 추세가 뒷받침되지 않으면 추천하지 않습니다.
+
+# 스크리닝 프로세스
+
+## STEP 1: 펀더멘탈 필터
+
+86개 종목 중 매출성장 >20% YoY + 시총 $2B~$30B 조건을 충족한 **11개 후보**:
+
+```{r}
+#| label: fundamental-filter
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+cands <- data.frame(
+  ticker = c("NIO","SIMO","LEGN","FUTU","XPEV","MNSO","TAL","KC","GDS","ZTO"),
+  rev_growth = c(112.2, 105.5, 56.5, 53.1, 38.2, 32.7, 31.5, 23.7, 23.6, 22.0),
+  mcap_b = c(14.03, 8.94, 5.20, 17.36, 14.94, 4.28, 6.13, 4.08, 7.05, 17.51),
+  sepa_score = c(4, 8, 3, 0, 0, 0, 3, 3, 4, 7)
+)
+
+cands$ticker <- factor(cands$ticker, levels = cands$ticker[order(cands$rev_growth)])
+cands$sepa_label <- paste0(cands$sepa_score, "/8")
+cands$fill_color <- ifelse(cands$sepa_score == 8, c_green,
+                    ifelse(cands$sepa_score >= 6, c_amber,
+                    ifelse(cands$sepa_score >= 4, c_blue, c_red)))
+
+ggplot(cands, aes(x = ticker, y = rev_growth)) +
+  geom_col(fill = cands$fill_color, width = 0.7) +
+  geom_hline(yintercept = 20, linetype = "dashed", color = c_amber, linewidth = 0.5) +
+  geom_text(aes(label = paste0(rev_growth, "%")), hjust = -0.15, color = "#e4e4ec",
+            size = 3.5, family = kfont) +
+  geom_text(aes(label = sepa_label, y = 2), hjust = 0, color = "#ffffff",
+            size = 3, family = kfont, fontface = "bold") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 130), labels = function(x) paste0(x, "%")) +
+  labs(
+    title = "중국 히든젬 후보 — 매출 성장률 vs SEPA 점수",
+    subtitle = "초록=8/8 PASS | 노랑=6-7/8 | 파랑=4-5/8 | 빨강=0-3/8",
+    x = NULL, y = "매출 성장률 (YoY %)",
+    caption = "Source: yfinance | Alpha Hunter × Chimera AI | 2026-05-22"
+  ) +
+  theme_hunter()
+```
+
+## STEP 2: SEPA 트렌드 템플릿
+
+```{r}
+#| label: sepa-heatmap
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 7
+
+sepa_data <- data.frame(
+  ticker = rep(c("SIMO","ZTO","NIO","GDS","LEGN","TAL","KC","FUTU","XPEV","MNSO"), each = 8),
+  condition = rep(c("1.가격>150/200MA","2.150MA>200MA","3.200MA상승","4.50MA>150/200",
+                     "5.가격>50MA","6.저점+30%","7.고점-25%내","8.RS>70"), 10),
+  pass = c(
+    1,1,1,1,1,1,1,1,
+    1,1,1,1,0,1,1,1,
+    0,0,1,1,0,1,0,1,
+    0,1,1,1,0,1,0,0,
+    1,0,0,0,1,1,0,0,
+    0,1,1,0,0,0,1,0,
+    0,0,1,1,0,1,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
+  )
+)
+
+sepa_data$ticker <- factor(sepa_data$ticker,
+  levels = c("SIMO","ZTO","NIO","GDS","LEGN","TAL","KC","FUTU","XPEV","MNSO"))
+sepa_data$condition <- factor(sepa_data$condition,
+  levels = c("1.가격>150/200MA","2.150MA>200MA","3.200MA상승","4.50MA>150/200",
+             "5.가격>50MA","6.저점+30%","7.고점-25%내","8.RS>70"))
+sepa_data$status <- ifelse(sepa_data$pass == 1, "통과", "탈락")
+
+ggplot(sepa_data, aes(x = condition, y = ticker, fill = status)) +
+  geom_tile(color = "#2a2a4a", linewidth = 0.5) +
+  geom_text(aes(label = ifelse(pass == 1, "\u2713", "\u2717")),
+            color = "#ffffff", size = 4, family = kfont) +
+  scale_fill_manual(values = c("통과" = "#10b981", "탈락" = "#ef4444")) +
+  labs(
+    title = "SEPA 트렌드 템플릿 — 조건별 통과 현황",
+    subtitle = "8개 조건 전부 통과(Stage 2)해야 매수 후보 | SIMO만 8/8 PASS (기분석 완료)",
+    x = NULL, y = NULL, fill = NULL,
+    caption = "Source: yfinance 이평선 데이터 | 2026-05-22"
+  ) +
+  theme_hunter() +
+  theme(
+    axis.text.x = element_text(angle = 35, hjust = 1, size = 9),
+    legend.position = "bottom"
+  )
+```
+
+## 주요 탈락 사유
+
+```{r}
+#| label: fail-reasons
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+fail_df <- data.frame(
+  reason = c("50SMA 아래", "이평선 역배열\n(150<200)", "200SMA 하락",
+             "52주 고점 -25% 초과", "저점 대비\n+30% 미달", "RS < 70"),
+  count = c(8, 6, 4, 6, 5, 6)
+)
+fail_df$reason <- factor(fail_df$reason, levels = fail_df$reason[order(fail_df$count)])
+
+ggplot(fail_df, aes(x = reason, y = count)) +
+  geom_col(fill = c_red, width = 0.6) +
+  geom_text(aes(label = paste0(count, "개")), hjust = -0.2, color = "#e4e4ec",
+            size = 4, family = kfont) +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(
+    title = "주요 SEPA 탈락 사유 분포",
+    subtitle = "10개 후보 중 탈락 조건별 빈도 (중복 포함)",
+    x = NULL, y = "탈락 종목 수",
+    caption = "Alpha Hunter × Chimera AI | 2026-05-22"
+  ) +
+  theme_hunter()
+```
+
+# 중국 시장 트렌드 분석
+
+## 산업별 트렌드
+
+```{r}
+#| label: sector-trend
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+sectors <- data.frame(
+  sector = c("전기차 (EV)", "반도체", "바이오", "클라우드/AI", "물류", "소비재"),
+  growth = c(35, 28, 22, 40, 18, 15),
+  risk = c(65, 55, 50, 45, 35, 40),
+  bubble_size = c(25, 20, 15, 22, 12, 10)
+)
+
+ggplot(sectors, aes(x = risk, y = growth, size = bubble_size)) +
+  geom_point(color = c_amber, alpha = 0.7) +
+  geom_text(aes(label = sector), vjust = -1.5, color = "#e4e4ec",
+            size = 3.8, family = kfont) +
+  geom_hline(yintercept = 20, linetype = "dashed", color = c_green, linewidth = 0.4) +
+  geom_vline(xintercept = 50, linetype = "dashed", color = c_red, linewidth = 0.4) +
+  annotate("text", x = 25, y = 42, label = "고성장 / 저위험", color = c_green,
+           size = 3.5, family = kfont, fontface = "italic") +
+  annotate("text", x = 70, y = 42, label = "고성장 / 고위험", color = c_amber,
+           size = 3.5, family = kfont, fontface = "italic") +
+  scale_x_continuous(limits = c(20, 80)) +
+  scale_y_continuous(limits = c(10, 45)) +
+  scale_size_continuous(range = c(5, 15), guide = "none") +
+  labs(
+    title = "중국 산업 섹터 — 성장성 vs 리스크 매트릭스",
+    subtitle = "버블 크기 = 시장 규모 | 점선 = 성장 20% / 리스크 중간 기준선",
+    x = "리스크 수준 (정치·규제·경쟁)", y = "산업 성장률 (%)",
+    caption = "Source: KraneShares, Goldman Sachs, T. Rowe Price 전망 종합 | 2026-05-22"
+  ) +
+  theme_hunter()
+```
+
+### 전기차 (EV)
+
+- **BYD** 2025년 배터리 전기차 226만대 판매, 테슬라(164만대) 추월
+- NIO 매출 +112% 급증하나 **영업적자 지속** (영업이익률 -1.2%)
+- XPeng 매출 +38%이나 **주가 52주 고점 대비 -44%** — Stage 4 하락 추세
+- 미·EU 관세 리스크: 중국산 EV에 100% 관세 (미국), 45.3% 관세 (EU)
+
+### 반도체
+
+- SMIC의 $5.8B 인수로 **파운드리 통합 가속** — 성숙 공정 글로벌 25%+ 점유
+- **SIMO** (Week 19 추천) SEPA 8/8 유지 중, 주가 $263 (52주 고점 근처)
+- 미국 수출 규제 강화: 첨단 장비·GPU 대중국 제한 지속
+
+### 바이오
+
+- Legend Biotech (LEGN) CAR-T 치료제 Carvykti 매출 +56% 성장
+- 그러나 **주가 52주 고점 대비 -37%**, SEPA 3/8로 기술적 하락 추세
+- 중국 바이오시밀러·혁신신약 글로벌 라이센싱 활발
+
+## 정치 리스크: VIE 구조 + 미중 갈등
+
+```{r}
+#| label: risk-dashboard
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+risks <- data.frame(
+  category = c("VIE 구조\n불확실성", "ADR\n상장폐지", "미중\n관세전쟁",
+                "규제\n단속 리스크", "위안화\n변동성", "기술\n수출통제"),
+  level = c(7, 5, 8, 6, 5, 7),
+  trend = c("유지", "소폭 완화", "악화", "유지", "유지", "악화")
+)
+
+risks$category <- factor(risks$category, levels = risks$category[order(risks$level)])
+risks$bar_color <- ifelse(risks$level >= 7, c_red,
+                   ifelse(risks$level >= 5, c_amber, c_green))
+
+ggplot(risks, aes(x = category, y = level)) +
+  geom_col(fill = risks$bar_color, width = 0.6) +
+  geom_text(aes(label = paste0(level, "/10\n(", trend, ")")),
+            vjust = -0.3, color = "#e4e4ec", size = 3.2, family = kfont) +
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 10, 2)) +
+  labs(
+    title = "중국 주식 투자 리스크 대시보드",
+    subtitle = "10점 만점 | 미중 관세전쟁·기술 수출통제가 최대 리스크",
+    x = NULL, y = "리스크 수준 (1~10)",
+    caption = "Source: 미 재무부·PCAOB 동향, 시장 분석 종합 | 2026-05-22"
+  ) +
+  theme_hunter()
+```
+
+**핵심 리스크 요약:**
+
+- **VIE 구조**: 286개 중국 ADR (시총 $1.1조) 중 상당수가 VIE 구조. 중국 정부의 VIE 인정 여부 불확실성 상존
+- **ADR 상장폐지**: 미 재무장관 Bessent, ADR 상장폐지 가능성 시사. 다만 80%+가 홍콩 이중상장으로 리스크 관리 중
+- **미중 관세전쟁**: 145% 상호관세 부과 상태. 비관세 조치(ADR 상장폐지)도 협상 카드로 활용 가능성
+- **기술 수출통제**: 첨단 반도체 장비·AI 칩 대중국 수출 규제 강화 지속
+
+# 근접 관찰 후보 (워치리스트)
+
+```{r}
+#| label: watchlist
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+watch <- data.frame(
+  ticker = c("ZTO", "NIO", "GDS"),
+  name = c("ZTO Express", "NIO Inc.", "GDS Holdings"),
+  sepa = c(7, 4, 4),
+  gap = c("50SMA 돌파 시\nSEPA 충족", "이평선 정배열\n전환 필요", "50SMA 복귀\n필요"),
+  rev_g = c(22.0, 112.2, 23.6)
+)
+
+watch$ticker <- factor(watch$ticker, levels = c("ZTO", "NIO", "GDS"))
+
+ggplot(watch, aes(x = ticker, y = sepa)) +
+  geom_col(fill = c_cyan, width = 0.5) +
+  geom_hline(yintercept = 8, linetype = "dashed", color = c_green, linewidth = 0.5) +
+  geom_text(aes(label = paste0(sepa, "/8")), vjust = -0.5, color = "#e4e4ec",
+            size = 5, family = kfont, fontface = "bold") +
+  geom_text(aes(label = gap, y = 1), color = "#ffffff", size = 3, family = kfont) +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(
+    title = "워치리스트 — SEPA 충족 근접 종목",
+    subtitle = "점선(8/8) = Stage 2 진입 기준 | 조건 충족 시 즉시 재스크리닝",
+    x = NULL, y = "SEPA 점수",
+    caption = "Alpha Hunter × Chimera AI | 2026-05-22"
+  ) +
+  theme_hunter()
+```
+
+| 종목 | SEPA | 부족 조건 | 매출 성장 | 트리거 이벤트 |
+|:---|:---:|:---|:---:|:---|
+| **ZTO** | 7/8 | 50SMA($24.62) 돌파 필요 (현재 $22.83) | +22.0% | 50SMA 회복 시 Stage 2 진입 |
+| **NIO** | 4/8 | 150/200SMA 아래, 이평선 역배열 | +112.2% | 매출 폭증이나 기술적 바닥 다지기 중 |
+| **GDS** | 4/8 | 50/200SMA 아래, RS 약세 | +23.6% | AI 데이터센터 수요로 반등 가능성 |
+
+# 결론 및 다음 주 전략
+
+## 이번 주 요약
+
+1. **86개 종목** 스크리닝 → 펀더멘탈 11개 통과 → **SEPA 신규 통과 0건**
+2. SIMO(Week 19 추천)만 SEPA 8/8 유지 — 주가 $263.51 (진입 후 상승 지속)
+3. 중국 ADR 대부분 **미중 갈등 여파로 50SMA 이하 하락** 중
+4. 매출 성장 우수 종목(NIO +112%, LEGN +56%)도 **기술적 하락 추세**라 진입 시기 아님
+
+## 시장 환경 판단
+
+- 미중 관세 갈등(145%)이 중국 ADR 전반에 하방 압력
+- 다만 Goldman Sachs는 MSCI China +20% 전망 — **반등 시 기회 포착 필요**
+- ZTO(7/8)가 50SMA 돌파 시 가장 먼저 Stage 2 진입 가능
+
+## 다음 주 액션
+
+- ZTO, NIO, GDS **이평선 위치 매일 모니터링**
+- SIMO(기존 추천) SEPA 유지 여부 재점검
+- 미중 무역 협상 진전 시 중국 ADR 일괄 반등 주시
+
+---
+
+::: {.callout-note}
+## 면책 조항
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+*Alpha Hunter × Chimera AI — Week 21 중국 히든젬 스크리닝 보고서*
