@@ -1,0 +1,593 @@
+---
+title: "Alpha Hunter 주간 종합 히든젬 보고서"
+subtitle: "Week 21 — ONTO·FUTU 손절 도달 · 프로텍 SEPA 7/7 신규 · KRYS 유전자치료 독점 · 중국 3주 연속 없음"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-23"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+c_orange <- "#fb923c"
+```
+
+# 주간 종합 요약 {.unnumbered}
+
+::: {.callout-important}
+## Week 21 (2026-05-19 ~ 2026-05-23) 핵심 액션
+
+- **❌ ONTO (NYSE) 손절 도달**: $238.12 < 손절가 $268 → 워치리스트 제거 (-9.8%)
+- **❌ FUTU (NASDAQ) 손절 도달**: $89.76 < 손절가 $120 → 워치리스트 제거 (-41.9%)
+- **⚠️ Hugel (145020) SEPA 3/7**: SMA150 < SMA200, Stage 2 이탈 경고
+- **🆕 한국 히든젬**: 프로텍 (053610) — LAB 글로벌 최초 양산, SEPA 7/7, 매출+71.7%
+- **🆕 미국 히든젬**: Krystal Biotech (KRYS) — FDA 유전자치료 독점, SEPA 7/7, OPM 46%
+- **중국**: 3주 연속 SEPA+펀더멘탈 동시 충족 종목 없음
+:::
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+---
+
+# 포트폴리오 성과 업데이트
+
+## 현재 포지션 현황 (2026-05-23)
+
+```{r}
+#| label: portfolio-performance
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+portfolio <- data.frame(
+  name = c("AROC\n(Archrock)", "HPSP\n(403870)", "Hugel\n(145020)"),
+  entry = c(35.70, 36.00, 186.79),
+  current = c(37.25, 39.07, 191.07),
+  stringsAsFactors = FALSE
+)
+# HPSP: 54700/1400=39.07, Hugel: 267500/1400=191.07
+
+portfolio$return_pct <- round((portfolio$current / portfolio$entry - 1) * 100, 1)
+portfolio$color <- ifelse(portfolio$return_pct >= 0, c_green, c_red)
+
+ggplot(portfolio, aes(x = reorder(name, return_pct), y = return_pct)) +
+  geom_col(aes(fill = color), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(ifelse(return_pct > 0, "+", ""), return_pct, "%"),
+                y = return_pct + sign(return_pct) * 0.8),
+            color = "#e4e4ec", size = 5, fontface = "bold", family = kfont) +
+  geom_hline(yintercept = 0, color = "#444466", linewidth = 0.5) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "포트폴리오 포지션 수익률",
+    subtitle = "진입가 대비 현재가 (2026-05-23 기준)",
+    x = NULL, y = "수익률 (%)",
+    caption = "HPSP·Hugel은 환율 1,400원/$ 기준 USD 환산"
+  ) +
+  theme_hunter()
+```
+
+**포지션 요약:**
+
+- **AROC** (Archrock): $35.70 → $37.25 (**+4.3%**) | SEPA 7/7 Stage 2 유지
+- **HPSP** (403870): 50,400원 → 54,700원 (**+8.5%**) | SEPA 7/7 Stage 2 복귀!
+- **Hugel** (145020): 261,500원 → 267,500원 (**+2.3%**) | ⚠️ SEPA 3/7 — SMA150 < SMA200
+
+## 포트폴리오 가치 추이
+
+```{r}
+#| label: portfolio-value-timeline
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+# AROC: 1400 * 37.25 = $52,150
+# HPSP: 1000 * 54700 / 1400 = $39,071
+# Hugel: 200 * 267500 / 1400 = $38,214
+# Cash: $14,020
+# Total: $143,455
+
+timeline <- data.frame(
+  date = as.Date(c("2026-04-02", "2026-04-06", "2026-05-02", "2026-05-09", "2026-05-16", "2026-05-23")),
+  value = c(100000, 94724, 102848, 128460, 127200, 143455),
+  label = c("Start", "W1", "W18", "W19", "W20", "W21")
+)
+
+ggplot(timeline, aes(x = date, y = value)) +
+  geom_area(fill = c_amber, alpha = 0.15) +
+  geom_line(color = c_amber, linewidth = 1.2) +
+  geom_point(color = c_amber, size = 3) +
+  geom_text(aes(label = label), vjust = -1.5, color = "#cccccc", size = 3.5, family = kfont) +
+  geom_text(aes(label = paste0("$", format(value, big.mark = ","))),
+            vjust = 2.5, color = c_amber, size = 3, family = kfont) +
+  geom_hline(yintercept = 100000, linetype = "dashed", color = c_gray, linewidth = 0.3) +
+  annotate("text", x = as.Date("2026-04-10"), y = 101500,
+           label = "Initial $100,000", color = c_gray, size = 3, family = kfont) +
+  scale_y_continuous(labels = dollar_format(), limits = c(88000, 155000)) +
+  labs(
+    title = "가상 포트폴리오 가치 추이",
+    subtitle = "2026-04-02 시작 → 2026-05-23 현재",
+    x = NULL, y = "포트폴리오 가치 (USD)",
+    caption = "초기 자본 $100,000 | AROC + HPSP + Hugel + Cash $14,020"
+  ) +
+  theme_hunter()
+```
+
+**포트폴리오 성과: $100,000 → $143,455 (+43.5%)**
+
+## SEPA 스코어보드
+
+```{r}
+#| label: sepa-heatmap
+#| lightbox: true
+#| fig-width: 11
+#| fig-height: 7
+
+sepa_data <- data.frame(
+  ticker = c("AROC", "HPSP", "Hugel", "프로텍", "RFHIC", "SIMO", "KRYS", "MRX", "ONTO", "APPF", "Classys", "FUTU"),
+  category = c("포지션", "포지션", "포지션", "워치리스트", "워치리스트", "워치리스트", "워치리스트", "워치리스트", "손절", "워치리스트", "워치리스트", "손절"),
+  sepa = c(7, 7, 3, 7, 7, 7, 7, 7, 7, 2, 2, 1),
+  return_pct = c(4.3, 8.5, 2.3, 1.7, 7.1, 13.8, -0.9, -5.4, -9.8, -1.3, -5.7, -41.9),
+  stringsAsFactors = FALSE
+)
+
+sepa_data$status <- ifelse(sepa_data$sepa >= 7, "Stage 2 (7/7)",
+                    ifelse(sepa_data$sepa >= 5, "근접 (5-6/7)",
+                    ifelse(sepa_data$sepa >= 3, "경고 (3-4/7)", "탈락 (1-2/7)")))
+
+sepa_data$fill_color <- ifelse(sepa_data$sepa >= 7, c_green,
+                        ifelse(sepa_data$sepa >= 5, c_cyan,
+                        ifelse(sepa_data$sepa >= 3, c_orange, c_red)))
+
+sepa_data$ticker <- factor(sepa_data$ticker, levels = sepa_data$ticker[order(sepa_data$sepa, sepa_data$return_pct)])
+
+ggplot(sepa_data, aes(x = ticker, y = sepa)) +
+  geom_col(aes(fill = fill_color), width = 0.7, show.legend = FALSE) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = c_green, linewidth = 0.4) +
+  geom_text(aes(label = paste0(sepa, "/7")),
+            vjust = -0.5, color = "#e4e4ec", size = 4, fontface = "bold", family = kfont) +
+  geom_text(aes(label = paste0(ifelse(return_pct > 0, "+", ""), return_pct, "%"), y = 0.3),
+            color = "#888888", size = 3, family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "SEPA 트렌드 템플릿 스코어보드",
+    subtitle = "Week 21 — 전 종목 SEPA 재점검 (7/7 = Stage 2 상승추세)",
+    x = NULL, y = "SEPA 점수",
+    caption = "점선: Stage 2 기준선 (7/7) | 수치: 진입가 대비 수익률"
+  ) +
+  scale_y_continuous(limits = c(0, 8.5), breaks = 0:7) +
+  theme_hunter()
+```
+
+---
+
+# ❌ 손절 도달 종목
+
+## ONTO Innovation (ONTO) — 손절 확정
+
+- **진입가**: $290.76 (2026-05-14)
+- **손절가**: $268.00
+- **저점**: $238.12 (2026-05-19, 장중)
+- **현재가**: $262.25
+- **손실**: **-9.8%**
+- **원인**: 반도체 업종 전반 매도세, 미중 반도체 수출 규제 강화 우려
+
+> SEPA 7/7을 유지하나 손절가를 장중 하회. 규율에 따라 즉시 매도 처리.
+
+## FUTU Holdings (FUTU) — 손절 확정
+
+- **진입가**: $154.51 (2026-05-01 워치리스트)
+- **손절가**: $120.00
+- **현재가**: $89.76
+- **손실**: **-41.9%**
+- **원인**: 미중 무역갈등 재격화, ADR 규제 리스크, SEPA 1/7 완전 붕괴
+
+> Stage 4 하락추세 진입. 5/22 급락으로 손절가 대폭 하회. 워치리스트 즉시 제거.
+
+```{r}
+#| label: stop-loss-analysis
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+stop_data <- data.frame(
+  ticker = c("ISC\n(W20)", "TMDX\n(W19)", "ONTO\n(W21)", "FUTU\n(W21)"),
+  loss_pct = c(-11.4, -32.2, -9.8, -41.9),
+  reason = c("SMA50 이탈", "Q1 대참사", "반도체 매도세", "ADR 규제+급락"),
+  stringsAsFactors = FALSE
+)
+
+ggplot(stop_data, aes(x = reorder(ticker, loss_pct), y = loss_pct)) +
+  geom_col(fill = c_red, width = 0.6, alpha = 0.8) +
+  geom_text(aes(label = paste0(loss_pct, "%")),
+            hjust = 1.2, color = "#ffffff", size = 4.5, fontface = "bold", family = kfont) +
+  geom_text(aes(label = reason, y = -1),
+            hjust = 0, color = c_gray, size = 3.2, family = kfont) +
+  coord_flip() +
+  labs(
+    title = "❌ 손절 도달 히스토리",
+    subtitle = "추천 후 손절가 도달 종목 (ISC·TMDX·ONTO·FUTU)",
+    x = NULL, y = "손실률 (%)",
+    caption = "손절 규율: 진입가 -7~8% 또는 사전 설정 손절가 하회 시 즉시 매도"
+  ) +
+  theme_hunter()
+```
+
+---
+
+# 이번 주 히든젬 요약
+
+## 🇰🇷 한국: 프로텍 (053610)
+
+**SEPA 7/7 Stage 2 | PEG 0.37x | 매출 +71.7% | 영업이익 +238%**
+
+- 레이저 어시스트 본딩(LAB) **글로벌 최초 양산** — ASE 납품 개시
+- 자사주 18.2% **전량 소각** (주주 환원 의지)
+- Forward PE 16.1x, PEG 0.37x — 성장 대비 극저평가
+- 목표가: 120,000원 (+28%), 손절가: 83,000원
+- R:R = **1:4.3**
+
+> 📋 상세 보고서: [프로텍 W21 딥리서치](kr_protec_w21.html)
+
+## 🇺🇸 미국: Krystal Biotech (KRYS)
+
+**SEPA 7/7 Stage 2 | OPM 46% | 매출 +32% | 현금 $1B 무부채**
+
+- 세계 **유일** FDA 승인 유전자 치료제 VYJUVEK (DEB 독점)
+- Gross Margin **95%** — 의약품 중 최고 수준
+- KB803 (TGM1 결핍) + KB801 (낭포성섬유증) 파이프라인 2026 데이터
+- 목표가: $381.5 (+26%), 손절가: $277
+- R:R = **1:3.2**
+
+> 📋 상세 보고서: [KRYS W21 딥리서치](us_krys_w21.html)
+
+## 🇨🇳 중국: 이번 주 조건 충족 종목 없음 (3주 연속)
+
+- ZTO Express: SEPA 6/7 (50SMA < 150SMA 미통과)
+- BIDU: SEPA 5/7 (150SMA 하회)
+- FUTU: 1/7 폭락으로 워치리스트 제거
+- **미중 무역갈등 + ADR 규제 리스크 지속 → 신규 진입 부적절**
+
+```{r}
+#| label: weekly-picks-summary
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+picks <- data.frame(
+  market = c("한국\n프로텍", "미국\nKRYS", "중국\n없음"),
+  sepa = c(7, 7, 0),
+  upside = c(28, 26, 0),
+  rr = c(4.3, 3.2, 0),
+  stringsAsFactors = FALSE
+)
+
+picks$market <- factor(picks$market, levels = picks$market)
+picks$fill <- c("#c7254e", "#3b82f6", "#555555")
+
+ggplot(picks, aes(x = market, y = upside)) +
+  geom_col(aes(fill = fill), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = ifelse(upside > 0, paste0("+", upside, "%"), "N/A")),
+            vjust = -0.5, color = "#e4e4ec", size = 5, fontface = "bold", family = kfont) +
+  geom_text(aes(label = ifelse(sepa > 0, paste0("SEPA ", sepa, "/7"), "미통과"),
+                y = ifelse(upside > 0, upside / 2, 2)),
+            color = "#ffffff", size = 3.5, family = kfont) +
+  scale_fill_identity() +
+  labs(
+    title = "Week 21 히든젬 — 나라별 업사이드",
+    subtitle = "한국: 프로텍 +28% | 미국: KRYS +26% | 중국: 3주 연속 없음",
+    x = NULL, y = "목표 업사이드 (%)",
+    caption = "SEPA 7/7 통과 필수 | R:R 최소 1:3"
+  ) +
+  theme_hunter()
+```
+
+---
+
+# 워치리스트 SEPA 재점검
+
+## 활성 워치리스트
+
+```{r}
+#| label: watchlist-status
+#| lightbox: true
+#| fig-width: 11
+#| fig-height: 6.5
+
+wl <- data.frame(
+  ticker = c("프로텍", "RFHIC", "SIMO", "KRYS", "MRX", "Wontech", "APPF", "Classys"),
+  sepa = c(7, 7, 7, 7, 7, 4, 2, 2),
+  return_pct = c(1.7, 7.1, 13.8, -0.9, -5.4, 28.0, -1.3, -5.7),
+  status = c("Stage 2", "Stage 2", "Stage 2", "Stage 2", "Stage 2", "경고", "탈락", "탈락"),
+  stringsAsFactors = FALSE
+)
+
+wl$ticker <- factor(wl$ticker, levels = wl$ticker[order(wl$sepa, wl$return_pct)])
+wl$fill <- ifelse(wl$sepa >= 7, c_green, ifelse(wl$sepa >= 5, c_cyan, c_red))
+
+ggplot(wl, aes(x = ticker, y = return_pct)) +
+  geom_col(aes(fill = fill), width = 0.6, show.legend = FALSE) +
+  geom_hline(yintercept = 0, color = "#444466", linewidth = 0.4) +
+  geom_text(aes(label = paste0("SEPA ", sepa, "/7")),
+            vjust = ifelse(wl$return_pct >= 0, -0.5, 1.5),
+            color = "#cccccc", size = 3.2, family = kfont) +
+  geom_text(aes(label = paste0(ifelse(return_pct > 0, "+", ""), return_pct, "%"),
+                y = return_pct + sign(return_pct) * 1.5),
+            color = "#e4e4ec", size = 3.8, fontface = "bold", family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "워치리스트 SEPA 재점검 + 수익률",
+    subtitle = "Stage 2 유지 vs 경고 vs 탈락 (2026-05-23 기준)",
+    x = NULL, y = "진입 대비 수익률 (%)",
+    caption = "SEPA 7/7 = Stage 2 유지 | 5-6/7 = 경고 | 1-4/7 = 탈락"
+  ) +
+  theme_hunter()
+```
+
+**SEPA 재점검 결과:**
+
+- ✅ **Stage 2 유지 (7/7)**: 프로텍, RFHIC, SIMO, KRYS, MRX
+- ⚠️ **경고 (4/7)**: Wontech — SMA150/200 정렬 미달, 수익률은 +28%
+- ❌ **탈락 (2/7 이하)**: APPF (52주 고점 대비 -49%), Classys (SMA50 < SMA150)
+
+---
+
+# 리스크 매트릭스
+
+```{r}
+#| label: risk-matrix
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 7
+
+risk_data <- data.frame(
+  ticker = c("AROC", "HPSP", "Hugel", "프로텍", "RFHIC", "SIMO", "KRYS", "MRX"),
+  upside = c(4.7, 46.0, 33.8, 28.0, 15.4, 5.0, 26.3, 31.6),
+  risk = c(2.5, 3.0, 6.5, 4.5, 4.0, 3.5, 5.0, 5.5),
+  sepa = c(7, 7, 3, 7, 7, 7, 7, 7),
+  category = c("포지션", "포지션", "포지션", "워치", "워치", "워치", "워치", "워치"),
+  stringsAsFactors = FALSE
+)
+
+risk_data$color <- ifelse(risk_data$category == "포지션", c_amber, c_cyan)
+risk_data$shape <- ifelse(risk_data$sepa >= 7, 16, 17)
+
+ggplot(risk_data, aes(x = risk, y = upside)) +
+  geom_rect(aes(xmin = 0, xmax = 4, ymin = 15, ymax = 50), fill = "#1a3a1a", alpha = 0.3) +
+  geom_rect(aes(xmin = 4, xmax = 8, ymin = 0, ymax = 15), fill = "#3a1a1a", alpha = 0.3) +
+  geom_point(aes(color = color, shape = factor(shape)), size = 5, show.legend = FALSE) +
+  geom_text(aes(label = ticker), vjust = -1.2, color = "#e4e4ec", size = 3.5, family = kfont) +
+  scale_color_identity() +
+  scale_shape_manual(values = c("16" = 16, "17" = 17)) +
+  annotate("text", x = 2, y = 48, label = "Sweet Spot", color = c_green, size = 4, family = kfont, fontface = "italic") +
+  annotate("text", x = 6, y = 5, label = "Risk Zone", color = c_red, size = 4, family = kfont, fontface = "italic") +
+  labs(
+    title = "리스크-리워드 매트릭스",
+    subtitle = "원 = SEPA 7/7 | 삼각 = SEPA 미달 | 금색 = 포지션 | 청색 = 워치",
+    x = "리스크 수준 (10 = 최고위험)", y = "업사이드 (%)",
+    caption = "좌상단(Sweet Spot): 리스크 낮음 + 업사이드 높음"
+  ) +
+  theme_hunter() +
+  scale_x_continuous(limits = c(0, 8)) +
+  scale_y_continuous(limits = c(0, 50))
+```
+
+---
+
+# 버핏 vs 린치 종합 렌즈
+
+## 이번 주 히든젬 비교
+
+```{r}
+#| label: buffett-lynch-radar
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+# Buffett lens scores (0-10)
+lens_data <- data.frame(
+  metric = rep(c("해자(Moat)", "경영진", "재무건전성", "밸류에이션", "성장성", "예측가능성"), 2),
+  ticker = rep(c("프로텍", "KRYS"), each = 6),
+  score = c(
+    7.5, 7.0, 8.0, 8.5, 9.0, 6.5,   # Protec
+    9.0, 8.5, 9.5, 6.5, 8.0, 7.0    # KRYS
+  ),
+  stringsAsFactors = FALSE
+)
+
+lens_data$fill <- ifelse(lens_data$ticker == "프로텍", "#c7254e", "#3b82f6")
+lens_data$metric <- factor(lens_data$metric, levels = unique(lens_data$metric))
+
+ggplot(lens_data, aes(x = metric, y = score, fill = fill)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = score, group = fill),
+            position = position_dodge(width = 0.7), vjust = -0.5,
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = c_amber, linewidth = 0.3) +
+  scale_fill_identity() +
+  labs(
+    title = "버핏 해자 렌즈 — 프로텍 vs KRYS",
+    subtitle = "빨강 = 프로텍 (한국) | 파랑 = KRYS (미국) | 점선 = 투자적격 기준 (7점)",
+    x = NULL, y = "점수 (10점 만점)",
+    caption = "해자·경영진·재무·밸류에이션·성장성·예측가능성 6개 축 평가"
+  ) +
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 10, 2)) +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+```{r}
+#| label: lynch-story-score
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+lynch <- data.frame(
+  category = c("회사 이해도", "PEG 매력", "성장 가속", "경쟁우위", "카탈리스트", "내부자 매수"),
+  protec = c(8, 9, 9, 7.5, 8, 9),
+  krys = c(7, 5, 8, 9.5, 8.5, 6),
+  stringsAsFactors = FALSE
+)
+
+lynch_long <- data.frame(
+  category = rep(lynch$category, 2),
+  ticker = rep(c("프로텍", "KRYS"), each = 6),
+  score = c(lynch$protec, lynch$krys),
+  stringsAsFactors = FALSE
+)
+
+lynch_long$fill <- ifelse(lynch_long$ticker == "프로텍", "#c7254e", "#3b82f6")
+lynch_long$category <- factor(lynch_long$category, levels = lynch$category)
+
+ggplot(lynch_long, aes(x = category, y = score, fill = fill)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = score, group = fill),
+            position = position_dodge(width = 0.7), vjust = -0.5,
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  scale_fill_identity() +
+  labs(
+    title = "피터 린치 스토리 점수 — 프로텍 vs KRYS",
+    subtitle = "빨강 = 프로텍 (PEG 0.37x, 이해 쉬움) | 파랑 = KRYS (독점 해자, PEG 높음)",
+    x = NULL, y = "점수 (10점 만점)",
+    caption = "린치 관점: '누구나 이해할 수 있는 좋은 성장주를 싸게 사라'"
+  ) +
+  scale_y_continuous(limits = c(0, 11), breaks = seq(0, 10, 2)) +
+  theme_hunter() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
+
+---
+
+# 종합 판정
+
+## Week 21 최종 선정
+
+```{r}
+#| label: final-verdict
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+verdict <- data.frame(
+  label = c("프로텍\n(053610)", "KRYS\n(NASDAQ)", "중국\n히든젬"),
+  verdict_score = c(8.2, 8.0, 0),
+  fill = c("#c7254e", "#3b82f6", "#444444"),
+  stringsAsFactors = FALSE
+)
+
+verdict$label <- factor(verdict$label, levels = verdict$label)
+
+ggplot(verdict, aes(x = label, y = verdict_score, fill = fill)) +
+  geom_col(width = 0.55, show.legend = FALSE) +
+  geom_text(aes(label = ifelse(verdict_score > 0,
+                                paste0(verdict_score, "/10"), "없음")),
+            vjust = -0.5, color = "#e4e4ec", size = 5.5, fontface = "bold", family = kfont) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = c_amber, linewidth = 0.3) +
+  scale_fill_identity() +
+  labs(
+    title = "Week 21 종합 판정",
+    subtitle = "SEPA + 펀더멘탈 + 카탈리스트 + 리스크 종합 평가",
+    x = NULL, y = "종합 점수 (10점 만점)",
+    caption = "점선: 투자적격 기준 (7점) | 한국 프로텍 8.2점 · 미국 KRYS 8.0점"
+  ) +
+  scale_y_continuous(limits = c(0, 11)) +
+  theme_hunter()
+```
+
+**🇰🇷 한국 히든젬: 프로텍 (053610) — 종합 8.2/10**
+
+- SEPA 7/7 Stage 2 완벽 통과
+- PEG 0.37x 극저평가 (성장 대비)
+- 레이저 본딩 글로벌 최초 양산 — 기술 해자
+- 자사주 18.2% 전량 소각 — 경영진 신뢰
+- 리스크: 애널리스트 1명, ASE 고객 집중
+
+**🇺🇸 미국 히든젬: Krystal Biotech (KRYS) — 종합 8.0/10**
+
+- SEPA 7/7 Stage 2 완벽 통과
+- FDA 독점 유전자 치료제 — 궁극의 해자
+- OPM 46%, Gross Margin 95%, 현금 $1B 무부채
+- 2개 파이프라인 2026 데이터 — 성장 스토리
+- 리스크: PSR 21x 고평가, 단일 제품 의존
+
+**🇨🇳 중국: 이번 주 조건 충족 종목 없음 (3주 연속)**
+
+- 미중 무역갈등 + ADR 규제 리스크 → 신규 진입 부적절
+- ZTO 6/7 근접이나 50SMA < 150SMA 미통과
+- 조건 완화 없이 정직하게 보고
+
+---
+
+# 다음 주 모니터링 포인트
+
+1. **Hugel SEPA 경고**: SMA150 < SMA200 지속 시 Stage 2 이탈 확정 → 매도 검토
+2. **프로텍 52주 신고가 도전**: 현재 93,700원 vs 52주 고점 96,400원
+3. **KRYS 파이프라인**: KB803 IOLITE Phase 3 top-line 데이터 Q4 2026
+4. **RFHIC 방산 수주**: 한화 대형 수주 확인 시 포지션 편입 검토
+5. **중국 시장**: ZTO 50SMA > 150SMA 돌파 시 재스크리닝
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
