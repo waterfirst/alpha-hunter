@@ -1,0 +1,549 @@
+---
+title: "NC (036570) 기업 분석 보고서"
+subtitle: "Alpha Hunter Hidden Gem Week 22 — 게임 산업의 불사조, AION 2로 깨어난 턴어라운드의 신호탄"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-05-26"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+library(ragg)
+library(jsonlite)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      strip.text = element_text(color = "#f59e0b", face = "bold")
+    )
+}
+
+c_amber <- "#f59e0b"
+c_blue <- "#3b82f6"
+c_green <- "#10b981"
+c_red <- "#ef4444"
+c_purple <- "#8b5cf6"
+c_gray <- "#6b7280"
+c_cyan <- "#06b6d4"
+```
+
+# 기업 개요 {.unnumbered}
+
+| 항목 | 내용 |
+|:---|:---|
+| **종목명** | NC (036570.KS) |
+| **업종** | 게임 (Electronic Gaming & Multimedia) |
+| **핵심 IP** | AION 2, 리니지 시리즈, TL(쓰론앤리버티), 블레이드&소울 |
+| **시총** | 약 5.3조원 |
+| **현재가** | 271,500원 |
+| **Forward PER** | 11.7x |
+| **EV/EBITDA** | 16.8x |
+| **컨센서스** | Buy (23명 애널리스트) |
+| **SEPA 점수** | 8/8 (Stage 2 완벽) |
+
+## 투자 포인트 요약
+
+> **"2024년 적자의 늪에서 AION 2로 화려하게 부활 — Q1 영업이익 +2,070% YoY, 매출 가이던스 2.5조원 상향"**
+
+1. **Q1 2026 깜짝 실적** — 매출 5,574억원(+55% YoY), 영업이익 1,133억원(+2,070% YoY), 영업이익률 20.3%
+2. **AION 2 글로벌 흥행** — 한국·대만 대성공, 북미·유럽 확장 예정(2026 하반기)
+3. **연간 매출 가이던스 2.5조원** — 경영진 자신감, 내부 목표는 더 높음
+4. **넷캐시 1.7조원** — 현금 2.07조 vs 부채 3,472억, 재무건전성 최상
+5. **SEPA 8/8 완벽한 Stage 2** — 52주 고가 근접, 모든 이동평균선 정배열
+
+::: {.callout-important}
+## 면책 고지
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+# SEPA 트렌드 템플릿
+
+```{r}
+#| label: fig-sepa
+#| fig-cap: "NC SEPA 트렌드 템플릿 — Stage 2 완벽 진입 (8/8)"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+price_data <- read.csv("../nc_price_data.csv")
+price_data$Date <- as.Date(price_data$Date)
+
+price_data <- price_data %>%
+  arrange(Date) %>%
+  mutate(
+    MA50 = zoo::rollmean(Close, 50, fill = NA, align = "right"),
+    MA150 = zoo::rollmean(Close, 150, fill = NA, align = "right"),
+    MA200 = zoo::rollmean(Close, 200, fill = NA, align = "right")
+  )
+
+plot_data <- price_data %>%
+  select(Date, Close, MA50, MA150, MA200) %>%
+  pivot_longer(-Date, names_to = "Series", values_to = "Price") %>%
+  mutate(Series = factor(Series, levels = c("Close", "MA50", "MA150", "MA200"),
+                         labels = c("종가", "50일 이평", "150일 이평", "200일 이평")))
+
+ggplot(plot_data, aes(x = Date, y = Price, color = Series)) +
+  geom_line(aes(linewidth = Series), na.rm = TRUE) +
+  scale_linewidth_manual(values = c(0.8, 0.6, 0.6, 0.6)) +
+  scale_color_manual(values = c(c_amber, c_cyan, c_blue, c_purple)) +
+  annotate("label", x = max(price_data$Date) - 30, y = max(price_data$Close, na.rm = TRUE) * 0.95,
+           label = "Stage 2\n8/8 PASS", fill = "#10b981", color = "white",
+           fontface = "bold", size = 4, family = kfont) +
+  labs(
+    title = "NC — SEPA 트렌드 템플릿",
+    subtitle = "현재가 > MA50 > MA150 > MA200 (완벽 정배열) | Stage 2 확인",
+    x = NULL, y = "주가 (원)", color = NULL, linewidth = NULL,
+    caption = "데이터: Yahoo Finance | Alpha Hunter × Chimera AI"
+  ) +
+  scale_y_continuous(labels = comma) +
+  theme_hunter() +
+  theme(legend.position = "bottom")
+```
+
+**SEPA 체크리스트 (8/8 통과):**
+
+- ✅ 현재가(271,500) > 150일 이평선 & 200일 이평선
+- ✅ 150일 이평선 > 200일 이평선
+- ✅ 200일 이평선 1개월 이상 상승추세
+- ✅ 50일 이평선 > 150일 이평선 & 200일 이평선
+- ✅ 현재가 > 50일 이평선
+- ✅ 현재가(271,500) ≥ 52주 저가(151,140) × 1.30 = 196,482
+- ✅ 현재가(271,500) ≥ 52주 고가(279,000) × 0.75 = 209,250
+- ✅ 상대강도(RS) — 6개월 수익률 +21.5%
+
+# 주가 추이 (52주)
+
+```{r}
+#| label: fig-price52
+#| fig-cap: "NC 52주 주가 추이 — 52주 고가 근접, 강력한 상승 모멘텀"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+high_52w <- max(price_data$Close, na.rm = TRUE)
+low_52w <- min(price_data$Close, na.rm = TRUE)
+current <- tail(price_data$Close, 1)
+
+pct_from_high <- round((current / high_52w - 1) * 100, 1)
+pct_from_low <- round((current / low_52w - 1) * 100, 1)
+
+ggplot(price_data, aes(x = Date, y = Close)) +
+  geom_area(fill = c_amber, alpha = 0.15) +
+  geom_line(color = c_amber, linewidth = 0.8) +
+  geom_hline(yintercept = high_52w, linetype = "dashed", color = c_green, linewidth = 0.5) +
+  geom_hline(yintercept = low_52w, linetype = "dashed", color = c_red, linewidth = 0.5) +
+  annotate("text", x = min(price_data$Date) + 10, y = high_52w + 5000,
+           label = paste0("52주 고가: ", format(high_52w, big.mark = ","), "원"),
+           color = c_green, size = 3.5, hjust = 0, family = kfont) +
+  annotate("text", x = min(price_data$Date) + 10, y = low_52w - 5000,
+           label = paste0("52주 저가: ", format(low_52w, big.mark = ","), "원"),
+           color = c_red, size = 3.5, hjust = 0, family = kfont) +
+  annotate("label", x = max(price_data$Date) - 60, y = current + 10000,
+           label = paste0("현재: ", format(current, big.mark = ","), "원\n",
+                         "고가 대비: ", pct_from_high, "%\n",
+                         "저가 대비: +", pct_from_low, "%"),
+           fill = "#2a2a4a", color = c_amber, size = 3.2, family = kfont) +
+  labs(
+    title = "NC — 52주 주가 추이",
+    subtitle = paste0("52주 저가 대비 +", pct_from_low, "% 상승 | 52주 고가까지 ", abs(pct_from_high), "% 남음"),
+    x = NULL, y = "주가 (원)",
+    caption = "데이터: Yahoo Finance | Alpha Hunter × Chimera AI"
+  ) +
+  scale_y_continuous(labels = comma) +
+  theme_hunter()
+```
+
+# 실적 추이 (매출/영업이익)
+
+```{r}
+#| label: fig-earnings
+#| fig-cap: "NC 분기별 실적 추이 — Q1 2026 턴어라운드 확정, 매출 +55% YoY 가속"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+earnings <- data.frame(
+  Quarter = c("Q1'25", "Q2'25", "Q3'25", "Q4'25", "Q1'26"),
+  Revenue = c(3603, 3824, 3600, 4042, 5574),
+  Operating = c(52, 151, -75, 32, 1133)
+)
+earnings$Quarter <- factor(earnings$Quarter, levels = earnings$Quarter)
+
+earnings_long <- earnings %>%
+  pivot_longer(-Quarter, names_to = "Metric", values_to = "Value") %>%
+  mutate(Metric = ifelse(Metric == "Revenue", "매출", "영업이익"))
+
+ggplot(earnings_long, aes(x = Quarter, y = Value, fill = Metric)) +
+  geom_col(position = "dodge", width = 0.6) +
+  geom_text(aes(label = paste0(format(Value, big.mark = ","), "억")),
+            position = position_dodge(width = 0.6), vjust = -0.5,
+            color = "#cccccc", size = 3.2, family = kfont) +
+  scale_fill_manual(values = c(c_amber, c_green)) +
+  labs(
+    title = "NC — 분기별 매출/영업이익 추이",
+    subtitle = "Q1 2026: 매출 5,574억(+55% YoY) | 영업이익 1,133억(+2,070% YoY)",
+    x = NULL, y = "금액 (억원)", fill = NULL,
+    caption = "데이터: yfinance | Alpha Hunter × Chimera AI"
+  ) +
+  scale_y_continuous(labels = comma) +
+  theme_hunter() +
+  theme(legend.position = "bottom")
+```
+
+**실적 분석:**
+
+- **2024년 연간 영업적자 -1,077억원** → 2025년 흑자 전환(161억원) → **2026 Q1 단분기 1,133억원** 폭발
+- 매출 가속: Q4'25 4,042억 → Q1'26 5,574억 (+38% QoQ)
+- AION 2 + 리니지 클래식 + 모바일 캐주얼 사업의 3박자 성장
+- **연간 매출 가이던스 2.5조원** (2025년 1.51조 대비 +66%)
+
+# 밸류에이션 비교 (동종업종)
+
+```{r}
+#| label: fig-valuation
+#| fig-cap: "NC vs 동종업종 밸류에이션 비교 — Forward PER 11.7x로 상대적 저평가"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+peers <- data.frame(
+  Company = c("NC", "크래프톤", "넷마블", "펄어비스", "컴투스", "카카오게임즈"),
+  Fwd_PE = c(11.7, 10.1, 10.1, 25.6, 8.7, 12.8),
+  Rev_Growth = c(54.7, 56.9, 4.5, -0.2, -4.2, -25.8),
+  Op_Margin = c(20.3, 30.0, 8.5, 12.0, 5.0, -5.0),
+  stringsAsFactors = FALSE
+)
+
+peers$highlight <- ifelse(peers$Company == "NC", "NC", "동종업종")
+
+p1 <- ggplot(peers, aes(x = reorder(Company, -Fwd_PE), y = Fwd_PE, fill = highlight)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = paste0(Fwd_PE, "x")), vjust = -0.5,
+            color = "#cccccc", size = 3.5, family = kfont) +
+  scale_fill_manual(values = c(c_amber, c_gray)) +
+  labs(title = "Forward PER 비교", x = NULL, y = "Fwd PER (배)", fill = NULL) +
+  theme_hunter() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 30, hjust = 1))
+
+p2 <- ggplot(peers, aes(x = reorder(Company, -Rev_Growth), y = Rev_Growth, fill = highlight)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = paste0(Rev_Growth, "%")), vjust = ifelse(peers$Rev_Growth >= 0, -0.5, 1.5),
+            color = "#cccccc", size = 3.5, family = kfont) +
+  scale_fill_manual(values = c(c_amber, c_gray)) +
+  geom_hline(yintercept = 0, color = "#444444", linewidth = 0.3) +
+  labs(title = "매출 성장률 비교", x = NULL, y = "매출성장 (%)", fill = NULL) +
+  theme_hunter() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 30, hjust = 1))
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+**밸류에이션 핵심:**
+
+- NC의 Fwd PER 11.7x는 매출 성장률 54.7%를 고려하면 **PEG 0.21** — 극단적 저평가
+- 크래프톤(10.1x)과 비슷한 PER이지만 턴어라운드 모멘텀은 NC가 더 강력
+- 애널리스트 목표가 평균 335,652원 (현재가 대비 +23.6% 상승 여력)
+
+# 워런 버핏 해자 레이더 차트
+
+```{r}
+#| label: fig-moat
+#| fig-cap: "NC 해자(Moat) 분석 — IP 파워와 전환비용이 핵심 경쟁우위"
+#| lightbox: true
+#| fig-width: 8
+#| fig-height: 8
+
+moat <- data.frame(
+  Factor = c("브랜드 파워\n(리니지 IP 30년)", "전환비용\n(게임 내 자산 고착)", "네트워크 효과\n(MMORPG 길드)",
+             "비용우위\n(자체 엔진)", "무형자산\n(IP 포트폴리오)", "규모의 경제\n(글로벌 퍼블리싱)"),
+  Score = c(9, 8, 7, 6, 8, 7),
+  stringsAsFactors = FALSE
+)
+moat$Factor <- factor(moat$Factor, levels = moat$Factor)
+n <- nrow(moat)
+angles <- seq(0, 2 * pi, length.out = n + 1)[1:n]
+
+moat$x <- moat$Score * cos(angles - pi/2)
+moat$y <- moat$Score * sin(angles - pi/2)
+moat_closed <- rbind(moat, moat[1, ])
+
+grid_data <- expand.grid(r = c(2, 4, 6, 8, 10), angle = angles)
+grid_data$x <- grid_data$r * cos(grid_data$angle - pi/2)
+grid_data$y <- grid_data$r * sin(grid_data$angle - pi/2)
+
+label_r <- 11
+label_data <- data.frame(
+  x = label_r * cos(angles - pi/2),
+  y = label_r * sin(angles - pi/2),
+  label = moat$Factor
+)
+
+circles_list <- lapply(c(2, 4, 6, 8, 10), function(r) {
+  circle <- data.frame(
+    x = r * cos(seq(0, 2*pi, length.out = 100)),
+    y = r * sin(seq(0, 2*pi, length.out = 100))
+  )
+  geom_path(data = circle, aes(x = x, y = y), color = "#2a2a4a", linewidth = 0.2)
+})
+
+spokes <- data.frame(
+  x = 0, y = 0,
+  xend = 10 * cos(angles - pi/2),
+  yend = 10 * sin(angles - pi/2)
+)
+
+p <- ggplot() +
+  geom_segment(data = spokes, aes(x = x, y = y, xend = xend, yend = yend),
+               color = "#2a2a4a", linewidth = 0.2) +
+  geom_polygon(data = moat_closed, aes(x = x, y = y),
+               fill = c_amber, alpha = 0.25, color = c_amber, linewidth = 1) +
+  geom_point(data = moat, aes(x = x, y = y), color = c_amber, size = 3) +
+  geom_text(data = moat, aes(x = x * 1.15, y = y * 1.15,
+            label = paste0(Score, "/10")),
+            color = c_green, size = 3.5, fontface = "bold", family = kfont) +
+  geom_text(data = label_data, aes(x = x, y = y, label = label),
+            color = "#cccccc", size = 3, family = kfont) +
+  coord_fixed() +
+  labs(
+    title = "NC — 워런 버핏 해자 분석",
+    subtitle = "평균 해자 점수: 7.5/10 | 리니지 IP + MMORPG 전환비용이 핵심",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid = element_blank())
+
+for (layer in circles_list) p <- p + layer
+p
+```
+
+**해자 분석:**
+
+- **브랜드 파워 (9/10):** 리니지 IP는 30년 역사, 한국 게임 산업의 상징. AION, B&S 등 다중 IP 보유
+- **전환비용 (8/10):** MMORPG 특성상 수년간 투자한 캐릭터·아이템에 대한 고착 효과
+- **무형자산 (8/10):** 자체 게임 엔진(UE5 커스텀), AI 기술(VARCO LLM), 다수 IP 저작권
+
+# 피터 린치 스토리 점수
+
+```{r}
+#| label: fig-lynch
+#| fig-cap: "NC 피터 린치 스토리 점수 — 턴어라운드 플레이로 총점 8.1/10"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+lynch <- data.frame(
+  Category = c("사업 이해도", "성장 스토리", "재무 건전성",
+                "밸류에이션", "경영진 역량", "카탈리스트",
+                "위험 관리", "독점적 지위"),
+  Score = c(9, 8.5, 9, 8, 7.5, 8.5, 7, 7.5),
+  stringsAsFactors = FALSE
+)
+
+lynch <- lynch %>% arrange(Score)
+lynch$Category <- factor(lynch$Category, levels = lynch$Category)
+
+ggplot(lynch, aes(x = Category, y = Score, fill = Score)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = Score), hjust = -0.3, color = "#cccccc", size = 3.8, family = kfont) +
+  scale_fill_gradient(low = c_blue, high = c_amber) +
+  coord_flip(ylim = c(0, 10.5)) +
+  geom_hline(yintercept = mean(lynch$Score), linetype = "dashed", color = c_green, linewidth = 0.5) +
+  annotate("text", x = 1, y = mean(lynch$Score) + 0.3,
+           label = paste0("평균: ", round(mean(lynch$Score), 1)),
+           color = c_green, size = 3.5, family = kfont) +
+  labs(
+    title = "NC — 피터 린치 스토리 점수",
+    subtitle = "턴어라운드 카테고리 | 총점 8.1/10",
+    x = NULL, y = "점수 (10점 만점)", fill = NULL,
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter() +
+  theme(legend.position = "none")
+```
+
+**린치 분류: 턴어라운드(Turnaround)**
+
+- 2024년 연간 영업적자 → 2026년 Q1 영업이익률 20% 회복 — 전형적 턴어라운드
+- **사업 이해도 (9/10):** 누구나 아는 게임 회사, 리니지·AION 브랜드
+- **재무 건전성 (9/10):** 넷캐시 1.7조원, 부채비율 9.8%
+- **카탈리스트 (8.5/10):** AION 2 글로벌 확장, 신작 파이프라인, AI 사업
+
+# 리스크 팩터 대시보드
+
+```{r}
+#| label: fig-risk
+#| fig-cap: "NC 리스크 팩터 대시보드 — 신작 의존도와 게임 산업 특성 리스크 존재"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+risks <- data.frame(
+  Risk = c("신작 매출\n지속성 불확실", "게임 규제\n리스크", "인력 유출\n(구조조정 후유증)",
+           "경쟁 심화\n(크래프톤 등)", "환율\n변동성", "리니지 IP\n노후화"),
+  Impact = c(8, 5, 6, 7, 4, 5),
+  Probability = c(6, 3, 5, 6, 5, 4),
+  stringsAsFactors = FALSE
+)
+
+risks$RiskScore <- risks$Impact * risks$Probability / 10
+risks$Color <- ifelse(risks$RiskScore >= 4, c_red,
+               ifelse(risks$RiskScore >= 2.5, c_amber, c_green))
+
+ggplot(risks, aes(x = Probability, y = Impact)) +
+  annotate("rect", xmin = 5, xmax = 10, ymin = 5, ymax = 10,
+           fill = c_red, alpha = 0.08) +
+  annotate("rect", xmin = 0, xmax = 5, ymin = 5, ymax = 10,
+           fill = c_amber, alpha = 0.05) +
+  annotate("rect", xmin = 5, xmax = 10, ymin = 0, ymax = 5,
+           fill = c_amber, alpha = 0.05) +
+  annotate("rect", xmin = 0, xmax = 5, ymin = 0, ymax = 5,
+           fill = c_green, alpha = 0.05) +
+  geom_point(aes(color = Color), size = 6) +
+  scale_color_identity() +
+  ggrepel::geom_label_repel(
+    aes(label = Risk), fill = "#2a2a4a", color = "#cccccc",
+    size = 3, family = kfont, box.padding = 0.8, max.overlaps = 20
+  ) +
+  scale_x_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  scale_y_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  labs(
+    title = "NC — 리스크 팩터 히트맵",
+    subtitle = "X축: 발생 확률 | Y축: 영향도 | 빨강: 고위험, 노랑: 중위험, 녹색: 저위험",
+    x = "발생 확률", y = "영향도",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  theme_hunter()
+```
+
+**핵심 리스크:**
+
+1. **신작 매출 지속성 (고위험):** AION 2의 초기 흥행이 지속될지 불확실. MMORPG의 lifecycle은 보통 출시 후 3~6개월 내 피크
+2. **경쟁 심화 (중위험):** 크래프톤(배그 모바일), 넥슨(던파모바일) 등 경쟁사도 강력한 신작 보유
+3. **인력 유출 (중위험):** 2023~2024년 대규모 구조조정으로 핵심 개발 인력 유출 가능성
+
+# 매수/목표/손절가 시나리오
+
+```{r}
+#| label: fig-scenario
+#| fig-cap: "NC 매수/목표/손절가 시나리오 — R:R = 1:3.3 (목표 335,000원, 손절 252,500원)"
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 6
+
+entry <- 271500
+stop_loss <- round(entry * 0.93, -2)   # -7%
+target1 <- 335000                       # 애널리스트 평균 목표가
+target2 <- 400000                       # 고점 목표
+risk <- entry - stop_loss
+reward1 <- target1 - entry
+rr1 <- round(reward1 / risk, 1)
+
+scenarios <- data.frame(
+  Level = c("손절가", "매수가\n(현재가)", "목표가 1\n(컨센서스)", "목표가 2\n(낙관)"),
+  Price = c(stop_loss, entry, target1, target2),
+  Color = c(c_red, c_amber, c_green, c_cyan),
+  Label = c(
+    paste0(format(stop_loss, big.mark = ","), "원\n(-", round((1 - stop_loss/entry)*100, 1), "%)"),
+    paste0(format(entry, big.mark = ","), "원\n(진입)"),
+    paste0(format(target1, big.mark = ","), "원\n(+", round((target1/entry - 1)*100, 1), "%)"),
+    paste0(format(target2, big.mark = ","), "원\n(+", round((target2/entry - 1)*100, 1), "%)")
+  ),
+  stringsAsFactors = FALSE
+)
+
+scenarios$Level <- factor(scenarios$Level, levels = scenarios$Level)
+
+ggplot(scenarios, aes(x = Level, y = Price)) +
+  geom_col(fill = scenarios$Color, width = 0.5, alpha = 0.8) +
+  geom_text(aes(label = Label), vjust = -0.3, color = "#cccccc", size = 3.5, family = kfont) +
+  # R:R annotation
+
+  annotate("label", x = 2.5, y = max(scenarios$Price) * 0.5,
+           label = paste0("Risk:Reward = 1:", rr1, "\n손절폭: ", format(risk, big.mark = ","), "원\n",
+                         "목표수익: ", format(reward1, big.mark = ","), "원"),
+           fill = "#2a2a4a", color = c_amber, size = 3.5, family = kfont) +
+  labs(
+    title = "NC — 매수/목표/손절가 시나리오",
+    subtitle = paste0("진입: ", format(entry, big.mark = ","), "원 | Risk:Reward = 1:", rr1),
+    x = NULL, y = "주가 (원)",
+    caption = "Alpha Hunter × Chimera AI"
+  ) +
+  scale_y_continuous(labels = comma, limits = c(0, max(scenarios$Price) * 1.15)) +
+  theme_hunter()
+```
+
+**트레이딩 플랜:**
+
+- **매수가:** 271,500원 (현재가 기준)
+- **손절가:** 252,500원 (-7.0%) — SEPA 트렌드 이탈 시 즉시 손절
+- **목표가 1:** 335,000원 (+23.4%) — 애널리스트 컨센서스 평균
+- **목표가 2:** 400,000원 (+47.3%) — AION 2 글로벌 흥행 + 가이던스 상회 시
+- **Risk:Reward = 1:3.3** — 최소 조건(1:3) 충족
+
+# 투자 스토리 — 왜 지금 NC인가?
+
+## 턴어라운드의 본질
+
+NC는 2022년 이후 3년간 매출이 2.57조 → 1.51조로 -41% 감소하며 "몰락한 게임 공룡"이라는 낙인이 찍혔다. 하지만 2026년 Q1, AION 2와 리니지 클래식의 동시 흥행으로 **단분기 매출 5,574억, 영업이익 1,133억**을 달성하며 완벽한 턴어라운드를 시작했다.
+
+## 핵심 카탈리스트
+
+1. **AION 2 글로벌 확장 (2026 H2):** 한국·대만에서 대성공 후 북미·유럽 출시 예정. 3개월간 TL 대비 월등한 지표
+2. **리니지 클래식:** 기존 리니지 IP의 재해석으로 안정적 매출 기반 확보
+3. **AI 사업 (VARCO):** 자체 LLM 및 AI 기술로 게임 외 신사업 영역 개척
+4. **연간 가이던스 2.5조원:** 2025년(1.51조) 대비 +66% 성장 목표, 경영진 자신감
+
+## 재무 건전성
+
+- **넷캐시 1.7조원** (현금 2.07조 - 부채 3,472억)
+- 부채비율 9.8% — 게임업종 최저 수준
+- FCF 2,748억원 — 주주환원 여력 충분
+
+::: {.callout-note}
+## Alpha Hunter 판단
+NC는 **펀더멘탈(매출 +55%, 영업이익률 20%)**과 **기술적 지표(SEPA 8/8)** 모두 충족하는 드문 턴어라운드 종목이다. 다만 AION 2의 매출 지속성이 핵심 변수이므로, Q2 실적 확인 시점까지 포지션을 단계적으로 구축하는 전략을 권장한다.
+:::
+
+---
+
+*이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.*
