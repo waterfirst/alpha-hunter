@@ -1,0 +1,1137 @@
+---
+title: "Alpha Hunter 2026 Q2 분기 종합 히든젬 보고서"
+subtitle: "한국·미국·중국 3개 시장 × 3종목 = 9 히든젬 — 섹터 기술 심층분석 포함"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-06-06"
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    dpi: 150
+    fig.retina: 1
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(scales)
+library(ragg)
+
+kfont <- "Noto Sans CJK KR"
+
+theme_hunter <- function(base_size = 13) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      plot.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.background = element_rect(fill = "#1a1a2e", color = NA),
+      panel.grid.major = element_line(color = "#2a2a4a", linewidth = 0.3),
+      panel.grid.minor = element_blank(),
+      text = element_text(family = kfont, color = "#e4e4ec"),
+      axis.text = element_text(color = "#aaaaaa"),
+      axis.title = element_text(color = "#cccccc", size = rel(0.9)),
+      plot.title = element_text(color = "#f59e0b", face = "bold", size = rel(1.2)),
+      plot.subtitle = element_text(color = "#888888", size = rel(0.85)),
+      plot.caption = element_text(color = "#666666", size = rel(0.7)),
+      legend.background = element_rect(fill = "#1a1a2e", color = NA),
+      legend.text = element_text(color = "#cccccc"),
+      legend.title = element_text(color = "#f59e0b"),
+      legend.key = element_rect(fill = "#1a1a2e", color = NA),
+      legend.position = "top",
+      strip.text = element_text(color = "#f59e0b", face = "bold"),
+      plot.margin = margin(10, 12, 10, 12)
+    )
+}
+
+c_amber  <- "#f59e0b"
+c_blue   <- "#6366f1"
+c_green  <- "#10b981"
+c_red    <- "#ef4444"
+c_cyan   <- "#06b6d4"
+c_purple <- "#a855f7"
+c_gray   <- "#aaaaaa"
+c_orange <- "#fb923c"
+c_pink   <- "#ec4899"
+c_kr     <- "#c7254e"
+c_us     <- "#3b82f6"
+c_cn     <- "#dc2626"
+```
+
+# 분기 종합 요약 {.unnumbered}
+
+::: {.callout-important}
+## 2026 Q2 (4월~6월) 핵심 발견
+
+**9개 히든젬 선정** — 한국 3종목 · 미국 3종목 · 중국 3종목
+
+- 🇰🇷 **한국**: 리노공업 (058470) · 프로텍 (053610) · 파크시스템스 (140860)
+- 🇺🇸 **미국**: Rocket Lab (RKLB) · Axon Enterprise (AXON) · CAVA Group (CAVA)
+- 🇨🇳 **중국**: CATL (300750) · XPeng (XPEV) · Kanzhun/BOSS직빈 (BZ)
+
+**분기 매크로 테마**: AI 인프라 → 반도체 후공정 → 로봇/우주/방산 확장
+:::
+
+::: {.callout-warning}
+## 면책 문구
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
+:::
+
+---
+
+# 포트폴리오 분기 성과
+
+## 가상 포트폴리오 현황 (Q2 누적)
+
+```{r}
+#| label: quarterly-portfolio
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+timeline <- data.frame(
+  date = as.Date(c("2026-04-02", "2026-04-06", "2026-05-02", "2026-05-09",
+                    "2026-05-16", "2026-05-23", "2026-06-06")),
+  value = c(100000, 94724, 102848, 128460, 127200, 143455, 152800),
+  label = c("Start", "W1", "W18", "W19", "W20", "W21", "Q2 End")
+)
+
+ggplot(timeline, aes(x = date, y = value)) +
+  geom_area(fill = c_amber, alpha = 0.15) +
+  geom_line(color = c_amber, linewidth = 1.2) +
+  geom_point(color = c_amber, size = 3) +
+  geom_text(aes(label = label), vjust = -1.5, color = "#cccccc", size = 3.5, family = kfont) +
+  geom_text(aes(label = paste0("$", format(value, big.mark = ","))),
+            vjust = 2.5, color = c_amber, size = 3, family = kfont) +
+  geom_hline(yintercept = 100000, linetype = "dashed", color = c_gray, linewidth = 0.3) +
+  annotate("text", x = as.Date("2026-04-10"), y = 101500,
+           label = "Initial $100,000", color = c_gray, size = 3, family = kfont) +
+  scale_y_continuous(labels = dollar_format(), limits = c(88000, 165000)) +
+  labs(
+    title = "가상 포트폴리오 분기 가치 추이",
+    subtitle = "2026-04-02 시작 → 2026-06-06 현재 (+52.8%)",
+    x = NULL, y = "포트폴리오 가치 (USD)",
+    caption = "초기 자본 $100,000 | 포지션: AROC + HPSP + Hugel + 신규 워치리스트"
+  ) +
+  theme_hunter()
+```
+
+## 분기 적중률 분석
+
+```{r}
+#| label: hit-rate
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+hit_data <- data.frame(
+  category = c("목표가 도달", "보유 중 (수익)", "보유 중 (손실)", "손절 도달"),
+  count = c(2, 4, 1, 4),
+  color = c(c_green, c_cyan, c_orange, c_red),
+  stringsAsFactors = FALSE
+)
+
+hit_data$pct <- round(hit_data$count / sum(hit_data$count) * 100, 1)
+hit_data$label <- paste0(hit_data$category, "\n", hit_data$count, "건 (", hit_data$pct, "%)")
+
+ggplot(hit_data, aes(x = "", y = count, fill = color)) +
+  geom_col(width = 1, show.legend = FALSE) +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = label),
+            position = position_stack(vjust = 0.5),
+            color = "#1a1a2e", size = 3.5, fontface = "bold", family = kfont) +
+  scale_fill_identity() +
+  labs(
+    title = "Q2 히든젬 추천 적중률",
+    subtitle = "전체 11건 추천 중 — 목표가 2건 / 수익보유 4건 / 손실보유 1건 / 손절 4건",
+    caption = "적중률 = (목표가 도달 + 수익보유) / 전체 = 54.5%"
+  ) +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid = element_blank())
+```
+
+---
+
+# 섹터 기술 심층분석 {.unnumbered}
+
+## AI 반도체 후공정 밸류체인
+
+2026년 Q2는 AI 인프라 투자가 반도체 전공정(파운드리)에서 **후공정(Advanced Packaging)**으로 확산되는 변곡점입니다.
+
+```{r}
+#| label: sector-ai-semiconductor
+#| lightbox: true
+#| fig-width: 12
+#| fig-height: 7
+
+sector_chain <- data.frame(
+  stage = c("설계\n(Fabless)", "전공정\n(Foundry)", "후공정\n(OSAT/Pkg)", "테스트\n(Test)", "장비\n(Equipment)", "소재\n(Materials)"),
+  growth_2026 = c(28, 18, 42, 35, 38, 25),
+  x_pos = 1:6,
+  key_player = c("NVIDIA\nBroadcom", "TSMC\n삼성전자", "ASE\nAmkor", "Teradyne\nAdvantest", "AMAT\n한미반도체", "SK머티리얼즈\nEntegris"),
+  stringsAsFactors = FALSE
+)
+
+ggplot(sector_chain, aes(x = x_pos, y = growth_2026)) +
+  geom_col(fill = c_amber, width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = paste0("+", growth_2026, "%")),
+            vjust = -0.5, color = c_amber, size = 4.5, fontface = "bold", family = kfont) +
+  geom_text(aes(label = stage, y = -5),
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  geom_text(aes(label = key_player, y = growth_2026 / 2),
+            color = "#1a1a2e", size = 3, family = kfont, lineheight = 0.9) +
+  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = -10, ymax = 50,
+           fill = c_amber, alpha = 0.05) +
+  annotate("text", x = 3.5, y = 48, label = "Alpha Hunter 집중 영역",
+           color = c_amber, size = 3.5, fontface = "bold", family = kfont) +
+  scale_y_continuous(limits = c(-12, 55)) +
+  labs(
+    title = "AI 반도체 밸류체인 성장률 (2026E YoY)",
+    subtitle = "후공정(+42%)·테스트(+35%)가 전공정(+18%) 대비 2배 이상 고성장",
+    x = NULL, y = "성장률 (%)",
+    caption = "출처: SEMI, TrendForce, Gartner (2026 예상치 종합)"
+  ) +
+  theme_hunter() +
+  theme(axis.text.x = element_blank())
+```
+
+### 핵심 기술 트렌드
+
+**1. HBM (High Bandwidth Memory) 4세대 진입**
+
+- HBM4가 2026H2 양산 개시 — SK하이닉스·삼성 양사 동시 램프업
+- HBM 시장 규모: 2025년 $26B → 2026년 $45B (+73% YoY)
+- HBM 후공정에 **레이저 본딩(LAB)** 기술이 핵심 — 프로텍(053610) 직접 수혜
+
+**2. Advanced Packaging (첨단 패키징)**
+
+- TSMC CoWoS 생산능력 2026년 2배 확대
+- 패널 레벨 패키징(PLP) 시장 본격 개화
+- 테스트 소켓·프로브 수요 급증 — 리노공업(058470) 직접 수혜
+
+**3. 나노계측 (Nanometrology)**
+
+- 2nm 이하 공정에서 원자 수준 계측 필수화
+- EUV 노출 후 인라인 검사 수요 폭증
+- AFM(원자현미경) 시장 CAGR 21% — 파크시스템스(140860) 직접 수혜
+
+## 우주·방산 + AI 융합
+
+```{r}
+#| label: sector-space-defense
+#| lightbox: true
+#| fig-width: 11
+#| fig-height: 6
+
+space_data <- data.frame(
+  segment = c("발사체\n(Launch)", "위성통신\n(LEO Sat)", "우주 센서\n(Space ISR)", "공공안전\nAI/SaaS", "무인시스템\n(UAS/Drone)", "에너지저장\n(ESS)"),
+  tam_2030 = c(35, 120, 55, 28, 45, 180),
+  cagr = c(18.5, 24.3, 21.0, 32.5, 28.0, 22.8),
+  alpha_pick = c("RKLB", "", "", "AXON", "", "CATL"),
+  stringsAsFactors = FALSE
+)
+
+space_data$has_pick <- ifelse(space_data$alpha_pick != "", c_amber, "#444466")
+
+ggplot(space_data, aes(x = reorder(segment, tam_2030), y = tam_2030)) +
+  geom_col(aes(fill = has_pick), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0("$", tam_2030, "B\nCAGR ", cagr, "%")),
+            hjust = -0.1, color = "#e4e4ec", size = 3.2, family = kfont, lineheight = 0.9) +
+  geom_text(aes(label = alpha_pick, y = tam_2030 / 2),
+            color = "#1a1a2e", size = 4, fontface = "bold", family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 230)) +
+  labs(
+    title = "우주·방산·AI 융합 시장 TAM (2030E)",
+    subtitle = "에너지저장 $180B, 위성통신 $120B가 최대 — Alpha Hunter Pick 표시",
+    x = NULL, y = "시장규모 (Billion USD)",
+    caption = "출처: Morgan Stanley, Goldman Sachs Space Economy Reports"
+  ) +
+  theme_hunter()
+```
+
+## 소비자 혁신 + 플랫폼
+
+**F&B 테크 (CAVA)**: 미국 Fast-Casual 시장은 2026년 $120B 규모, CAGR 8.5%. 지중해식 카테고리는 연 15%+ 성장. 디지털 주문 비중 40%+ 도달.
+
+**AI 채용 플랫폼 (Kanzhun/BOSS)**: 중국 온라인 리크루팅 시장 RMB 300B+. AI 매칭 기술로 전환율 3배 향상. 인당매출(ARPU) 지속 상승.
+
+**자율주행 EV (XPeng)**: 물리적 AI + 로보택시 2027 상용화 목표. 글로벌 EV 시장 $900B (2026E).
+
+---
+
+# 🇰🇷 한국 히든젬 3선
+
+## 1. 리노공업 (058470) — 반도체 테스트 소켓 글로벌 1위
+
+### 기업 개요
+
+- **업종**: 반도체 테스트 소켓 · IC Test Socket · Leeno Pin
+- **시가총액**: 약 1.7조원 (2026.06 기준)
+- **52주 범위**: 39,050원 ~ 129,000원
+
+### Q1 2026 실적 하이라이트
+
+```{r}
+#| label: kr1-revenue
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+leeno_rev <- data.frame(
+  quarter = c("Q1'25", "Q2'25", "Q3'25", "Q4'25", "Q1'26"),
+  revenue = c(74.0, 82.5, 89.0, 95.2, 99.8),
+  op_income = c(35.0, 39.1, 42.8, 45.9, 47.3),
+  stringsAsFactors = FALSE
+)
+leeno_rev$quarter <- factor(leeno_rev$quarter, levels = leeno_rev$quarter)
+
+ggplot(leeno_rev) +
+  geom_col(aes(x = quarter, y = revenue), fill = c_amber, width = 0.5, alpha = 0.8) +
+  geom_line(aes(x = as.numeric(quarter), y = op_income * 2.1), color = c_green, linewidth = 1.2) +
+  geom_point(aes(x = as.numeric(quarter), y = op_income * 2.1), color = c_green, size = 3) +
+  geom_text(aes(x = quarter, y = revenue, label = paste0(revenue, "억")),
+            vjust = -0.5, color = c_amber, size = 3.5, family = kfont) +
+  scale_y_continuous(
+    name = "매출액 (십억원)",
+    sec.axis = sec_axis(~./2.1, name = "영업이익 (십억원)")
+  ) +
+  labs(
+    title = "리노공업 분기 실적 추이",
+    subtitle = "Q1 2026 매출 998억원 (+35% YoY), 영업이익 473억원 (OPM 47.4%)",
+    x = NULL,
+    caption = "막대: 매출, 선: 영업이익 | 출처: FnGuide"
+  ) +
+  theme_hunter()
+```
+
+- **Q1 2026 순이익**: 403억원 (+37.7% YoY)
+- **Q1 2026 영업이익**: 473억원 (영업이익률 47.4%)
+- **2026 연간 컨센서스**: 매출 4,458억원 (+20%), 영업이익 2,157억원 (+22%)
+
+### SEPA 트렌드 템플릿
+
+```{r}
+#| label: kr1-sepa
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+sepa_leeno <- data.frame(
+  criteria = c("현재가 > SMA150\n& SMA200", "SMA150 > SMA200", "SMA200 상승\n(1개월+)", "SMA50 > SMA150\n& SMA200", "현재가 > SMA50", "52주 저점\n+30% 이상", "52주 고점\n-25% 이내", "RS 순위\n70+"),
+  score = c(1, 1, 1, 1, 1, 1, 1, 1),
+  stringsAsFactors = FALSE
+)
+sepa_leeno$criteria <- factor(sepa_leeno$criteria, levels = rev(sepa_leeno$criteria))
+sepa_leeno$color <- ifelse(sepa_leeno$score == 1, c_green, c_red)
+
+ggplot(sepa_leeno, aes(x = criteria, y = score)) +
+  geom_col(aes(fill = color), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = ifelse(score == 1, "PASS", "FAIL")),
+            hjust = -0.3, color = "#e4e4ec", size = 4, fontface = "bold", family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "SEPA 트렌드 템플릿: 리노공업 (058470)",
+    subtitle = "8/8 PASS — Stage 2 상승추세 완전 확인",
+    x = NULL, y = NULL,
+    caption = "현재가 ~120,000원 | 52주 저점 39,050원 대비 +207% | 52주 고점 129,000원 대비 -7%"
+  ) +
+  scale_y_continuous(limits = c(0, 1.5)) +
+  theme_hunter()
+```
+
+**SEPA 점수: 8/8 (Stage 2 완전 확인)**
+
+- 현재가 ~120,000원 > SMA50/150/200 모두 상회
+- 52주 저점 39,050원 대비 +207% (조건 6 충족)
+- 52주 고점 129,000원 대비 -7% (조건 7 충족)
+
+### 워런 버핏 해자 레이더 차트
+
+```{r}
+#| label: kr1-moat
+#| lightbox: true
+#| fig-width: 9
+#| fig-height: 7
+
+moat_leeno <- data.frame(
+  factor = c("기술 해자", "가격결정력", "전환비용", "네트워크효과", "규모의 경제", "브랜드력"),
+  score = c(9.5, 9.0, 8.5, 6.0, 7.5, 8.0)
+)
+
+# Radar chart approximation using polar coordinates
+moat_leeno$angle <- seq(0, 2*pi*(1-1/6), length.out = 6)
+moat_leeno$x <- moat_leeno$score * cos(moat_leeno$angle)
+moat_leeno$y <- moat_leeno$score * sin(moat_leeno$angle)
+
+# Close polygon
+moat_closed <- rbind(moat_leeno, moat_leeno[1, ])
+
+ggplot() +
+  # Background circles
+  annotate("path",
+           x = 10 * cos(seq(0, 2*pi, length.out = 100)),
+           y = 10 * sin(seq(0, 2*pi, length.out = 100)),
+           color = "#2a2a4a", linewidth = 0.3) +
+  annotate("path",
+           x = 7.5 * cos(seq(0, 2*pi, length.out = 100)),
+           y = 7.5 * sin(seq(0, 2*pi, length.out = 100)),
+           color = "#2a2a4a", linewidth = 0.3) +
+  annotate("path",
+           x = 5 * cos(seq(0, 2*pi, length.out = 100)),
+           y = 5 * sin(seq(0, 2*pi, length.out = 100)),
+           color = "#2a2a4a", linewidth = 0.3) +
+  # Data polygon
+  geom_polygon(data = moat_closed, aes(x = x, y = y),
+               fill = c_amber, alpha = 0.2, color = c_amber, linewidth = 1) +
+  geom_point(data = moat_leeno, aes(x = x, y = y),
+             color = c_amber, size = 3) +
+  # Labels
+  geom_text(data = moat_leeno,
+            aes(x = 12 * cos(angle), y = 12 * sin(angle),
+                label = paste0(factor, "\n", score, "/10")),
+            color = "#e4e4ec", size = 3.5, family = kfont, lineheight = 0.9) +
+  coord_fixed() +
+  labs(
+    title = "리노공업 워런 버핏 해자 분석",
+    subtitle = "기술해자 9.5 · 가격결정력 9.0 — 글로벌 독점 지위",
+    caption = "IC Test Socket 세계 1위 (점유율 40%+), Leeno Pin 독자 기술"
+  ) +
+  theme_hunter() +
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        panel.grid = element_blank())
+```
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: 118,000원 (현재가 근방)
+- **목표가**: 155,000원 (+31.4%) — 2026E EPS 기준 PER 28x 적용
+- **손절가**: 109,000원 (-7.6%)
+- **Risk:Reward = 1:4.1**
+
+---
+
+## 2. 프로텍 (053610) — LAB 레이저 본딩 글로벌 최초 양산
+
+### 기업 개요
+
+- **업종**: 반도체 후공정 장비 (디스펜서, 다이본더, 레이저 본더)
+- **시가총액**: 약 6,000억원
+- **핵심 기술**: LAB (Laser Assisted Bonding) — HBM/첨단패키징 핵심 공정
+
+### 기술 심층: LAB (레이저 보조 본딩)
+
+LAB는 레이저로 선택적·국부 가열을 통해 칩과 기판을 접합하는 차세대 본딩 기술입니다. 기존 리플로우 공정 대비 **열적 스트레스 90% 감소**, **본딩 정밀도 10배 향상**이 특징입니다.
+
+```{r}
+#| label: kr2-lab-tech
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+lab_compare <- data.frame(
+  method = c("Mass Reflow\n(기존)", "TCB\n(열압착)", "LAB\n(레이저본딩)"),
+  precision_um = c(25, 10, 2),
+  throughput = c(100, 40, 85),
+  thermal_stress = c(100, 60, 10),
+  stringsAsFactors = FALSE
+)
+lab_compare$method <- factor(lab_compare$method, levels = lab_compare$method)
+
+library(tidyr)
+lab_long <- pivot_longer(lab_compare, cols = -method,
+                         names_to = "metric", values_to = "value")
+lab_long$metric <- factor(lab_long$metric,
+                          levels = c("precision_um", "throughput", "thermal_stress"),
+                          labels = c("정밀도 (um, 낮을수록 좋음)", "처리량 (상대값)", "열적 스트레스 (상대값)"))
+
+ggplot(lab_long, aes(x = method, y = value, fill = method)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = value), vjust = -0.5, color = "#e4e4ec", size = 3.5,
+            fontface = "bold", family = kfont) +
+  facet_wrap(~metric, scales = "free_y", ncol = 3) +
+  scale_fill_manual(values = c("#444466", c_cyan, c_amber)) +
+  labs(
+    title = "본딩 기술 비교: LAB vs TCB vs Mass Reflow",
+    subtitle = "LAB는 정밀도 2um, 열적 스트레스 10%로 차세대 HBM 패키징의 핵심",
+    x = NULL, y = NULL,
+    caption = "프로텍 LAB 장비: 글로벌 최초 양산 레벨 달성 (2026 Q1)"
+  ) +
+  theme_hunter()
+```
+
+### Q1 2026 실적
+
+- **매출 성장**: +71.7% YoY (LAB 장비 본격 매출 기여)
+- **EPS 성장**: +22.2% YoY (5,642원 → 6,896원 전망)
+- **SEPA**: 7/7 (Stage 2 상승추세)
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: 53,000원
+- **목표가**: 72,000원 (+35.8%) — HBM4 양산 수혜 반영
+- **손절가**: 49,000원 (-7.5%)
+- **Risk:Reward = 1:4.8**
+
+---
+
+## 3. 파크시스템스 (140860) — 원자현미경(AFM) 글로벌 1위
+
+### 기업 개요
+
+- **업종**: 나노계측장비 (원자현미경 AFM)
+- **시가총액**: 약 2.5조원
+- **글로벌 AFM 시장 점유율**: 1위
+
+### 기술 심층: 원자현미경(AFM)과 2nm 이하 공정
+
+```{r}
+#| label: kr3-afm-market
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+afm_market <- data.frame(
+  year = c(2023, 2024, 2025, 2026, 2027, 2028),
+  market_size = c(0.68, 0.82, 0.99, 1.20, 1.45, 1.75),
+  park_share = c(32, 34, 36, 38, 40, 42),
+  stringsAsFactors = FALSE
+)
+
+ggplot(afm_market, aes(x = year)) +
+  geom_area(aes(y = market_size), fill = c_purple, alpha = 0.2) +
+  geom_line(aes(y = market_size), color = c_purple, linewidth = 1.2) +
+  geom_point(aes(y = market_size), color = c_purple, size = 3) +
+  geom_text(aes(y = market_size, label = paste0("$", market_size, "B")),
+            vjust = -1.2, color = c_purple, size = 3.5, family = kfont) +
+  geom_line(aes(y = park_share / 25), color = c_amber, linewidth = 1, linetype = "dashed") +
+  geom_text(aes(y = park_share / 25, label = paste0(park_share, "%")),
+            vjust = 1.5, color = c_amber, size = 3, family = kfont) +
+  scale_y_continuous(
+    name = "글로벌 AFM 시장 (Billion USD)",
+    sec.axis = sec_axis(~.*25, name = "파크시스템스 점유율 (%)")
+  ) +
+  labs(
+    title = "글로벌 AFM 시장 규모 및 파크시스템스 점유율",
+    subtitle = "시장 CAGR 21% 성장 중 — 파크시스템스 점유율 32% → 42% 확대 전망",
+    x = NULL,
+    caption = "출처: BCC Research, 삼성증권 (2026년 이후 추정)"
+  ) +
+  theme_hunter()
+```
+
+- **2026 연간 전망**: 매출 2,170억원, 영업이익률 25%+
+- **신규 장비 매출 CAGR 57%** (2024~2027)
+- **애널리스트 컨센서스**: Strong Buy (11명), 목표가 평균 315,000원
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: 275,000원
+- **목표가**: 340,000원 (+23.6%)
+- **손절가**: 253,000원 (-8.0%)
+- **Risk:Reward = 1:3.0**
+
+---
+
+# 🇺🇸 미국 히든젬 3선
+
+## 4. Rocket Lab (RKLB) — 우주 발사체 + 위성 부품 수직통합
+
+### 기업 개요
+
+- **업종**: 우주 발사체 (Electron/Neutron) + 우주 시스템
+- **시가총액**: $71.4B
+- **52주 범위**: $25.24 ~ $151.00
+
+### Q1 2026 실적 하이라이트
+
+```{r}
+#| label: us1-revenue
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+rklb_rev <- data.frame(
+  quarter = c("Q1'25", "Q2'25", "Q3'25", "Q4'25", "Q1'26"),
+  revenue = c(122.5, 135.0, 155.0, 178.7, 200.3),
+  stringsAsFactors = FALSE
+)
+rklb_rev$quarter <- factor(rklb_rev$quarter, levels = rklb_rev$quarter)
+rklb_rev$yoy_growth <- c(69.0, 55.0, 50.0, 58.0, 63.5)
+
+ggplot(rklb_rev) +
+  geom_col(aes(x = quarter, y = revenue), fill = c_us, width = 0.5, alpha = 0.8) +
+  geom_text(aes(x = quarter, y = revenue,
+                label = paste0("$", revenue, "M\n+", yoy_growth, "%")),
+            vjust = -0.3, color = c_us, size = 3.5, family = kfont, lineheight = 0.9) +
+  labs(
+    title = "Rocket Lab 분기 매출 추이",
+    subtitle = "Q1 2026 매출 $200.3M (역대 최고, +63.5% YoY) — Q2 가이던스 $225-240M",
+    x = NULL, y = "매출 (Million USD)",
+    caption = "백로그 $2.2B (사상 최대) | Q2 Adj. EBITDA 흑자 전환 예상"
+  ) +
+  theme_hunter()
+```
+
+- **Q1 매출**: $200.3M (+63.5% YoY, 역대 최고)
+- **백로그**: $2.2B (사상 최대)
+- **Q2 가이던스**: $225~$240M (흑자 전환 예상)
+
+### 피터 린치 스토리 점수
+
+```{r}
+#| label: us1-lynch
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5
+
+lynch_rklb <- data.frame(
+  factor = c("이해 가능성", "성장 스토리", "재무 건전성", "경영진 품질", "경쟁 우위", "밸류에이션", "카탈리스트"),
+  score = c(9, 10, 7, 9, 9, 4, 10),
+  stringsAsFactors = FALSE
+)
+lynch_rklb$factor <- factor(lynch_rklb$factor, levels = rev(lynch_rklb$factor))
+lynch_rklb$color <- ifelse(lynch_rklb$score >= 8, c_green,
+                    ifelse(lynch_rklb$score >= 6, c_cyan, c_orange))
+
+ggplot(lynch_rklb, aes(x = factor, y = score)) +
+  geom_col(aes(fill = color), width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = paste0(score, "/10")),
+            hjust = -0.3, color = "#e4e4ec", size = 4, fontface = "bold", family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "Rocket Lab 피터 린치 스토리 점수",
+    subtitle = "총점 58/70 — 성장 스토리 10, 카탈리스트 10, 밸류에이션 4 (고평가 주의)",
+    x = NULL, y = "점수",
+    caption = "Neutron 중형 발사체 2026H2 초도비행, SpaceX 이외 유일한 재사용 발사체 운용사"
+  ) +
+  scale_y_continuous(limits = c(0, 12)) +
+  theme_hunter()
+```
+
+### 리스크
+
+- 밸류에이션 부담: 시총 $71B vs 연매출 ~$850M (PS 84x)
+- Neutron 발사체 개발 지연 리스크
+- SpaceX 독점 완화 기대 vs 실제 경쟁 강도
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: $108.00
+- **목표가**: $150.00 (+38.9%)
+- **손절가**: $100.00 (-7.4%)
+- **Risk:Reward = 1:5.3**
+
+⚠️ **주의**: 극단적 고밸류 성장주. 포지션 사이즈 10% 이하 권장.
+
+---
+
+## 5. Axon Enterprise (AXON) — 공공안전 AI + 바디캠 독점
+
+### 기업 개요
+
+- **업종**: 공공안전 기술 (TASER, 바디캠, AI 소프트웨어)
+- **시가총액**: ~$32B
+- **52주 범위**: $260 ~ $750+
+
+### Q1 2026 실적 하이라이트
+
+```{r}
+#| label: us2-revenue
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+axon_rev <- data.frame(
+  quarter = c("Q1'25", "Q2'25", "Q3'25", "Q4'25", "Q1'26"),
+  revenue = c(602, 650, 710, 760, 807),
+  sw_pct = c(40, 41, 42, 43, 44),
+  stringsAsFactors = FALSE
+)
+axon_rev$quarter <- factor(axon_rev$quarter, levels = axon_rev$quarter)
+
+ggplot(axon_rev) +
+  geom_col(aes(x = quarter, y = revenue), fill = c_us, width = 0.5, alpha = 0.8) +
+  geom_text(aes(x = quarter, y = revenue, label = paste0("$", revenue, "M")),
+            vjust = -0.5, color = c_us, size = 3.5, family = kfont) +
+  geom_text(aes(x = quarter, y = 50, label = paste0("S/W ", sw_pct, "%")),
+            color = c_amber, size = 3, family = kfont) +
+  labs(
+    title = "Axon Enterprise 분기 매출 추이",
+    subtitle = "Q1 2026 $807M (+34% YoY) — AI 제품 매출 700%+ 성장, 소프트웨어 비중 44%",
+    x = NULL, y = "매출 (Million USD)",
+    caption = "FY2026 가이던스: 매출 성장 30-32% (상향 조정) | NRR 125%"
+  ) +
+  theme_hunter()
+```
+
+- **Q1 매출**: $807M (+34% YoY)
+- **AI 제품 매출**: 700%+ YoY 성장 (Axon Vision, DraftOne)
+- **FY2026 가이던스**: 매출 성장 30-32% (상향)
+- **NRR**: 125% (강력한 고객 확장)
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: $430.00
+- **목표가**: $675.00 (+57.0%) — 애널리스트 중간 목표가
+- **손절가**: $395.00 (-8.1%)
+- **Risk:Reward = 1:7.0**
+
+---
+
+## 6. CAVA Group (CAVA) — 지중해식 Fast-Casual 체인
+
+### 기업 개요
+
+- **업종**: 레스토랑 (지중해식 Fast-Casual)
+- **시가총액**: $9.2B
+- **52주 범위**: $43.41 ~ $98.79
+
+### Q1 2026 실적 하이라이트
+
+```{r}
+#| label: us3-revenue
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+cava_rev <- data.frame(
+  quarter = c("Q1'25", "Q2'25", "Q3'25", "Q4'25", "Q1'26"),
+  revenue = c(328.5, 345.0, 365.0, 390.0, 434.4),
+  same_store = c(13.4, 10.8, 8.5, 7.2, 9.7),
+  stringsAsFactors = FALSE
+)
+cava_rev$quarter <- factor(cava_rev$quarter, levels = cava_rev$quarter)
+
+ggplot(cava_rev) +
+  geom_col(aes(x = quarter, y = revenue), fill = c_green, width = 0.5, alpha = 0.8) +
+  geom_text(aes(x = quarter, y = revenue, label = paste0("$", revenue, "M")),
+            vjust = -0.5, color = c_green, size = 3.5, family = kfont) +
+  geom_line(aes(x = as.numeric(quarter), y = same_store * 30), color = c_amber, linewidth = 1.2) +
+  geom_point(aes(x = as.numeric(quarter), y = same_store * 30), color = c_amber, size = 3) +
+  geom_text(aes(x = as.numeric(quarter), y = same_store * 30,
+                label = paste0("+", same_store, "%")),
+            vjust = -1.2, color = c_amber, size = 3, family = kfont) +
+  scale_y_continuous(
+    name = "매출 (Million USD)",
+    sec.axis = sec_axis(~./30, name = "동일매장 성장률 (%)")
+  ) +
+  labs(
+    title = "CAVA Group 분기 실적 추이",
+    subtitle = "Q1 2026 매출 $434.4M (+32.2% YoY), 동일매장 +9.7% (트래픽 +6.8%)",
+    x = NULL,
+    caption = "막대: 매출, 선: 동일매장 성장률 | FY2026 Adj. EBITDA 가이던스 $181-191M (상향)"
+  ) +
+  theme_hunter()
+```
+
+- **Q1 매출**: $434.4M (+32.2% YoY)
+- **동일매장 성장**: +9.7% (고객 트래픽 +6.8%)
+- **EBITDA 가이던스**: $181~$191M (상향 조정)
+- **매장 확장**: YTD 신규 54개점 오픈
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: $72.00
+- **목표가**: $95.00 (+31.9%)
+- **손절가**: $66.50 (-7.6%)
+- **Risk:Reward = 1:4.2**
+
+---
+
+# 🇨🇳 중국 히든젬 3선
+
+## 7. CATL (300750.SZ) — 글로벌 배터리 1위 + AI 데이터센터 진출
+
+### 기업 개요
+
+- **업종**: 리튬이온 배터리 (EV + ESS + 데이터센터)
+- **시가총액**: $275B
+- **글로벌 EV 배터리 점유율**: 39% (1위)
+
+### 기술 심층: 나트륨이온 배터리 + AI 데이터센터 ESS
+
+```{r}
+#| label: cn1-catl-diversification
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+catl_segments <- data.frame(
+  segment = c("EV 배터리", "ESS\n(에너지저장)", "AI 데이터센터\n전력시스템", "나트륨이온\n(차세대)"),
+  revenue_pct_2025 = c(72, 22, 3, 3),
+  revenue_pct_2028e = c(55, 25, 12, 8),
+  stringsAsFactors = FALSE
+)
+catl_segments$segment <- factor(catl_segments$segment, levels = catl_segments$segment)
+
+library(tidyr)
+catl_long <- pivot_longer(catl_segments, cols = starts_with("revenue"),
+                          names_to = "period", values_to = "pct")
+catl_long$period <- factor(catl_long$period,
+                           levels = c("revenue_pct_2025", "revenue_pct_2028e"),
+                           labels = c("2025 (실적)", "2028E (전망)"))
+
+ggplot(catl_long, aes(x = segment, y = pct, fill = period)) +
+  geom_col(position = "dodge", width = 0.6) +
+  geom_text(aes(label = paste0(pct, "%")),
+            position = position_dodge(width = 0.6), vjust = -0.5,
+            color = "#e4e4ec", size = 3.5, family = kfont) +
+  scale_fill_manual(values = c("#444466", c_cn)) +
+  labs(
+    title = "CATL 매출 구성 변화 (2025 → 2028E)",
+    subtitle = "AI 데이터센터 전력시스템 3% → 12%로 급성장, 나트륨이온 상용화",
+    x = NULL, y = "매출 비중 (%)",
+    caption = "2026년 4월 AI 데이터센터 전력 사업에 $600M 투자 | DeepSeek 전략 투자"
+  ) +
+  theme_hunter() +
+  theme(legend.position = "top")
+```
+
+- **2025 매출**: RMB 4,237억 (+17% YoY)
+- **순이익**: RMB 722억 (+42.3% YoY)
+- **AI 데이터센터**: $600M 투자, 고압직류 전력시스템 49% 지분 확보
+- **나트륨이온**: 2026 상용 출하, 2-8시간 유틸리티 스케일 ESS 대응
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: CNY 400 (~$56 USD)
+- **목표가**: CNY 548 (+37.0%) — 애널리스트 평균
+- **손절가**: CNY 370 (-7.5%)
+- **Risk:Reward = 1:4.9**
+
+---
+
+## 8. XPeng (XPEV/9868.HK) — 물리적 AI + 자율주행 EV
+
+### 기업 개요
+
+- **업종**: 전기차 (Smart EV + 자율주행 + 로보택시)
+- **시가총액**: $16.1B
+- **52주 범위**: $8.70 ~ $28.24 (ADR)
+
+### Q1 2026 실적
+
+```{r}
+#| label: cn2-xpeng-delivery
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+xpeng_del <- data.frame(
+  month = c("Jan'26", "Feb'26", "Mar'26", "Apr'26", "May'26"),
+  deliveries = c(30500, 25200, 28800, 31000, 32158),
+  stringsAsFactors = FALSE
+)
+xpeng_del$month <- factor(xpeng_del$month, levels = xpeng_del$month)
+
+ggplot(xpeng_del, aes(x = month, y = deliveries)) +
+  geom_col(fill = c_cn, width = 0.5, alpha = 0.8) +
+  geom_text(aes(label = format(deliveries, big.mark = ",")),
+            vjust = -0.5, color = c_cn, size = 3.5, family = kfont) +
+  labs(
+    title = "XPeng 월간 인도량 추이",
+    subtitle = "5월 32,158대 (+4% MoM) — Q2 가이던스 100K-106K대, 매출 RMB 19.6-20.8B",
+    x = NULL, y = "인도량 (대)",
+    caption = "GM 20.6% (YoY +5%p 개선) | 물리적 AI 양산 가속 | 해외 확장 본격화"
+  ) +
+  theme_hunter()
+```
+
+- **Q1 2026 매출**: RMB 130.3억 (GM 20.6%, +5%p YoY)
+- **Q2 가이던스**: 100K~106K대, 매출 RMB 196~208억
+- **물리적 AI**: 자율주행 칩 자체 개발, 로보택시 2027 상용화 목표
+- **해외 확장**: 유럽·동남아 시장 진출 가속
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: $17.50 (ADR)
+- **목표가**: $26.00 (+48.6%)
+- **손절가**: $16.00 (-8.6%)
+- **Risk:Reward = 1:5.7**
+
+⚠️ **주의**: Q1 매출 YoY -17.6% 하락. 계절적 요인이나 Q2 가이던스 확인 필요.
+
+---
+
+## 9. Kanzhun/BOSS직빈 (BZ) — 중국 AI 채용 플랫폼 1위
+
+### 기업 개요
+
+- **업종**: 온라인 리크루팅 플랫폼 (BOSS직빈)
+- **시가총액**: $6.1B
+- **52주 범위**: $10.50 ~ $22.80
+
+### 실적 하이라이트
+
+```{r}
+#| label: cn3-kanzhun
+#| lightbox: true
+#| fig-width: 10
+#| fig-height: 5.5
+
+bz_rev <- data.frame(
+  year = c("2022", "2023", "2024", "2025", "2026E"),
+  revenue_rmb = c(4.66, 5.95, 7.36, 8.27, 9.31),
+  earnings_rmb = c(0.32, 1.46, 1.59, 2.74, 3.20),
+  stringsAsFactors = FALSE
+)
+bz_rev$year <- factor(bz_rev$year, levels = bz_rev$year)
+
+ggplot(bz_rev) +
+  geom_col(aes(x = year, y = revenue_rmb), fill = c_cn, width = 0.5, alpha = 0.8) +
+  geom_line(aes(x = as.numeric(year), y = earnings_rmb * 2.9), color = c_amber, linewidth = 1.2) +
+  geom_point(aes(x = as.numeric(year), y = earnings_rmb * 2.9), color = c_amber, size = 3) +
+  geom_text(aes(x = year, y = revenue_rmb, label = paste0("RMB ", revenue_rmb, "B")),
+            vjust = -0.5, color = c_cn, size = 3.5, family = kfont) +
+  geom_text(aes(x = as.numeric(year), y = earnings_rmb * 2.9,
+                label = paste0("RMB ", earnings_rmb, "B")),
+            vjust = -1.2, color = c_amber, size = 3, family = kfont) +
+  scale_y_continuous(
+    name = "매출 (Billion RMB)",
+    sec.axis = sec_axis(~./2.9, name = "순이익 (Billion RMB)")
+  ) +
+  labs(
+    title = "Kanzhun (BOSS직빈) 연간 실적 추이",
+    subtitle = "2025 매출 RMB 82.7B (+12.4%), 순이익 RMB 27.4B (+72.6%) — 2026E RMB 93.1B",
+    x = NULL,
+    caption = "막대: 매출, 선: 순이익 | Q2 2026 가이던스: RMB 23.8-24.2B (+13-15% YoY)"
+  ) +
+  theme_hunter()
+```
+
+- **2025 매출**: RMB 82.7억 (+12.4% YoY)
+- **2025 순이익**: RMB 27.4억 (+72.6% YoY)
+- **자사주매입**: 2026년 YTD RMB 16억 규모 (신뢰 신호)
+- **Q2 가이던스**: RMB 23.8~24.2억 (+13~15% YoY)
+
+### 매수/목표/손절 시나리오
+
+- **매수가**: $13.50 (ADR)
+- **목표가**: $22.00 (+63.0%) — 자사주매입 + AI 채용 성장
+- **손절가**: $12.50 (-7.4%)
+- **Risk:Reward = 1:8.5**
+
+---
+
+# 종합 비교 대시보드
+
+## 9종목 밸류에이션 비교
+
+```{r}
+#| label: valuation-comparison
+#| lightbox: true
+#| fig-width: 12
+#| fig-height: 7
+
+val_data <- data.frame(
+  ticker = c("리노공업", "프로텍", "파크시스템스", "RKLB", "AXON", "CAVA", "CATL", "XPEV", "BZ"),
+  market = c("KR", "KR", "KR", "US", "US", "US", "CN", "CN", "CN"),
+  revenue_growth = c(20, 72, 21, 64, 34, 32, 17, 87, 13),
+  op_margin = c(47.4, 22, 25, -5, 25.5, 8.5, 17, 4, 33),
+  forward_pe = c(22, 18, 33, NA, 65, 120, 28, NA, 12),
+  sepa_score = c(8, 7, 7, 7, 7, 6, 7, 5, 6),
+  rr_ratio = c(4.1, 4.8, 3.0, 5.3, 7.0, 4.2, 4.9, 5.7, 8.5),
+  stringsAsFactors = FALSE
+)
+
+val_data$market_color <- ifelse(val_data$market == "KR", c_kr,
+                         ifelse(val_data$market == "US", c_us, c_cn))
+
+ggplot(val_data, aes(x = revenue_growth, y = rr_ratio)) +
+  geom_point(aes(color = market_color, size = sepa_score), alpha = 0.8, show.legend = FALSE) +
+  geom_text(aes(label = ticker), vjust = -1.5, color = "#e4e4ec", size = 3.5, family = kfont) +
+  scale_color_identity() +
+  scale_size_continuous(range = c(4, 12)) +
+  geom_vline(xintercept = 30, linetype = "dashed", color = "#2a2a4a") +
+  geom_hline(yintercept = 4, linetype = "dashed", color = "#2a2a4a") +
+  annotate("text", x = 60, y = 8, label = "고성장 + 고R:R\n(이상적 영역)",
+           color = c_amber, size = 3.5, family = kfont, lineheight = 0.9) +
+  labs(
+    title = "9종목 성장률 vs R:R 비율 매핑",
+    subtitle = "원 크기 = SEPA 점수 | 색상: 빨강=KR, 파랑=US, 붉은색=CN",
+    x = "매출성장률 YoY (%)", y = "Risk:Reward 비율",
+    caption = "우상단 = 높은 성장 + 높은 R:R (가장 매력적)"
+  ) +
+  theme_hunter()
+```
+
+## 리스크 팩터 대시보드
+
+```{r}
+#| label: risk-dashboard
+#| lightbox: true
+#| fig-width: 12
+#| fig-height: 6
+
+risk_data <- data.frame(
+  ticker = c("리노공업", "프로텍", "파크시스템스", "RKLB", "AXON", "CAVA", "CATL", "XPEV", "BZ"),
+  valuation_risk = c(3, 2, 5, 9, 7, 8, 4, 3, 2),
+  liquidity_risk = c(4, 5, 4, 2, 2, 3, 2, 3, 5),
+  geopolitical_risk = c(3, 3, 3, 2, 1, 1, 7, 8, 8),
+  execution_risk = c(2, 4, 3, 6, 3, 4, 3, 6, 3),
+  stringsAsFactors = FALSE
+)
+
+risk_long <- pivot_longer(risk_data, cols = -ticker,
+                          names_to = "risk_type", values_to = "score")
+risk_long$risk_type <- factor(risk_long$risk_type,
+                              levels = c("valuation_risk", "liquidity_risk", "geopolitical_risk", "execution_risk"),
+                              labels = c("밸류에이션", "유동성", "지정학", "실행"))
+
+risk_long$fill_color <- ifelse(risk_long$score >= 7, c_red,
+                        ifelse(risk_long$score >= 4, c_orange, c_green))
+
+ggplot(risk_long, aes(x = ticker, y = score, fill = fill_color)) +
+  geom_col(width = 0.7, show.legend = FALSE) +
+  geom_text(aes(label = score), vjust = -0.3, color = "#e4e4ec", size = 3, family = kfont) +
+  scale_fill_identity() +
+  facet_wrap(~risk_type, ncol = 4) +
+  coord_flip() +
+  labs(
+    title = "9종목 리스크 팩터 대시보드",
+    subtitle = "1(낮음) ~ 10(높음) | 빨강 = 고위험, 주황 = 중간, 초록 = 저위험",
+    x = NULL, y = "리스크 점수",
+    caption = "중국 ADR (XPEV, BZ)는 지정학 리스크 8/10 — 미중 관계 변수 주의"
+  ) +
+  scale_y_continuous(limits = c(0, 11)) +
+  theme_hunter() +
+  theme(axis.text.x = element_text(size = 8))
+```
+
+---
+
+# 섹터별 투자 전략
+
+## Q3 2026 전망
+
+```{r}
+#| label: q3-outlook
+#| lightbox: true
+#| fig-width: 11
+#| fig-height: 6
+
+outlook <- data.frame(
+  theme = c("HBM4 양산\n(SK하이닉스/삼성)", "Neutron 초도비행\n(Rocket Lab)", "미국 직판 개시\n(Hugel 보톡스)", "CATL 나트륨이온\n상용 출하", "젠슨 황 방한\n(NVIDIA 파트너십)", "GAA 3nm 램프업\n(TSMC/삼성)"),
+  impact = c(9.5, 8.5, 7.5, 8.0, 9.0, 8.5),
+  timeline = c("2026 H2", "2026 H2", "2026 H2", "2026 Q3", "2026 Q3", "2026 Q3-Q4"),
+  beneficiary = c("프로텍, 리노공업", "RKLB", "Hugel", "CATL", "리노공업, HPSP", "파크시스템스"),
+  stringsAsFactors = FALSE
+)
+outlook$theme <- factor(outlook$theme, levels = rev(outlook$theme))
+
+ggplot(outlook, aes(x = theme, y = impact)) +
+  geom_col(fill = c_amber, width = 0.6, alpha = 0.85) +
+  geom_text(aes(label = paste0(impact, "/10")),
+            hjust = -0.3, color = c_amber, size = 4, fontface = "bold", family = kfont) +
+  geom_text(aes(label = beneficiary, y = impact / 2),
+            color = "#1a1a2e", size = 3, family = kfont) +
+  coord_flip() +
+  labs(
+    title = "Q3 2026 주요 카탈리스트 임팩트 분석",
+    subtitle = "HBM4 양산(9.5), 젠슨 황 방한(9.0)이 최대 영향 — 한국 반도체 최대 수혜",
+    x = NULL, y = "임팩트 점수 (10점 만점)",
+    caption = "카탈리스트 실현 시 해당 종목 급등 가능성 높음"
+  ) +
+  scale_y_continuous(limits = c(0, 11)) +
+  theme_hunter()
+```
+
+---
+
+# 분기 액션 플랜
+
+## 포트폴리오 전략 요약
+
+**신규 편입 우선순위:**
+
+1. **리노공업** (058470) — SEPA 8/8, OPM 47%, R:R 1:4.1 ⭐ 최우선
+2. **프로텍** (053610) — LAB 독점, +72% 매출성장, R:R 1:4.8
+3. **AXON** — AI 공공안전 독점, +34% 성장, R:R 1:7.0
+
+**워치리스트 (조건부 편입):**
+
+4. **CAVA** — 동일매장 +9.7%, 성장 유효하나 밸류에이션 120x PE
+5. **CATL** — AI 데이터센터 신규 진출, 글로벌 1위 해자
+6. **Kanzhun/BZ** — 자사주매입 $400M, R:R 1:8.5 최고
+
+**고위험 관찰:**
+
+7. **RKLB** — PS 84x 극단적 고평가, Neutron 성공 시 재평가
+8. **XPeng** — Q1 매출 -17.6% YoY, Q2 가이던스 확인 필요
+9. **파크시스템스** — 안정적이나 R:R 1:3.0으로 상대적 매력 낮음
+
+## SEPA 전종목 스코어보드
+
+```{r}
+#| label: final-sepa-board
+#| lightbox: true
+#| fig-width: 11
+#| fig-height: 7
+
+final_sepa <- data.frame(
+  ticker = c("리노공업", "프로텍", "파크시스템스", "RKLB", "AXON", "CAVA", "CATL", "XPEV", "BZ"),
+  market = c("KR", "KR", "KR", "US", "US", "US", "CN", "CN", "CN"),
+  sepa = c(8, 7, 7, 7, 7, 6, 7, 5, 6),
+  rr = c(4.1, 4.8, 3.0, 5.3, 7.0, 4.2, 4.9, 5.7, 8.5),
+  stringsAsFactors = FALSE
+)
+
+final_sepa$color <- ifelse(final_sepa$market == "KR", c_kr,
+                    ifelse(final_sepa$market == "US", c_us, c_cn))
+final_sepa$ticker <- factor(final_sepa$ticker,
+                             levels = final_sepa$ticker[order(final_sepa$sepa, final_sepa$rr)])
+
+ggplot(final_sepa, aes(x = ticker, y = sepa)) +
+  geom_col(aes(fill = color), width = 0.6, show.legend = FALSE) +
+  geom_hline(yintercept = 7, linetype = "dashed", color = c_green, linewidth = 0.4) +
+  geom_text(aes(label = paste0(sepa, "/8")),
+            vjust = -0.5, color = "#e4e4ec", size = 4, fontface = "bold", family = kfont) +
+  geom_text(aes(label = paste0("R:R 1:", rr), y = 0.3),
+            color = "#888888", size = 3, family = kfont) +
+  scale_fill_identity() +
+  coord_flip() +
+  labs(
+    title = "Q2 분기 히든젬 SEPA 스코어보드",
+    subtitle = "9종목 SEPA 트렌드 템플릿 결과 — 리노공업 8/8 최고점",
+    x = NULL, y = "SEPA 점수",
+    caption = "빨강=한국 | 파랑=미국 | 붉은색=중국 | 점선: Stage 2 기준선 (7/8)"
+  ) +
+  scale_y_continuous(limits = c(0, 9.5), breaks = 0:8) +
+  theme_hunter()
+```
+
+---
+
+::: {.callout-note}
+## 다음 분기 (Q3) 예고
+
+- HBM4 양산 본격화에 따른 한국 후공정 밸류체인 재점검
+- Neutron 초도비행 성공 여부에 따른 RKLB 포지션 결정
+- 중국 ADR 지정학 리스크 모니터링 강화
+- 기존 포지션(AROC, HPSP, Hugel) SEPA 재점검 및 목표가 조정
+:::
+
+---
+
+*Alpha Hunter × Chimera AI | 2026 Q2 분기 종합 보고서*
+
+*이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.*
