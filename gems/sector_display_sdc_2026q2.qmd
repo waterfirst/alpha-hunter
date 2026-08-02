@@ -2,7 +2,7 @@
 title: "삼성디스플레이 2026 Q2 실적 업데이트 — 경쟁사와 OLED 시장까지"
 subtitle: "Alpha Hunter Sector Report | 기존 SDC 분석 후속 · 분기 실적 × 경쟁사 × 시장구조"
 author: "Alpha Hunter × Chimera AI"
-date: "2026-08-01"
+date: "2026-08-03"
 format:
   html:
     theme:
@@ -22,12 +22,12 @@ execute:
 
 ::: {.callout-note}
 ## 보고서 위치
-기업분석 보고서는 `Chimera AI`가 아니라 **Alpha Hunter** 섹터 분석으로 관리한다. 본 문서는 기존 [`2026 Q1 SDC 전망 보고서`](sector_display_sdc_2026q1.html)의 후속 업데이트이며, 삼성디스플레이 2026년 2분기 실적발표 이후 경쟁사와 시장구조를 함께 재검토한다.
+기업분석 보고서는 `Chimera AI`가 아니라 **Alpha Hunter** 섹터 분석으로 관리한다. 본 문서는 기존 [`2026 Q1 SDC 전망 보고서`](sector_display_sdc_2026q1.html)의 후속 업데이트이며, 삼성디스플레이 2026년 2분기 실적발표 이후 경쟁사와 시장구조를 함께 재검토한다. 2026-08-03 재확인에서는 Samsung Newsroom, Samsung Semiconductor Newsroom, LG Display Newsroom/IR, BOE 공식 뉴스 및 Omdia 공개자료를 우선 기준으로 삼았다.
 :::
 
 ## 핵심 요약
 
-1. **SDC 2Q26 실적은 공식 발표로 확인** — Samsung Newsroom 및 Samsung Semiconductor Newsroom 기준 매출 7.5조 원, 영업이익 0.7조 원, 영업이익률 9.3%. 1Q26 대비 매출 +11.9%, 영업이익 +75.0%.
+1. **SDC 2Q26 실적은 공식 발표로 확인** — 2026년 7월 30일 Samsung Newsroom 및 Samsung Semiconductor Newsroom 기준 매출 7.5조 원, 영업이익 0.7조 원, 영업이익률 9.3%. 1Q26 대비 매출 +11.9%, 영업이익 +75.0%.
 2. **단기 수익성은 좋아졌지만 구조 문제는 그대로** — 프리미엄 모바일 OLED와 게이밍 모니터가 방어했지만, 중국 OLED 물량 추격과 IT OLED 초기 투자 부담은 계속된다.
 3. **경쟁 구도는 3갈래** — SDC는 프리미엄 수익성, LGD는 대형·자동차·Tandem 회복, BOE는 flexible OLED 물량과 가격으로 압박한다.
 4. **다음 전장은 IT OLED·게이밍·자동차** — 스마트폰 OLED는 성숙시장이고, 8.6G IT OLED와 대면적 장수명 신뢰성이 핵심이다.
@@ -78,7 +78,7 @@ execute:
 |---|---|---|---|---|
 | **Samsung Display** | 2Q26 매출 7.5조 원, OP 0.7조 원, OPM 9.3% | 프리미엄 모바일 OLED, 폴더블, QD-OLED, 8.6G IT OLED | 스마트폰 계절성, IT OLED 초기 수율/투자비 | 고부가 믹스와 신뢰성 표준화가 방어선 |
 | **LG Display** | 공식 뉴스룸/IR 기준 2Q26 매출 약 5.61조 원, 영업손실 약 0.11조 원 | 대형 OLED TV, Automotive, Tandem OLED, Apple IT/모바일 경험 | 구조조정 비용, 모바일 계절성, 수익성 변동 | 대형·자동차·Tandem 신뢰성에서 직접 경쟁 |
-| **BOE** | 공개 보도 기준 1H26 순이익 전망 RMB 50~55억, YoY +54~69%; flexible OLED 8천만 장 이상 출하. Omdia는 BOE Gen 8.6 Flexible OLED Fab 3Q26 램프업 계획을 언급 | 중국 내수, 대규모 CAPA, 가격경쟁력, flexible OLED 물량 확대 | 프리미엄 품질·수율·특허/무역분쟁, 고객 승인 안정성 | 중저가와 일부 프리미엄 영역에서 가격 압박 확대 |
+| **BOE** | BOE 공식 뉴스 기준 2026년 6월 17일 청두 Gen 8.6 AMOLED 라인 양산/제품 납품 행사 개최. 공개 보도 기준 1H26 순이익 전망 RMB 50~55억, YoY +54~69%; flexible OLED 8천만 장 이상 출하. Omdia 공개자료도 Gen 8.6 OLED 라인 램프업과 노트북 OLED 경쟁 확대를 언급 | 중국 내수, 대규모 CAPA, 가격경쟁력, flexible OLED 물량 확대 | 프리미엄 품질·수율·특허/무역분쟁, 고객 승인 안정성 | 중저가와 일부 프리미엄 영역에서 가격 압박 확대 |
 | **CSOT / Tianma / Visionox** | 중국 패널 생태계의 보조 축 | LCD 기반 원가경쟁력, 중국 세트업체와 밀착 | 프리미엄 OLED 기술·고객 인증 한계 | 최고급 제품 대체는 제한적이나 가격 하방 압력 지속 |
 
 ```{=html}
@@ -110,7 +110,7 @@ execute:
 
 ### 3.2 IT OLED: 다음 성장 축
 
-Omdia는 대형 OLED 출하가 2026년에 전년 대비 **18.8% 증가**해 **3,880만 대**에 이를 것으로 전망했고, 노트북·모니터 수요를 핵심 성장 축으로 본다. 별도 공개자료에서는 2026년 노트북 OLED 매출이 **40억 달러**에 도달하고, Samsung Display의 신규 노트북 OLED 공급과 BOE의 Gen 8.6 Flexible OLED Fab 램프업이 2026년 하반기 경쟁 구도를 바꿀 수 있다고 설명했다.
+Omdia는 대형 OLED 출하가 2026년에 전년 대비 **18.8% 증가**해 **3,880만 대**에 이를 것으로 전망했고, 노트북·모니터 수요를 핵심 성장 축으로 본다. 별도 공개 블로그에서는 Samsung Display의 A6 Gen 8.6 라인 램프업과 BOE B16 Gen 8.6 라인의 2026년 3분기 양산 목표를 언급해, 2026년 하반기 IT OLED 경쟁 구도가 공급능력과 고객 승인 속도로 재편될 수 있음을 시사했다.
 
 ### 3.3 Gaming/Monitor: 대형 OLED의 현실적 돌파구
 
@@ -198,11 +198,12 @@ SDC의 2026년 2분기는 “OLED 시장이 모두 좋아졌다”는 신호가 
 4. [LG Display Reports Second Quarter 2026 Results — LG Display Newsroom](https://news.lgdisplay.com/en/2026/07/lg-display-reports-second-quarter-2026-results/)
 5. [LG Display IR Activity — Q2 2026 Earnings Conference Call Notice](https://www.lgdisplay.com/eng/company/investment/ir-activity)
 6. [LG Display Financial Information — 2026 2Q Income Statement](https://www.lgdisplay.com/eng/company/investment/finance)
-7. [BOE H1 2026 flexible OLED shipment and profit guidance — OLED-Info public summary](https://www.oled-info.com/boe-shipped-over-80-million-flexible-oled-displays-first-half-2026-sees-profit)
-8. [OLED notebook PC demand and Samsung Display/BOE Gen 8.6 plans — Omdia](https://omdia.tech.informa.com/pr/2026/june/oled-display-demand-for-notebook-pcs-to-reach-11point5-billion-dollars-by-2033)
-9. [Large-area OLED shipments to increase 18.8% YoY in 2026 — Omdia](https://omdia.tech.informa.com/pr/2026/july/large-area-oled-shipments-to-increase-18point8percent-yoy-in-2026-despite-economic-uncertainty-and-component-price-hike)
+7. [BOE launches China's first Gen 8.6 AMOLED production line — BOE official](https://www.boe.com/en/company/dynamic-0c62e240c2c94634b1c5530191b8307f)
+8. [BOE H1 2026 flexible OLED shipment and profit guidance — OLED-Info public summary](https://www.oled-info.com/boe-shipped-over-80-million-flexible-oled-displays-first-half-2026-sees-profit)
+9. [Notebook PC brands to diversify OLED notebooks with rigid, hybrid and flexible OLED — Omdia](https://omdia.tech.informa.com/blogs/2026/apr/notebook-pc-brands-to-diversify-their-oled-notebooks-with-rigid-hybrid-and-flexible-oled)
+10. [Large-area OLED shipments to increase 18.8% YoY in 2026 — Omdia](https://omdia.tech.informa.com/pr/2026/july/large-area-oled-shipments-to-increase-18point8percent-yoy-in-2026-despite-economic-uncertainty-and-component-price-hike)
 
 ---
 
-*Alpha Hunter Sector Report · 2026.08.01 · Nakcho Choi × Chimera AI*  
+*Alpha Hunter Sector Report · 2026.08.03 · Nakcho Choi × Chimera AI*  
 *면책: 이 프로젝트는 정보·연구 목적의 시장/산업 분석이며, 실제 투자 자문이나 투자 권유가 아닙니다.*
