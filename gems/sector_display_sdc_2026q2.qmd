@@ -2,7 +2,7 @@
 title: "삼성디스플레이 2026 Q2 실적 업데이트 — 경쟁사와 OLED 시장까지"
 subtitle: "Alpha Hunter Sector Report | 기존 SDC 분석 후속 · 분기 실적 × 경쟁사 × 시장구조"
 author: "Alpha Hunter × Chimera AI"
-date: "2026-08-03"
+date: "2026-08-05"
 format:
   html:
     theme:
@@ -22,7 +22,7 @@ execute:
 
 ::: {.callout-note}
 ## 보고서 위치
-기업분석 보고서는 `Chimera AI`가 아니라 **Alpha Hunter** 섹터 분석으로 관리한다. 본 문서는 기존 [`2026 Q1 SDC 전망 보고서`](sector_display_sdc_2026q1.html)의 후속 업데이트이며, 삼성디스플레이 2026년 2분기 실적발표 이후 경쟁사와 시장구조를 함께 재검토한다. 2026-08-03 재확인에서는 Samsung Newsroom, Samsung Semiconductor Newsroom, LG Display Newsroom/IR, BOE 공식 뉴스 및 Omdia 공개자료를 우선 기준으로 삼았다.
+기업분석 보고서는 `Chimera AI`가 아니라 **Alpha Hunter** 섹터 분석으로 관리한다. 본 문서는 기존 [`2026 Q1 SDC 전망 보고서`](sector_display_sdc_2026q1.html)의 후속 업데이트이며, 삼성디스플레이 2026년 2분기 실적발표 이후 경쟁사와 시장구조를 함께 재검토한다. 2026-08-05 재확인에서는 Samsung Newsroom, Samsung Semiconductor Newsroom, LG Display Newsroom/IR, BOE 공식 뉴스센터 및 Omdia 공개자료를 우선 기준으로 삼았다.
 :::
 
 ## 핵심 요약
@@ -205,5 +205,5 @@ SDC의 2026년 2분기는 “OLED 시장이 모두 좋아졌다”는 신호가 
 
 ---
 
-*Alpha Hunter Sector Report · 2026.08.03 · Nakcho Choi × Chimera AI*  
+*Alpha Hunter Sector Report · 2026.08.05 · Nakcho Choi × Chimera AI*  
 *면책: 이 프로젝트는 정보·연구 목적의 시장/산업 분석이며, 실제 투자 자문이나 투자 권유가 아닙니다.*
