@@ -1,0 +1,182 @@
+---
+title: "Amkor Technology (AMKR) 기업 분석"
+subtitle: "AI 패키징의 좋은 회사, 아직은 좋은 진입점이 아닌 이유"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-08-16"
+lang: ko
+jupyter: python3
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+execute:
+  echo: false
+  warning: false
+---
+
+::: {.callout-warning}
+## 면책과 판정
+이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었으며 실제 투자 권유가 아니다. **AMKR는 이번 검토에서 SEPA Stage 2 조건을 통과하지 못했으므로 신규 추천 종목이 아니다.**
+:::
+
+```{python}
+#| label: setup
+import pandas as pd, numpy as np, matplotlib.pyplot as plt
+from pathlib import Path
+plt.style.use("dark_background"); plt.rcParams["font.family"]="Noto Sans CJK KR"; plt.rcParams["axes.unicode_minus"]=False
+ACC,GREEN,RED,BLUE,MUTED="#f59e0b","#22c55e","#ef4444","#3b82f6","#94a3b8"
+p=pd.read_csv(Path("data/amkr_price_2025-08-15_2026-08-14.csv"),parse_dates=["date"]).sort_values("date")
+for n in [50,150,200]: p[f"ma{n}"]=p.adj_close.rolling(n).mean()
+last=p.iloc[-1]; high=p.adj_close.max(); low=p.adj_close.min()
+def finish(ax,t,s=""):
+    ax.set_title(t,loc="left",color=ACC,fontweight="bold",fontsize=15,pad=16)
+    if s: ax.text(0,1.01,s,transform=ax.transAxes,color=MUTED,fontsize=9)
+    ax.grid(alpha=.18); ax.spines[["top","right"]].set_visible(False)
+```
+
+# 한눈에 보는 결론
+
+Amkor의 2Q26 실적은 강했다. 매출은 `19.0억 달러`로 전년 대비 `26%` 늘었고, 영업이익은 `2.00억 달러`, 영업이익률은 `10.5%`였다. Computing 매출은 전분기 대비 `20%` 증가했고 회사는 AI·HPC 프로그램, NVIDIA와의 다년 협력, TSMC와의 10년 첨단패키징 계약을 제시했다. 그러나 2026년 연간 CAPEX 계획은 `25~30억 달러`이고, 상반기 영업현금흐름 `3.82억 달러`보다 유형자산 지출 `6.88억 달러`가 컸다. 성장의 질은 **수요뿐 아니라 가동률과 현금회수**로 검증해야 한다. [Amkor 2Q26 공식 실적](https://ir.amkor.com/static-files/202be5d9-a98f-4eec-b33a-1ca37bbbfb29) · [공식 발표자료](https://ir.amkor.com/static-files/24ab31c3-a74b-4dde-8591-904204b5b0b9)
+
+| 항목 | 판정 |
+|---|---|
+| 펀더멘털 | 매출·마진·EPS 가속 확인 |
+| 산업 서사 | AI/HPC 첨단패키징 수요와 연결 |
+| 현금흐름 | 대규모 선행 CAPEX로 자유현금흐름 압박 |
+| 가격 추세 | 50일선 아래, 52주 고점 대비 약 -37% |
+| 최종 | **관찰 — SEPA 불합격, 진입가격 제시 안 함** |
+
+# SEPA 트렌드 템플릿
+
+```{python}
+#| label: fig-sepa
+#| fig-cap: "그림 1. AMKR 조정주가와 50·150·200일 이동평균. 8월 14일 현재 주가는 50일선 아래다."
+fig,ax=plt.subplots(figsize=(10,5.5)); ax.plot(p.date,p.adj_close,color="#ffffff",lw=2,label="조정주가")
+for n,c in [(50,ACC),(150,BLUE),(200,GREEN)]: ax.plot(p.date,p[f"ma{n}"],color=c,label=f"MA{n}")
+finish(ax,"SEPA: 장기추세와 단기훼손이 공존","가격 원자료 2025-08-15~2026-08-14"); ax.legend(frameon=False,ncol=4)
+plt.tight_layout(); plt.show()
+```
+
+```{python}
+#| label: fig-range
+#| fig-cap: "그림 2. 52주 저가·현재가·고가 위치. 현재가는 저점보다 높지만 고점의 75% 기준을 충족하지 못한다."
+vals=pd.Series({"52주 저가":low,"현재가":last.adj_close,"SEPA 고점75%":high*.75,"52주 고가":high})
+fig,ax=plt.subplots(figsize=(8,4.5)); ax.scatter(vals.values,[0]*len(vals),s=[90,180,110,90],c=[MUTED,ACC,BLUE,GREEN])
+for k,v in vals.items(): ax.annotate(f"{k}\n${v:.2f}",(v,0),xytext=(0,14 if k in ["현재가","52주 고가"] else -34),textcoords="offset points",ha="center")
+ax.set_yticks([]); finish(ax,"52주 가격 위치"); plt.tight_layout(); plt.show()
+```
+
+마지막 가격은 `$58.99`, MA50 `$67.98`, MA150 `$60.22`, MA200 `$54.81`이다. MA200은 한 달 전보다 상승했지만, 현재가는 MA50과 MA150 아래이고 52주 고가 `$93.55`의 `63.1%`다. 조건 4·5·7이 깨진다.
+
+```{python}
+#| label: fig-checklist
+#| fig-cap: "그림 3. SEPA 8개 조건의 기계적 판정. RS 순위는 공식 비교 데이터가 없어 미확인으로 남겼다."
+checks=pd.Series({
+"현재가>MA150·200": last.adj_close>last.ma150 and last.adj_close>last.ma200,
+"MA150>MA200": last.ma150>last.ma200,
+"MA200 1개월 상승": last.ma200>p.ma200.iloc[-21],
+"MA50>MA150·200": last.ma50>last.ma150 and last.ma50>last.ma200,
+"현재가>MA50": last.adj_close>last.ma50,
+"저가 대비 +30%": last.adj_close>=low*1.3,
+"고가의 75% 이상": last.adj_close>=high*.75,
+"RS 순위 70+": False})
+fig,ax=plt.subplots(figsize=(8,5)); ax.barh(checks.index,[1]*8,color=[GREEN if bool(x) else MUTED if i==7 else RED for i,x in enumerate(checks.values)])
+for i,x in enumerate(checks): ax.text(.5,i,"PASS" if x else "미확인" if i==7 else "FAIL",ha="center",va="center",fontweight="bold")
+ax.set_xlim(0,1); ax.set_xticks([]); finish(ax,"SEPA 체크리스트 — 8개 중 4개 통과")
+plt.tight_layout(); plt.show()
+```
+
+# 실적 가속
+
+```{python}
+#| label: fig-results
+#| fig-cap: "그림 4. Amkor 공식 2Q26 실적표의 분기 비교(백만 달러)."
+q=pd.DataFrame({"분기":["2Q25","1Q26","2Q26"],"매출":[1511,1685,1898],"영업이익":[92,100,200],"순이익":[54,83,174],"EBITDA":[259,285,400]}).set_index("분기")
+fig,axs=plt.subplots(1,2,figsize=(10,4.5)); q[["매출"]].plot(kind="bar",ax=axs[0],color=BLUE,legend=False); q[["영업이익","순이익","EBITDA"]].plot(kind="bar",ax=axs[1],color=[ACC,GREEN,MUTED])
+finish(axs[0],"매출 성장"); finish(axs[1],"이익 레버리지"); axs[1].legend(frameon=False)
+plt.tight_layout(); plt.show()
+```
+
+```{python}
+#| label: fig-margins
+#| fig-cap: "그림 5. 매출총이익률과 영업이익률. 가동률 개선이 마진 확대로 연결됐다."
+m=pd.DataFrame({"분기":["2Q25","1Q26","2Q26"],"매출총이익률":[12.0,14.2,16.8],"영업이익률":[6.1,6.0,10.5]}).set_index("분기")
+fig,ax=plt.subplots(figsize=(8,4.5)); m.plot(marker="o",lw=2,ax=ax,color=[BLUE,ACC]); finish(ax,"마진 회복","공식 분기 실적, 단위 %"); ax.legend(frameon=False)
+plt.tight_layout(); plt.show()
+```
+
+EPS는 `$0.22 → $0.33 → $0.70`으로 확대됐다. 단, 2Q25에는 Nanium 관련 우발대가 순이익에 약 `$0.07` 포함됐다. 기저를 그대로 비교하면 오히려 2026년 개선을 과소평가할 수 있으나, 한 분기 이익을 장기 정상마진으로 외삽해서도 안 된다.
+
+# 사업 믹스와 AI 연결
+
+```{python}
+#| label: fig-mix
+#| fig-cap: "그림 6. 2Q26 매출 믹스. Computing은 22%이며 AI 서사가 회사 전체 매출과 동일하지는 않다."
+mix=pd.Series({"Communications":42,"Computing":22,"Automotive & Industrial":22,"Consumer":14})
+fig,ax=plt.subplots(figsize=(7,5)); ax.pie(mix,labels=mix.index,autopct="%1.0f%%",colors=[BLUE,ACC,GREEN,MUTED],startangle=90,wedgeprops={"width":.45}); ax.set_title("2Q26 End-market mix",color=ACC,fontweight="bold")
+plt.tight_layout(); plt.show()
+```
+
+Computing 22%에는 데이터센터뿐 아니라 인프라·PC·노트북·스토리지가 함께 포함된다. 따라서 “매출의 22%가 AI”라고 읽으면 안 된다. 확인 가능한 것은 Computing이 전분기 대비 20% 성장했고 데이터센터 수요가 강했다는 회사 설명까지다.
+
+# CAPEX와 현금흐름
+
+```{python}
+#| label: fig-cashflow
+#| fig-cap: "그림 7. 2026년 상반기 영업현금흐름과 설비투자(백만 달러). 성장투자가 내부현금창출을 앞섰다."
+cf=pd.Series({"영업현금흐름":381.6,"유형자산 지출":688.4,"단순 FCF":381.6-688.4})
+fig,ax=plt.subplots(figsize=(8,4.5)); ax.bar(cf.index,cf,color=[GREEN,ACC,RED]); ax.axhline(0,color=MUTED,lw=.8)
+for i,x in enumerate(cf): ax.text(i,x+(15 if x>=0 else -28),f"${x:.1f}M",ha="center")
+finish(ax,"성장은 선행투자를 요구한다","단순 FCF=영업현금흐름-유형자산 지출")
+plt.tight_layout(); plt.show()
+```
+
+상반기 말 현금·단기투자는 약 `$25억`, 총부채도 약 `$25억`이다. 동시에 장기부채는 2025년 말 `$12.8억`에서 2026년 6월 `$23.3억`으로 늘었다. 연간 CAPEX 계획 `$25~30억`은 현재 EBITDA 확대가 실제 현금수익률로 이어지는지 확인해야 할 이유다.
+
+# 리스크 대시보드
+
+```{python}
+#| label: fig-risk
+#| fig-cap: "그림 8. Alpha Hunter 리스크 점수. 0은 낮음, 100은 높음이며 공개 수치에 대한 규칙 기반 평가다."
+risk=pd.Series({"가격추세 훼손":85,"CAPEX/FCF 압력":80,"고객집중(상위10 66%)":66,"통신매출 의존(42%)":42,"장기부채 증가":72,"실적 모멘텀 둔화":25})
+fig,ax=plt.subplots(figsize=(8,5)); ax.barh(risk.sort_values().index,risk.sort_values(),color=[GREEN if x<35 else ACC if x<65 else RED for x in risk.sort_values()]); ax.set_xlim(0,100)
+for i,x in enumerate(risk.sort_values()): ax.text(x+2,i,str(x))
+finish(ax,"리스크 팩터")
+plt.tight_layout(); plt.show()
+```
+
+# 해자와 스토리
+
+**해자 후보**는 세 가지다. 첨단패키징 공정경험, 글로벌 생산거점, 선도 고객과의 장기 공동투자다. 하지만 OSAT는 높은 고정비와 고객의 짧은 주문가시성, 가동률 민감도를 함께 가진다. 회사도 공시에서 높은 가동률이 만족스러운 마진에 필요하고 고객 약정이 단기적이라고 경고한다.
+
+**피터 린치식 한 문장:** “AI 칩의 성능경쟁이 전공정에서 패키징으로 이동할수록 수혜를 받을 수 있지만, 공장을 먼저 짓고 주문을 나중에 받는 위험도 함께 커지는 회사.”
+
+# 반증 조건과 재검토 규칙
+
+이번 글은 목표가를 만들지 않는다. Stage 2가 아니기 때문이다. 다음 세 조건이 동시에 회복될 때만 재검토한다.
+
+1. 현재가가 MA50과 MA150 위로 복귀한다.
+2. 52주 고점의 75% 이상인 약 `$70.16`을 회복한다.
+3. 다음 분기에서 Computing 성장과 총 가동률 개선이 마진·영업현금흐름으로 이어진다.
+
+반대로 MA200 하향 전환, CAPEX 가이던스 상향과 현금흐름 악화의 동시 발생, 고객 프로그램 지연은 투자 가설을 약화한다.
+
+# 결론
+
+Amkor는 AI 시대의 “보이지 않는 병목”인 첨단패키징을 맡고 있고 2Q26 실적은 분명 강했다. 그러나 Alpha Hunter는 좋은 회사를 찾는 데서 멈추지 않는다. **가격이 펀더멘털을 확인해야 좋은 주식 후보가 된다.** 현재 AMKR는 장기 이동평균 구조의 일부만 살아 있고 52주 고점과 거리가 멀다. 결론은 추천이 아니라 관찰이다.
+
+## 자료와 재현성
+
+- [Amkor 2Q26 공식 실적 발표](https://ir.amkor.com/static-files/202be5d9-a98f-4eec-b33a-1ca37bbbfb29)
+- [Amkor 2Q26 공식 프레젠테이션](https://ir.amkor.com/static-files/24ab31c3-a74b-4dde-8591-904204b5b0b9)
+- [Amkor 2Q26 Form 10-Q](https://ir.amkor.com/sec-filings/sec-filing/10-q/0001047127-26-000046)
+- 가격 고정본: `gems/data/amkr_price_2025-08-15_2026-08-14.csv`, Yahoo Finance chart API
+- RS 순위는 공식 비교자료가 없어 미확인 처리했다. 이를 통과로 간주하지 않았다.
