@@ -1,0 +1,180 @@
+---
+title: "Lumentum (LITE) FY2026 주말 검토"
+subtitle: "AI 광통신 실적은 통과, 주가는 매수 문턱을 넘었다"
+author: "Alpha Hunter × Chimera AI"
+date: "2026-08-21"
+lang: ko
+jupyter: python3
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+---
+
+::: {.callout-warning}
+## 이번 판정: **추격매수 탈락 — 관찰만**
+이 글은 가상 투자 연구이며 투자자문이 아니다. Lumentum은 실적과 SEPA 가격 구조가 강하지만, 2026년 8월 20일 종가 기준 1년 수익률 약 `+649%`, 시가총액 약 `$846억`, FY2026 비GAAP EPS 대비 약 `101배`다. **기업은 통과했지만 신규 진입의 기대수익/손실 비대칭은 통과하지 못했다.**
+:::
+
+```{python}
+import pandas as pd, numpy as np, matplotlib.pyplot as plt
+plt.style.use("dark_background")
+plt.rcParams["font.family"]="Noto Sans CJK KR"
+plt.rcParams["axes.unicode_minus"]=False
+ACC,GREEN,RED,BLUE,MUTED="#f59e0b","#22c55e","#ef4444","#3b82f6","#94a3b8"
+def finish(ax,title,sub=""):
+    ax.set_title(title,loc="left",color=ACC,fontweight="bold",fontsize=15,pad=16)
+    if sub: ax.text(0,1.01,sub,transform=ax.transAxes,color=MUTED,fontsize=9)
+    ax.grid(alpha=.18); ax.spines[["top","right"]].set_visible(False)
+```
+
+# 한눈에 보는 결론
+
+Lumentum의 FY2026 4분기 매출은 `$10.06억`으로 전년 동기 대비 `109.3%`, 전분기 대비 `24.5%` 성장했다. GAAP 영업이익률은 `27.8%`, 비GAAP 영업이익률은 `36.6%`다. 회사는 다음 분기 매출 중간값 `$12.5억`과 비GAAP 영업이익률 `39.5~40.5%`를 제시했다. AI 클러스터의 데이터 이동이 전기 연결에서 광 연결로 이동하는 산업 가설은 숫자로 확인된다. [Lumentum FY2026 공식 실적](https://investor.lumentum.com/financial-news-releases/news-details/2026/Lumentum-Announces-Fourth-Quarter-and-Full-Fiscal-Year-2026-Results/default.aspx)
+
+그러나 주가는 이미 이 가속을 크게 선반영했다. 8월 20일 종가 `$879.28`은 50·150·200일 이동평균 위이며 52주 고점의 `83.5%`다. 기술적 추세를 이유로 탈락시킬 수는 없지만, **과열된 가격과 주식수 증가를 무시한 추천도 할 수 없다.**
+
+| 검토 축 | 판정 | 근거 |
+|---|---|---|
+| 매출·마진 가속 | 통과 | Q4 매출 +109.3% YoY, GAAP OPM 27.8% |
+| AI 광통신 수요 | 통과 | Components +102.7%, Systems +122.6% YoY |
+| SEPA 추세 | 7개 가격조건 통과 | 종가가 MA50·150·200과 고점 75%선 상회 |
+| RS 순위 | 미확인 | 공인된 비교 순위 데이터 없음 |
+| 희석·회계 | 경계 | Q4 기본 주식수 84.6M vs 전년 69.6M |
+| 진입 가격 | 탈락 | 1년 +649%, FY 비GAAP EPS의 약 101배 |
+
+# 실적 가속은 진짜다
+
+```{python}
+#| label: fig-revenue
+#| fig-cap: "그림 1. Lumentum 공식 분기 매출. 단위 백만 달러."
+rev=pd.Series({"Q4 FY25":480.7,"Q3 FY26":808.4,"Q4 FY26":1006.3})
+fig,ax=plt.subplots(figsize=(8,4.6)); ax.bar(rev.index,rev,color=[MUTED,BLUE,ACC])
+for i,v in enumerate(rev): ax.text(i,v+20,f"${v:,.1f}M",ha="center",fontweight="bold")
+finish(ax,"한 분기 만에 10억 달러 매출 진입","공식 FY2026 Q4 실적표"); plt.tight_layout(); plt.show()
+```
+
+```{python}
+#| label: fig-margin
+#| fig-cap: "그림 2. GAAP·비GAAP 수익성. 제품 믹스와 가동률 개선이 동시에 나타났다."
+m=pd.DataFrame({"GAAP 총마진":[33.3,44.2,47.4],"비GAAP 총마진":[37.8,47.9,50.4],"GAAP 영업마진":[-1.7,21.6,27.8],"비GAAP 영업마진":[15.0,32.2,36.6]},index=rev.index)
+fig,ax=plt.subplots(figsize=(10,5)); m.plot(kind="line",marker="o",lw=2,ax=ax,color=[BLUE,GREEN,RED,ACC])
+finish(ax,"마진 확장은 매출보다 더 빠르다","단위 %, 공식 실적 발표"); ax.legend(frameon=False,ncol=2); plt.tight_layout(); plt.show()
+```
+
+Components 매출은 `$6.49억`, Systems는 `$3.57억`이었다. 각각 전년 대비 `102.7%`, `122.6%` 늘었다. 한 제품에만 기대는 성장이 아니라는 점은 긍정적이다. 다만 회사가 언급한 OCS, 1.6T 모듈, CPO 레이저, ELS·NPO는 아직 일부가 초기 주문·초기 채택 단계다. 현재 성장률을 장기 정상률로 놓는 것은 위험하다.
+
+```{python}
+#| label: fig-mix
+#| fig-cap: "그림 3. Q4 FY2026 제품군별 매출과 전년 대비 성장률."
+mix=pd.DataFrame({"매출($M)":[649.4,356.9],"YoY(%)":[102.7,122.6]},index=["Components","Systems"])
+fig,axs=plt.subplots(1,2,figsize=(10,4.4)); mix["매출($M)"].plot.bar(ax=axs[0],color=[BLUE,ACC]); mix["YoY(%)"].plot.bar(ax=axs[1],color=[GREEN,ACC])
+finish(axs[0],"제품 매출"); finish(axs[1],"성장률"); axs[0].tick_params(axis="x",rotation=0); axs[1].tick_params(axis="x",rotation=0)
+plt.tight_layout(); plt.show()
+```
+
+# SEPA: 가격 구조는 통과한다
+
+Yahoo Finance chart API의 2025-08-21~2026-08-20 일별 조정종가 251개를 고정 시점에 계산했다. 마지막 종가 `$879.28`, MA50 `$814.14`, MA150 `$760.60`, MA200 `$649.28`이다. MA200은 21거래일 전 `$581.87`보다 상승했다. 52주 저가 `$117.43`, 고가 `$1,053.09`다.
+
+```{python}
+#| label: fig-price
+#| fig-cap: "그림 4. 8월 20일 종가와 이동평균·52주 기준선. 전체 251거래일에서 산출."
+levels=pd.Series({"52주 저가":117.43,"MA200":649.28,"MA150":760.60,"고점 75%":789.82,"MA50":814.14,"현재가":879.28,"52주 고가":1053.09})
+colors=[MUTED,GREEN,BLUE,BLUE,ACC,"#ffffff",GREEN]
+fig,ax=plt.subplots(figsize=(10,4.7)); ax.scatter(levels.values,np.zeros(len(levels)),s=[70,100,100,80,100,180,80],c=colors)
+for i,(k,v) in enumerate(levels.items()): ax.annotate(f"{k}\n${v:,.0f}",(v,0),xytext=(0,18 if i%2 else -42),textcoords="offset points",ha="center",fontsize=9)
+ax.set_yticks([]); finish(ax,"추세는 강하지만 안전마진은 얇다"); plt.tight_layout(); plt.show()
+```
+
+```{python}
+#| label: fig-sepa
+#| fig-cap: "그림 5. SEPA 가격조건 판정. RS 순위는 확인 불가라 통과 수에 포함하지 않았다."
+checks=pd.Series({"현재가>MA150·200":True,"MA150>MA200":True,"MA200 1개월 상승":True,"MA50>MA150·200":True,"현재가>MA50":True,"저가 대비 +30%":True,"고가의 75% 이상":True,"RS 순위 70+":False})
+fig,ax=plt.subplots(figsize=(8,5)); cs=[GREEN]*7+[MUTED]; ax.barh(checks.index,[1]*8,color=cs)
+for i in range(8): ax.text(.5,i,"PASS" if i<7 else "미확인",ha="center",va="center",fontweight="bold")
+ax.set_xlim(0,1); ax.set_xticks([]); finish(ax,"SEPA 7개 가격조건 통과, RS 미확인"); plt.tight_layout(); plt.show()
+```
+
+# 왜 추천하지 않는가
+
+## 1. 주가가 실적보다 더 빨리 달렸다
+
+종가는 1년 전 `$117.43`에서 `$879.28`로 약 `+648.8%` 올랐다. FY2026 매출은 `83.2%`, 비GAAP EPS는 `$2.06 → $8.67`로 `321%` 증가했다. 놀라운 실적이지만 주가 상승률은 이익 증가율도 앞섰다. 현재가는 FY2026 비GAAP EPS의 약 `101배`, 최근 시가총액은 약 `$846억`이다. 다음 분기 매출 가이던스 중간값을 단순 연율화한 `$50억` 대비로도 약 `16.9배` 매출이다. 이는 실행 실수에 대한 허용 폭이 작다는 뜻이다.
+
+```{python}
+#| label: fig-growth-gap
+#| fig-cap: "그림 6. FY2026 성장과 최근 1년 주가 상승의 속도 차이."
+g=pd.Series({"FY 매출":83.2,"FY 비GAAP EPS":(8.67/2.06-1)*100,"1년 주가":(879.28/117.43-1)*100})
+fig,ax=plt.subplots(figsize=(8,4.6)); ax.bar(g.index,g,color=[BLUE,GREEN,RED])
+for i,v in enumerate(g): ax.text(i,v+14,f"+{v:.0f}%",ha="center",fontweight="bold")
+finish(ax,"성장률보다 더 빠른 멀티플 확장","각 기간의 출발점이 달라 방향 비교용"); plt.tight_layout(); plt.show()
+```
+
+## 2. GAAP 손실은 비현금이지만, 희석은 현실이다
+
+Q4 GAAP 순손실 `$71.6억`은 전환사채 자본화 과정의 일회성 비현금 채무소멸손실 `$78억`이 주원인이다. 영업이 무너졌다고 읽으면 틀리다. 반대로 이를 완전히 무시해도 안 된다. Q4 기본 주식수는 `84.6M`으로 전년 동기 `69.6M`보다 `21.6%` 늘었다. 비GAAP 희석주식 계산에는 전환사채 관련 약 `14.0M` 주식과 주식보상 등 약 `3.1M`이 반영됐다.
+
+```{python}
+#| label: fig-shares
+#| fig-cap: "그림 7. Q4 기본 주식수 변화. 비현금 회계손실과 주주 희석은 구분해야 한다."
+shares=pd.Series({"Q4 FY25":69.6,"Q4 FY26":84.6})
+fig,ax=plt.subplots(figsize=(7,4.5)); ax.bar(shares.index,shares,color=[MUTED,RED])
+for i,v in enumerate(shares): ax.text(i,v+1,f"{v:.1f}M",ha="center",fontweight="bold")
+finish(ax,"기본 주식수 +21.6% YoY"); plt.tight_layout(); plt.show()
+```
+
+## 3. 현금도 많지만 분기 중 감소했다
+
+연말 현금·현금성자산과 단기투자는 약 `$27.4억`으로 FY2025 말보다 `$18.6억` 증가했다. 그러나 Q4 한 분기에는 `$4.34억` 감소했다. 재무구조 개선과 자본거래 효과, 실제 영업현금 창출을 다음 10-K에서 분리 확인해야 한다. 8월 21일 현재 FY2026 10-K가 SEC 검색결과에 아직 보이지 않으므로 보도자료보다 더 강한 확정 판단은 보류한다.
+
+# 명확한 통과·탈락 기준
+
+## 신규 편입 통과
+
+다음 중 **모두** 충족할 때만 가상 포트폴리오 편입을 재검토한다.
+
+1. FY2027 Q1 실제 매출이 가이던스 하단 `$12.25억` 이상이고 비GAAP 영업이익률 `39.5%` 이상.
+2. 10-K에서 영업현금흐름이 이익 증가를 확인하고, 자본거래 제외 현금흐름의 질이 훼손되지 않음.
+3. 주가가 MA50 부근에서 최소 3주 기반을 만들거나, 새로운 이익 추정치 기준 비GAAP PER이 `60배 이하`로 내려옴.
+4. 희석주식수 증가율이 다음 분기에 둔화하고 고객·제품 집중 위험이 악화하지 않음.
+
+## 즉시 탈락·가설 파기
+
+- Q1 매출이 `$12.25억` 미만이거나 비GAAP 영업이익률이 `39.5%` 미만.
+- 현재가가 MA50 아래로 내려간 뒤 MA150도 이탈.
+- OCS·1.6T·CPO 관련 주문 지연과 재고 증가가 동시에 확인.
+- 전환사채·주식보상으로 희석주식수가 다시 두 자릿수 증가.
+
+# 위험과 한계
+
+- **가격 데이터:** Yahoo Finance 비공식 시장 데이터이며 8월 20일 종가까지다. RS 순위는 공식 자료가 없어 미확인이다.
+- **비GAAP 의존:** 회사 조정치는 비교에 유용하지만 주식보상·전환증권 경제효과를 제거할 수 있다.
+- **10-K 시차:** FY2026 10-K가 아직 확인되지 않아 감사된 현금흐름·고객집중·재고 세부정보는 후속 검증 대상이다.
+- **산업 순환:** 광부품은 고객 주문, 수율, 공급능력, ASP와 믹스에 민감하다. AI 수요가 곧 Lumentum의 장기 초과수익을 보장하지 않는다.
+- **가치평가:** 미래 EPS 컨센서스를 사용하지 않고 공개 실적과 가이던스만 사용했기 때문에 보수적이지만, 목표가격을 산출할 만큼 충분하지 않다.
+
+# 결론
+
+Lumentum은 이번 주말 검토에서 **기업 실적과 SEPA 추세는 통과**했다. 그럼에도 Alpha Hunter의 임무는 가장 빠르게 오른 종목을 뒤따르는 일이 아니다. 현재 가격은 성장 지속, 마진 확대, 신제품 양산, 희석 안정화를 동시에 요구한다. 하나만 어긋나도 멀티플 압축 폭이 클 수 있다.
+
+따라서 판정은 **추천 보류**다. 좋은 기업이라는 결론과 좋은 신규 매수가격이라는 결론을 분리한다. 다음 공식 체크포인트는 FY2026 10-K와 FY2027 Q1 실적이다.
+
+## 출처와 재현 기준
+
+- [Lumentum FY2026 Q4 공식 실적 발표](https://investor.lumentum.com/financial-news-releases/news-details/2026/Lumentum-Announces-Fourth-Quarter-and-Full-Fiscal-Year-2026-Results/default.aspx)
+- [Lumentum 투자자관계 홈페이지](https://investor.lumentum.com/)
+- [SEC Lumentum 회사 공시 페이지 (CIK 1633978)](https://www.sec.gov/edgar/browse/?CIK=0001633978)
+- 가격: Yahoo Finance chart API `LITE`, 2025-08-21~2026-08-20, 251거래일. 계산값은 본문에 고정했으며 조회시점은 2026-08-21 KST다.
+- 시가총액: 2026-08-21 시장 조회값 약 `$84.6B`. 실시간 값은 변한다.
+
