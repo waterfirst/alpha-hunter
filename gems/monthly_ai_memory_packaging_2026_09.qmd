@@ -1,0 +1,140 @@
+---
+title: "2026년 9월 월간 기업·산업 분석"
+subtitle: "AI 메모리의 다음 병목 — HBM에서 추론용 계층 메모리와 첨단 패키징으로"
+author: "Alpha Hunter"
+date: "2026-09-30"
+lang: ko
+jupyter: python3
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+---
+
+::: {.callout-warning}
+## 연구 목적 고지
+이 글은 공개 공시·기업 IR·공식 발표·시장조사기관 공개자료를 바탕으로 한 정보·연구 목적의 기업·산업 분석이다. **투자자문이나 특정 증권의 매수·매도·보유 권유가 아니다.** 데이터 기준일은 **2026년 9월 30일**이며, 이후 발표·가격은 반영하지 않았다.
+:::
+
+```{python}
+import pandas as pd, numpy as np, matplotlib.pyplot as plt
+plt.style.use("dark_background")
+plt.rcParams["font.family"] = "Noto Sans CJK KR"
+plt.rcParams["axes.unicode_minus"] = False
+ACC, BLUE, GREEN, RED, PURPLE, MUTED, BG = "#f59e0b", "#3b82f6", "#22c55e", "#ef4444", "#a855f7", "#94a3b8", "#111122"
+def finish(ax, title, sub=""):
+    ax.set_facecolor(BG); ax.set_title(title, loc="left", color=ACC, fontweight="bold", fontsize=15, pad=16)
+    if sub: ax.text(0, 1.02, sub, transform=ax.transAxes, color=MUTED, fontsize=9)
+    ax.grid(alpha=.18); ax.spines[["top","right"]].set_visible(False)
+def labels(ax, suffix=""):
+    top=ax.get_ylim()[1]
+    for p in ax.patches:
+        ax.text(p.get_x()+p.get_width()/2, p.get_height()+top*.025, f"{p.get_height():.1f}{suffix}", ha="center", fontsize=9, fontweight="bold")
+```
+
+# 월간 결론: “메모리 가격”에서 “시스템 내 데이터 이동”으로
+
+9월에 확인한 핵심 변화는 AI 인프라의 병목이 단순한 HBM 공급 부족에서 **추론 워크로드의 데이터 이동·용량·패키징 제약**으로 넓어진 점이다. Omdia는 2Q26 세계 반도체 매출을 `$425B`, 전분기 대비 `+31.4%`로 집계했고, 메모리 IC가 전체의 절반을 넘었다. 동시에 SK hynix는 HBM·DRAM·SSD 사이에 데이터를 배치하는 HBF·SALT-KV·PIM을 공개했고, Amkor는 고객 약정을 근거로 미국 첨단 패키징 캠퍼스 투자 계획을 `$12B`로 늘렸다.
+
+| 9월 체크포인트 | 공개 확인치 | 해석 |
+|---|---:|---|
+| 세계 반도체 매출(2Q26) | $425B, QoQ +31.4% | 메모리 ASP가 순환의 중심 |
+| 메모리 IC 비중 | 전체 매출의 50% 초과 | 총시장 숫자는 메모리 사이클에 크게 좌우 |
+| Micron FY26 Q3 매출 | $41.46B | 가격·제품 믹스의 레버리지 확인 |
+| Amkor Q2 매출/영업이익률 | $1.898B / 10.5% | 패키징도 실적 개선이 확인된 구간 |
+| Amkor Arizona 계획 투자 | 약 $12B | 고객약정은 긍정적이나 2027~29년 실행 위험 존재 |
+
+```{python}
+#| label: fig-market
+#| fig-cap: "그림 1. 2026년 분기별 세계 반도체 매출. 1Q·2Q는 Omdia 공개자료, 3Q는 Omdia 전망치다."
+market = pd.Series({"1Q26":319, "2Q26":425, "3Q26E":500})
+fig, ax = plt.subplots(figsize=(9,4.8))
+ax.bar(market.index, market.values, color=[BLUE, ACC, PURPLE])
+labels(ax, "B 달러"); ax.set_ylabel("십억 달러")
+finish(ax, "반도체 매출: 메모리가 전체 시장을 끌어올린 분기", "3Q는 Omdia의 ‘$500B 초과’ 전망을 보수적으로 $500B로 표시")
+plt.tight_layout(); plt.show()
+```
+
+## 기업분석 1 — Micron: 실적은 가격·공급 제약을 확인, 계약 구조는 별도 점검
+
+Micron의 FY26 3분기(2026-05-28 종료) 매출은 `$41.46B`로 전분기 `$23.86B`, 전년 동기 `$9.30B`에서 크게 증가했다. GAAP 순이익은 `$28.24B`, 영업현금흐름은 `$25.39B`였다. 이 수치는 AI 메모리 수요가 HBM에 국한되지 않고 DRAM·NAND 가격과 제품 믹스로 전이된 결과로 읽힌다.
+
+다만 이번 호는 목표가나 매매 의견을 제시하지 않는다. 메모리 업황의 현물가격과 고객 계약가격은 다르게 움직일 수 있고, 고마진 구간일수록 증설·고객 재고·수요 탄력성의 확인이 중요하다.
+
+```{python}
+#| label: fig-micron
+#| fig-cap: "그림 2. Micron FY26 Q3 매출 비교. 출처: Micron FY26 Q3 공식 보도자료/SEC 8-K."
+mu = pd.DataFrame({"기간":["FY25 Q3","FY26 Q2","FY26 Q3"],"매출":[9.301,23.860,41.456]})
+fig, ax = plt.subplots(figsize=(9,4.8))
+ax.bar(mu["기간"], mu["매출"], color=[MUTED, BLUE, GREEN])
+labels(ax, "B 달러"); ax.set_ylabel("십억 달러")
+finish(ax, "Micron: 세 분기 비교로 본 메모리 레버리지", "회계 분기 기준; 주가·밸류에이션 차트가 아닌 공식 실적 비교")
+plt.tight_layout(); plt.show()
+```
+
+## 기업분석 2 — Amkor: 첨단 패키징은 수요가 아니라 실행 순서가 핵심
+
+Amkor의 2Q26 매출은 `$1.898B`(YoY `+26%`), 영업이익은 `$200M`, 영업이익률은 `10.5%`였다. Advanced products 매출은 `$1.557B`로 전체 매출의 대부분을 차지했다. 회사는 9월 8일 Arizona 첨단 패키징·테스트 캠퍼스 2단계를 발표했다. 고객 약정이 1단계의 `33,000㎡` 클린룸 계획을 넘어섰고, 2단계 `60,000㎡`를 더해 총 약 `93,000㎡`, 계획 투자는 약 `$12B`가 된다.
+
+이것은 AI 패키징 수요의 강한 신호이지만, 2단계 착공은 2027년 말, 완공 예상은 2029년 말이다. 따라서 이번 달의 핵심 리스크는 “수요 발표”가 아니라 **긴 투자 회수기간, 고객 집중도, 일정·원가 집행**이다.
+
+```{python}
+#| label: fig-amkor
+#| fig-cap: "그림 3. Amkor 분기 매출과 영업이익률. 출처: Amkor 2Q26 공식 실적 발표."
+am = pd.DataFrame({"기간":["Q2 2025","Q1 2026","Q2 2026"],"매출":[1.511,1.685,1.898],"영업이익률":[6.1,6.0,10.5]})
+fig, axes=plt.subplots(1,2,figsize=(11,4.6))
+axes[0].bar(am["기간"],am["매출"],color=[MUTED,BLUE,GREEN]); labels(axes[0],"B 달러"); axes[0].set_ylabel("십억 달러"); finish(axes[0],"매출")
+axes[1].plot(am["기간"],am["영업이익률"],marker="o",lw=3,color=ACC)
+for i,v in enumerate(am["영업이익률"]): axes[1].text(i,v+.55,f"{v:.1f}%",ha="center",fontweight="bold")
+axes[1].set_ylim(0,13); axes[1].set_ylabel("영업이익률"); finish(axes[1],"수익성")
+plt.tight_layout(); plt.show()
+```
+
+# 산업분석 — 추론 시대의 메모리 계층화
+
+SK hynix는 9월 AI Infra Summit에서 HBF(High Bandwidth Flash), PIM, SALT-KV를 제시했다. 특히 SALT-KV는 LLM의 KV cache를 HBM·DRAM·SSD에 재사용가치와 저장비용에 따라 배치하는 접근이다. 이는 기업 발표에 따른 기술 방향이며, 상용화 속도·경제성은 후속 검증이 필요하다. 분석상 중요한 점은 HBM 단독의 비트 수요보다 **어떤 데이터가 어느 계층에 머무는가**가 DRAM·eSSD·패키징 수요를 함께 결정한다는 것이다.
+
+```{python}
+#| label: fig-stack
+#| fig-cap: "그림 4. AI 추론 데이터 경로의 정성적 병목 지도. 기업 공개자료를 바탕으로 한 Alpha Hunter의 분석 프레임이며 시장 규모 예측이 아니다."
+stack=pd.DataFrame({"계층":["HBM","DRAM","HBF / 고대역 NAND","eSSD"],"대역폭 우선": [5,4,4,2],"용량 우선":[2,3,5,5],"패키징 난도":[5,3,4,2]})
+fig,ax=plt.subplots(figsize=(9,4.8))
+im=ax.imshow(stack.iloc[:,1:].values,cmap="magma",vmin=1,vmax=5)
+ax.set_xticks(range(3),stack.columns[1:]); ax.set_yticks(range(4),stack["계층"])
+for i in range(4):
+ for j in range(3): ax.text(j,i,stack.iloc[i,j+1],ha="center",va="center",color="white",fontweight="bold")
+ax.set_title("추론용 AI: 단일 메모리가 아닌 계층 조합",loc="left",color=ACC,fontweight="bold",pad=16)
+fig.colorbar(im,ax=ax,fraction=.035,pad=.03,label="정성 점수 (1~5)")
+plt.tight_layout(); plt.show()
+```
+
+## 10월에 확인할 항목
+
+1. 메모리 ASP 상승이 고객의 서버·PC·모바일 BOM 부담으로 전가되는지 확인한다.
+2. HBM 공급 확대가 첨단 패키징 병목을 얼마나 완화하는지, 실제 양산·수율 지표를 우선 확인한다.
+3. Amkor Arizona 계획은 고객 약정이 실매출·가동률로 전환되는 시점과 투자 집행을 분리해 본다.
+4. HBF·PIM·SALT-KV는 시연과 상용 고객 채택을 구분해 점검한다.
+
+# 출처와 재현 기준
+
+공개 접근 가능한 공식 출처와 시장조사기관 공개자료 **7개**를 사용했다. 유료 리포트 전문, 비공개 IR, 계좌·개인정보, 실시간 주가 데이터는 사용하지 않았다.
+
+- [Omdia, Global semiconductor revenue surges 31% to record $425bn in 2Q26, 2026-09-14](https://omdia.tech.informa.com/pr/2026/sep/global-semiconductor-revenue-surges-31percent-to-record-425bn-dollars-in-2q26)
+- [Micron, FY26 Q3 results, 2026-06-24](https://investors.micron.com/financials/quarterly-results/default.aspx)
+- [Micron FY26 Q3 Exhibit 99.1 filed with the SEC, 2026-06-24](https://www.sec.gov/Archives/edgar/data/723125/000072312526000013/a2026q3ex991-pressrelease.htm)
+- [SK hynix, AI Infra Summit 2026, 2026-09-17](https://news.skhynix.com/en/ai-infra-summit-2026/)
+- [Amkor, 2Q26 financial results, 2026-07-27](https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026)
+- [Amkor, Arizona advanced packaging campus Phase 2, 2026-09-08](https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-phase-2-arizona-advanced-packaging)
+- [TSMC and Amkor, long-term advanced packaging partnership, 2026-06-16](https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership)
+
+수치는 위 출처의 공개값을 문서 안에 고정해 재현했다. 아래 차트의 정성 점수는 시장 규모나 투자 의견이 아니라, 공개 기술 설명을 비교하기 위한 Alpha Hunter의 분석 프레임이다.
