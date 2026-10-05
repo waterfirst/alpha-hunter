@@ -29,7 +29,7 @@ execute:
 ```{python}
 import pandas as pd, numpy as np, matplotlib.pyplot as plt
 plt.style.use("dark_background")
-plt.rcParams["font.family"] = "Noto Sans CJK KR"
+plt.rcParams["font.family"] = ["Noto Sans CJK KR","NanumBarunGothic","DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 ACC, BLUE, GREEN, RED, PURPLE, MUTED, BG = "#f59e0b", "#3b82f6", "#22c55e", "#ef4444", "#a855f7", "#94a3b8", "#111122"
 def finish(ax, title, sub=""):
@@ -118,16 +118,106 @@ fig.colorbar(im,ax=ax,fraction=.035,pad=.03,label="정성 점수 (1~5)")
 plt.tight_layout(); plt.show()
 ```
 
+# 집중 분석 — 중국 반도체: 메모리 슈퍼사이클의 '두 번째 공급자'
+
+::: {.callout-note}
+## 2026-10-06 추가
+이 절은 10월 6일 덧붙였다. 데이터 기준일은 본문과 같은 **2026년 9월 30일**이며, 사용한 수치는 모두 9월 23일 이전에 공개된 공시·보도다.
+:::
+
+요약하면, 2026년 상반기 중국 반도체의 이익 급증은 **메모리 가격**이 대부분을 만들었다. ijiwei 집계를 인용한 TrendForce에 따르면 A주 상장 반도체 186개사의 1H26 지배주주 순이익 합계는 1,605억 위안으로 전년 대비 607% 늘었다. 매출 상위 10개사 중 6곳, 순이익 상위 10개사 중 5곳이 메모리 공급망 기업이다. 본문의 주제인 "메모리 → 패키징 → 장비"로 이어지는 병목 이동은 중국 안에서도 같은 순서로 나타나고 있다.
+
+```{python}
+#| label: fig-china-rev
+#| fig-cap: "그림 5. 2026년 상반기 중국 반도체 주요 기업 매출(억 위안). 출처: TrendForce(ijiwei 집계, 2026-09-23), JCET·AMEC·Cambricon 1H26 공시 보도. YMTC(모회사 CCSH)는 미상장이라 상반기 수치가 없어 1분기 매출(470억 위안, Caixin)을 따로 표시했다."
+cn=pd.DataFrame({"기업":["CXMT\n(DRAM)","SMIC\n(파운드리)","Naura\n(장비)","JCET\n(패키징)","AMEC\n(식각 장비)","Cambricon\n(AI 칩)"],
+                 "매출":[1503.1,386.4,201.6,195.3,66.9,60.0],
+                 "성장":[873.6,19.4,24.9,5.0,34.9,108.0]})
+fig,ax=plt.subplots(figsize=(10,5.2))
+cols=[PURPLE,BLUE,GREEN,ACC,GREEN,RED]
+ax.bar(cn["기업"],cn["매출"],color=cols)
+for i,(v,g) in enumerate(zip(cn["매출"],cn["성장"])):
+    ax.text(i,v+30,f"{v:,.0f}억\n(전년比 +{g:.1f}%)",ha="center",fontsize=9,fontweight="bold")
+ax.set_ylim(0,1800); ax.set_ylabel("1H26 매출 (억 위안)")
+ax.text(5.45,1500,"참고: YMTC 1Q26 매출 470억 위안\n(1개 분기만으로 SMIC 상반기를 넘음)",ha="right",fontsize=9,color=MUTED)
+finish(ax,"중국 반도체 1H26 매출 — 메모리가 압도","CXMT 한 곳이 나머지 다섯 곳 합계의 1.7배")
+plt.tight_layout(); plt.show()
+```
+
+## 기업분석 3 — CXMT(창신메모리): 중국 DRAM의 유일한 IDM
+
+- **실적**: 1H26 매출 1,503억 위안(+873.6%), 지배주주 순이익 776억 위안. A주 반도체 전체에서 매출·이익 모두 1위다(TrendForce).
+- **상장**: 7월 27일 상하이 과창판(STAR) 상장. 공모가 8.66위안, 첫날 장중 주가가 공모가의 6배를 넘으며 시가총액 3.66조 위안으로 본토 상장사 1위에 올랐다(TechNode). 조달액은 보도에 따라 579억~666억 위안으로 다르다.
+- **기술**: 9월 20일 5세대 DRAM 플랫폼 'G5' 양산을 발표했다. 웨이퍼당 다이 수를 직전 세대보다 50% 이상 늘렸고, 24Gb LPDDR5X 두 종을 공개했다. LPDDR6 샘플은 고객에게 이미 공급됐다.
+- **분석 포인트**: 이익의 대부분은 가격 효과다. 메모리 가격이 꺾이면 가장 먼저, 가장 크게 흔들릴 곳이다. HBM 양산 여부는 이번 공개 자료로 확인되지 않아 판단하지 않는다.
+
+## 기업분석 4 — YMTC(창장메모리): 출하 점유율과 매출 점유율의 차이
+
+- **실적**: 모회사 CCSH의 1Q26 매출 470억 위안, 순이익 334억 위안. 한 분기 매출이 2024년 연간을 넘었다(Caixin).
+- **상장**: 8월 21일 과창판 상장 신청이 접수됐다. 목표 조달액은 330억 위안이다.
+- **위치**: Counterpoint 추정으로 2Q26 세계 NAND 출하 점유율 14%, 3위다. 반면 매출 순위는 그보다 낮다. 제품 구성이 고가 데이터센터 eSSD보다 소비자용에 치우쳐 있기 때문이다.
+- **분석 포인트**: 본문 그림 4의 'eSSD·HBF' 계층에서 YMTC가 실제 경쟁자가 되려면 출하량이 아니라 **기업용 비중**이 늘어야 한다. 2022년 말부터 미국 엔티티 리스트에 올라 있어 첨단 장비 조달이 막혀 있다는 점도 그대로다. 3기 라인은 연말 가동이 목표다.
+
+## 기업분석 5 — SMIC·Hua Hong: AI 수요가 파운드리 마진을 끌어올렸다
+
+```{python}
+#| label: fig-china-foundry
+#| fig-cap: "그림 6. SMIC·Hua Hong 분기 매출총이익률(%). 출처: SMIC 2Q26 실적 발표(가이던스 26~28%), Hua Hong 2Q26 실적 발표. Hua Hong의 2Q25·1Q26 값은 2Q26 발표의 증감폭(전년 +5.6%p, 전 분기 +3.5%p)으로 역산했다."
+q=["2Q25","1Q26","2Q26","3Q26 가이던스"]
+smic=[20.4,20.1,25.3,27.0]; hh=[10.9,13.0,16.5,np.nan]
+fig,ax=plt.subplots(figsize=(9,4.6))
+ax.plot(q,smic,"o-",color=BLUE,lw=2.5,label="SMIC")
+ax.errorbar([3],[27.0],yerr=[[1.0],[1.0]],fmt="none",ecolor=BLUE,capsize=6)
+ax.plot(q[:3],hh[:3],"s-",color=ACC,lw=2.5,label="Hua Hong")
+for x,y in zip(q,smic): ax.text(x,y+1,f"{y:.1f}",ha="center",color=BLUE,fontsize=9)
+for x,y in zip(q[:3],hh[:3]): ax.text(x,y-2.2,f"{y:.1f}",ha="center",color=ACC,fontsize=9)
+ax.set_ylim(5,32); ax.set_ylabel("매출총이익률 (%)"); ax.legend(frameon=False)
+finish(ax,"중국 파운드리 마진 반등","SMIC 3Q26 가이던스는 26~28% 구간(가운데 27%로 표시)")
+plt.tight_layout(); plt.show()
+```
+
+- **SMIC**: 2Q26 매출 30.06억 달러로 처음 분기 30억 달러를 넘었다(전 분기 +20.0%, 전년 +36.1%). 매출총이익률 25.3%, 가동률 93.7%. 3Q26 가이던스는 매출 +2~4%, 매출총이익률 26~28%다. 위안화 기준 1H26 매출은 386억 위안(+19.4%)이다.
+- **Hua Hong**: 2Q26 매출 7.175억 달러(+26.8%), 매출총이익률 16.5%, 지배주주 순이익은 전년 대비 약 4.9배다.
+- **분석 포인트**: 두 회사 모두 '가격 인상 + 가동률 유지'로 마진을 회복했다. 다만 SMIC는 최첨단 공정 장비 조달 제약이 그대로라, 이 마진 개선을 **AI 동반 칩(전력·인터페이스 등) 수요**와 **선단 공정 생산 능력**으로 나눠 봐야 한다.
+
+## 기업분석 6 — Naura·AMEC: 국산화의 실적화
+
+- **Naura**: 1H26 매출 201.6억 위안(+24.9%). 식각·박막증착 장비 출하가 늘었다.
+- **AMEC**: 1H26 매출 약 66.9억 위안(+34.9%), 지배주주 순이익 28.3억 위안(+300.2%). 다만 이익에는 Piotech 지분 일부 매각으로 생긴 약 9.5억 위안의 투자이익이 들어 있다. 이를 빼면 증가율은 크게 낮아진다.
+- **분석 포인트**: 장비 국산화는 이제 '정책 기대'가 아니라 매출로 확인되는 단계다. 반면 AMEC 사례처럼 일회성 이익이 섞인 헤드라인 증가율은 걸러서 봐야 한다.
+
+## 기업분석 7 — JCET·Tongfu: 중국판 첨단 패키징 증설
+
+- **JCET**: 1H26 매출 195.3억 위안(+5.0%, 상반기 기준 최대), 지배주주 순이익 8.4억 위안(+79.4%). 컴퓨팅 전자 매출이 40.4% 늘었고, 6월에 상하이 첨단 패키징 공장에 78억 위안 투자를 발표했다.
+- **업계**: 상반기에 JCET·Tongfu·Huatian·Forehope 4개사가 발표한 첨단 패키징 증설 투자가 합계 270억 위안을 넘었다.
+- **분석 포인트**: 본문의 Amkor 분석과 같은 기준이 적용된다. 수요는 이미 확인됐고, 관건은 **증설이 실제 가동률·매출로 전환되는 순서**다. 매출 증가율(+5.0%)과 이익 증가율(+79.4%)의 차이는 제품 구성이 고부가 쪽으로 옮겨 가고 있다는 신호로 읽힌다.
+
+## 기업분석 8 — Cambricon: 국산 AI 칩 수요의 온도계
+
+- 1H26 매출 59.96억 위안(+108%), 순이익 23억 위안(+122.6%).
+- 수출 통제로 엔비디아 고성능 GPU의 중국 판매가 제한되는 동안, 국산 AI 칩 수요가 이 회사 실적으로 모이고 있다. 그 수요는 다시 SMIC 생산 능력과 JCET·Tongfu 패키징으로 이어진다.
+
+## 중국 반도체 종합 — 병목은 같은 순서로 이동한다
+
+1. **이익은 메모리가 만든다.** CXMT·YMTC의 이익이 업종 전체를 끌어올렸다. 메모리 가격이 반락하면 업종 이익도 가장 크게 흔들린다.
+2. **AI 수요는 파운드리 마진으로 번지고 있다.** SMIC 25.3%, Hua Hong 16.5%로 마진이 회복됐다.
+3. **다음 병목은 패키징과 장비다.** 4대 패키징 업체의 270억 위안 증설, Naura·AMEC의 매출 증가가 그 방향을 보여 준다.
+4. **위험**: 미국 수출 통제(엔티티 리스트·장비 조달), 메모리 가격 사이클, 상장 직후 높은 밸류에이션, 일회성 이익이 섞인 헤드라인 수치.
+
 ## 10월에 확인할 항목
 
 1. 메모리 ASP 상승이 고객의 서버·PC·모바일 BOM 부담으로 전가되는지 확인한다.
 2. HBM 공급 확대가 첨단 패키징 병목을 얼마나 완화하는지, 실제 양산·수율 지표를 우선 확인한다.
 3. Amkor Arizona 계획은 고객 약정이 실매출·가동률로 전환되는 시점과 투자 집행을 분리해 본다.
 4. HBF·PIM·SALT-KV는 시연과 상용 고객 채택을 구분해 점검한다.
+5. CXMT의 G5 양산이 출하량·이익률로 확인되는지, HBM 관련 공시가 나오는지 본다.
+6. YMTC(CCSH) 과창판 심사 진행과 기업용 eSSD 비중 변화를 확인한다.
+7. SMIC 3Q26 실적이 가이던스(매출 +2~4%, 매출총이익률 26~28%) 안에 드는지 확인한다.
+8. 중국 4대 패키징 업체의 증설이 가동률·매출로 전환되는 시점을 Amkor와 같은 기준으로 비교한다.
 
 # 출처와 재현 기준
 
-공개 접근 가능한 공식 출처와 시장조사기관 공개자료 **7개**를 사용했다. 유료 리포트 전문, 비공개 IR, 계좌·개인정보, 실시간 주가 데이터는 사용하지 않았다.
+공개 접근 가능한 공식 출처와 시장조사기관 공개자료 **7개**를 사용했고, 10월 6일 중국 반도체 절을 추가하며 공시 보도·시장조사기관 자료 **10개**를 더했다. 유료 리포트 전문, 비공개 IR, 계좌·개인정보, 실시간 주가 데이터는 사용하지 않았다.
 
 - [Omdia, Global semiconductor revenue surges 31% to record $425bn in 2Q26, 2026-09-14](https://omdia.tech.informa.com/pr/2026/sep/global-semiconductor-revenue-surges-31percent-to-record-425bn-dollars-in-2q26)
 - [Micron, FY26 Q3 results, 2026-06-24](https://investors.micron.com/financials/quarterly-results/default.aspx)
@@ -136,5 +226,18 @@ plt.tight_layout(); plt.show()
 - [Amkor, 2Q26 financial results, 2026-07-27](https://ir.amkor.com/news-releases/news-release-details/amkor-technology-reports-financial-results-second-quarter-2026)
 - [Amkor, Arizona advanced packaging campus Phase 2, 2026-09-08](https://ir.amkor.com/news-releases/news-release-details/amkor-technology-announces-phase-2-arizona-advanced-packaging)
 - [TSMC and Amkor, long-term advanced packaging partnership, 2026-06-16](https://ir.amkor.com/news-releases/news-release-details/tsmc-and-amkor-technology-announce-long-term-partnership)
+
+**중국 반도체 절 (2026-10-06 추가)**
+
+- [TrendForce, China's A-share semiconductor profit jumps 607% YoY in 1H26, 2026-09-23](https://www.trendforce.com/news/2026/09/23/news-chinas-a-share-semiconductor-profit-jumps-607-yoy-in-1h26-cxmt-tops-both-revenue-and-profit-rankings/)
+- [TechNode, CXMT becomes China's most valuable A-share company after IPO, 2026-07-27](https://technode.com/2026/07/27/cxmt-becomes-chinas-most-valuable-a-share-company-after-8-6-billion-ipo/)
+- [Caixin Global, YMTC parent files for $4.9 billion IPO, 2026-08-24](https://www.caixinglobal.com/2026-08-24/chinese-memory-chipmaker-ymtc-parent-files-for-49-billion-ipo-102477468.html)
+- [AnySilicon, SMIC Q2 2026 revenue surpasses $3 billion](https://anysilicon.com/news/smic-q2-2026-revenue-surpasses-3-billion-as-ai-demand-tightens-foundry-capacity/)
+- [Investing.com, Hua Hong Grace Q2 2026 earnings call transcript](https://www.investing.com/news/transcripts/earnings-call-transcript-hua-hong-grace-posts-record-q2-2026-revenue-stock-rises-3-93CH-4857209)
+- [PR Newswire, JCET H1 2026 results, 2026-08-21](https://www.prnewswire.com/news-releases/jcet-reports-794-yoy-growth-in-h1-2026-net-profit-attributable-to-shareholders-accelerates-advanced-packaging-expansion-302856590.html)
+- [DIGITIMES, JCET profit surges 79% on AI demand, 2026-08-21](https://www.digitimes.com/news/a20260821VL209/packaging-demand-jcet-profit-revenue.html)
+- [SCMP, AMEC first-half profit to nearly quadruple](https://www.scmp.com/tech/tech-trends/article/3362918/chinese-chip-tool-maker-amec-says-first-half-profit-nearly-quadruple-amid-soaring-demand)
+- [TrendForce, Cambricon 1H26 net profit surges 123%, 2026-08-11](https://www.trendforce.com/news/2026/08/11/news-china-ai-chip-maker-cambricons-1h26-net-profit-surges-123-moore-threads-eyes-hong-kong-listing/)
+- [BigGo Finance, Four Chinese packaging leaders pour over 27 billion yuan into expansion](https://finance.biggo.com/news/68c850c2-737e-4e7d-96d7-579f7e5e6a85)
 
 수치는 위 출처의 공개값을 문서 안에 고정해 재현했다. 아래 차트의 정성 점수는 시장 규모나 투자 의견이 아니라, 공개 기술 설명을 비교하기 위한 Alpha Hunter의 분석 프레임이다.
