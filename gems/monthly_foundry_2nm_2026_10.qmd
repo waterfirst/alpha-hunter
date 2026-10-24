@@ -1,0 +1,164 @@
+---
+title: "2026년 10월 월간 기업·산업 분석"
+subtitle: "TSMC 3분기 — 2나노 양산과 AI 파운드리 병목의 실적화"
+author: "Alpha Hunter"
+date: "2026-10-25"
+lang: ko
+jupyter: python3
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+execute:
+  echo: false
+  warning: false
+---
+
+::: {.callout-warning}
+## 연구 목적 고지
+이 글은 공개 공시·기업 IR·실적 발표·증권사 공개 리서치·시장조사기관 공개자료를 바탕으로 한 **정보·연구 목적**의 기업·산업 분석이다. **투자자문이나 특정 증권의 매수·매도·보유 권유가 아니다.** 데이터 기준일은 **2026년 10월 25일**이며, 이후 발표·가격은 반영하지 않았다.
+:::
+
+```{python}
+import pandas as pd, numpy as np, matplotlib.pyplot as plt
+plt.style.use("dark_background")
+plt.rcParams["font.family"] = ["Noto Sans CJK KR","NanumBarunGothic","DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+ACC, BLUE, GREEN, RED, PURPLE, MUTED, BG = "#f59e0b", "#3b82f6", "#22c55e", "#ef4444", "#a855f7", "#94a3b8", "#111122"
+def finish(ax, title, sub=""):
+    ax.set_facecolor(BG); ax.set_title(title, loc="left", color=ACC, fontweight="bold", fontsize=15, pad=16)
+    if sub: ax.text(0, 1.02, sub, transform=ax.transAxes, color=MUTED, fontsize=9)
+    ax.grid(alpha=.18); ax.spines[["top","right"]].set_visible(False)
+def barlabels(ax, fmt="{:.1f}"):
+    top=ax.get_ylim()[1]
+    for p in ax.patches:
+        ax.text(p.get_x()+p.get_width()/2, p.get_height()+top*.025, fmt.format(p.get_height()), ha="center", fontsize=9, fontweight="bold")
+```
+
+# 월간 결론
+
+10월의 핵심은 AI 반도체 수요가 **TSMC의 매출 성장, HPC 비중, 2나노 매출, 4분기 가이던스**로 동시에 확인됐다는 점이다. 3분기 매출은 `NT$1.494조`로 전년 대비 `+50.9%`, 순이익은 `NT$7,631억`으로 `+68.7%` 증가했다. 달러 매출 `$46.72B`는 종전 가이던스 상단 `$45.8B`를 웃돌았다.
+
+다만 성장과 위험은 같은 곳에 있다. HPC가 매출의 `68%`, 7나노 이하 선단공정이 웨이퍼 매출의 `79%`를 차지했다. AI 가속기와 선단공정 수요가 강할수록 고객·제품 집중, 막대한 설비투자, 해외 팹 비용, 지정학적 노출도 함께 커진다.
+
+| 10월 체크포인트 | 확인치 | Alpha Hunter 해석 |
+|---|---:|---|
+| 3Q26 매출 | NT$1,494.24B / US$46.72B | 가이던스 상단을 넘은 선단공정 수요 |
+| 3Q26 순이익 | NT$763.06B, YoY +68.7% | 매출 증가보다 큰 이익 레버리지 |
+| 매출총이익률 / 영업이익률 | 66.4% / 58.7% | 초기 2나노 비용에도 높은 수익성 |
+| 2나노 웨이퍼 매출 비중 | 8% | 양산 램프가 이미 손익계산서에 반영 |
+| HPC 매출 비중 | 68%, QoQ +22% | AI·고성능컴퓨팅이 성장축 |
+| 4Q26 매출 가이던스 | US$52.3~54.3B | 중간값 기준 QoQ 약 +14% |
+
+```{python}
+#| label: fig-revenue-profit
+#| lightbox: true
+#| fig-cap: "그림 1. TSMC 3Q26 핵심 실적. 출처: TSMC 3Q26 Earnings Release 및 SEC 6-K."
+df=pd.DataFrame({"지표":["매출","순이익"],"3Q25":[989.918,452.302],"3Q26":[1494.243,763.064]})
+x=np.arange(2); w=.34
+fig,ax=plt.subplots(figsize=(9,4.8)); ax.bar(x-w/2,df["3Q25"],w,label="3Q25",color=MUTED); ax.bar(x+w/2,df["3Q26"],w,label="3Q26",color=ACC)
+ax.set_xticks(x,df["지표"]); ax.set_ylabel("십억 대만달러"); ax.legend(frameon=False)
+for i,v in enumerate(df["3Q26"]): ax.text(i+w/2,v+35,f"{v:,.0f}",ha="center",fontweight="bold")
+finish(ax,"TSMC: 매출 +50.9%, 순이익 +68.7%","동일 분기 전년 대비; TIFRS 연결 기준")
+plt.tight_layout(); plt.show()
+```
+
+# 기업분석 — TSMC
+
+## 실적: 성장률보다 중요한 믹스
+
+3분기 달러 매출은 전년 대비 `41.2%`, 전분기 대비 `16.2%` 증가했다. 매출총이익률 `66.4%`, 영업이익률 `58.7%`, 순이익률 `51.1%`다. 2나노 초기 양산 비용으로 매출총이익률은 2분기 `67.7%`보다 낮아졌지만, 선단공정 믹스와 가동률이 높은 수익성을 지켰다.
+
+플랫폼별로 HPC 매출은 전분기 대비 `22%` 늘어 전체의 `68%`를 차지했다. 스마트폰은 `+10%`, IoT는 `+5%`였다. 실적의 질은 범용 회복보다 **AI/HPC와 선단공정의 결합**에 가깝다.
+
+```{python}
+#| label: fig-platform
+#| lightbox: true
+#| fig-cap: "그림 2. TSMC 3Q26 플랫폼별 웨이퍼 매출 비중. 출처: TSMC 3Q26 Presentation."
+p=pd.Series({"HPC":68,"스마트폰":22,"IoT":4,"자동차":3,"소비자":1,"기타":2})
+fig,ax=plt.subplots(figsize=(9,4.8)); ax.bar(p.index,p.values,color=[ACC,BLUE,PURPLE,GREEN,MUTED,"#64748b"])
+barlabels(ax,"{:.0f}%"); ax.set_ylabel("매출 비중 (%)"); finish(ax,"HPC가 매출의 68%","AI 가속기·CPU·네트워킹을 포함한 회사 플랫폼 분류")
+plt.tight_layout(); plt.show()
+```
+
+## 2나노: 기술 발표가 아니라 매출 항목
+
+2나노는 2분기 웨이퍼 매출의 `3%`에서 3분기 `8%`로 확대됐다. 3나노 `33%`, 5나노 `28%`, 7나노 `10%`를 합치면 7나노 이하가 `79%`다. 4분기 회사 가이던스는 매출 `$52.3~54.3B`, 매출총이익률 `65~67%`, 영업이익률 `56.5~58.5%`다. 중간값은 3분기 대비 매출 약 `14.1%` 증가를 뜻한다.
+
+```{python}
+#| label: fig-node
+#| lightbox: true
+#| fig-cap: "그림 3. TSMC 3Q26 공정별 웨이퍼 매출 비중. 출처: TSMC 3Q26 Presentation."
+node=pd.Series({"2nm":8,"3nm":33,"5nm":28,"7nm":10,"16nm+":21})
+fig,ax=plt.subplots(figsize=(9,4.8)); ax.bar(node.index,node.values,color=[GREEN,ACC,BLUE,PURPLE,MUTED])
+barlabels(ax,"{:.0f}%"); ax.set_ylabel("웨이퍼 매출 비중 (%)"); finish(ax,"선단공정(7nm 이하) 비중 79%","2nm 비중은 2Q26 3%에서 3Q26 8%로 상승")
+plt.tight_layout(); plt.show()
+```
+
+## 증권사 시각: 숫자는 참고하되 목표가는 분리
+
+KGI Singapore는 10월 19일 공개 노트에서 3분기 매출이 시장 예상보다 약 `$1.10B` 높았고, 회사가 2026년 달러 매출 성장률 전망을 약 `44%`로 높였다고 정리했다. 의견은 긍정적이지만, 이 저널은 목표가나 매매 의견을 채택하지 않는다. 증권사 해석은 공식 실적과 가이던스를 읽는 보조자료로만 사용했다.
+
+# 산업분석 — 파운드리의 병목이 넓어진다
+
+## 선단공정: 2나노 램프와 설비투자
+
+TSMC의 3분기 자본지출은 `NT$443.21B`였다. 높은 선단공정 수요는 매출을 끌어올리는 동시에 현금 집행과 감가상각을 늘린다. 4분기 매출 가이던스의 상승과 마진 가이던스의 정체는 이 두 힘이 동시에 작동함을 보여준다.
+
+```{python}
+#| label: fig-guidance
+#| lightbox: true
+#| fig-cap: "그림 4. TSMC 분기 달러 매출과 4Q26 가이던스. 출처: TSMC 3Q26 Earnings Release. 4Q는 범위와 중간값."
+q=["2Q26","3Q26","4Q26E"]; rev=[40.2,46.72,53.3]
+fig,ax=plt.subplots(figsize=(9,4.8)); ax.bar(q,rev,color=[BLUE,ACC,GREEN]); ax.errorbar(2,53.3,yerr=[[1.0],[1.0]],fmt="none",ecolor="white",capsize=8,lw=2)
+barlabels(ax,"${:.1f}B"); ax.set_ylabel("십억 달러"); finish(ax,"4분기도 선단공정 수요가 성장을 지지","4Q26 회사 가이던스 $52.3~54.3B; 막대는 중간값")
+plt.tight_layout(); plt.show()
+```
+
+## 첨단패키징·실리콘포토닉스: 후공정까지 이어지는 공급 제약
+
+TrendForce의 10월 5일 파운드리 업데이트는 TSMC가 일부 성숙공정 설비를 CoWoS 인터포저와 실리콘포토닉스에 활용하는 흐름을 짚었다. 이는 AI 칩 병목이 전공정 미세화 하나로 끝나지 않고 **인터포저·패키징·광연결**로 넓어진다는 뜻이다. 다만 해당 자료의 세부 시장 규모는 유료 영역이므로, 공개 요약을 넘어선 수치를 추정하지 않았다.
+
+메모리 쪽에서도 같은 방향이 보인다. TrendForce는 4분기 일반 DRAM 계약가격 `+10~15% QoQ`, NAND Flash `+15~20%`를 전망했고, 기업용 SSD의 2026년 비트 수요가 `80% 이상` 늘 것으로 봤다. AI 시스템의 병목은 파운드리 웨이퍼, HBM, 기업용 SSD, 패키징·테스트가 연결된 **공급망 전체의 처리량** 문제다.
+
+## 위험 지도
+
+| 위험 | 확인 신호 | 다음 점검 |
+|---|---|---|
+| AI/HPC 집중 | HPC 매출 비중 68% | 고객별 주문 조정과 가속기 세대 전환 |
+| 2나노 초기 비용 | 2nm 비중 8%, GM 66.4% | 4Q GM 가이던스 65~67% 달성 여부 |
+| 설비투자·감가상각 | 3Q CapEx NT$443.21B | 2027년 가동률과 해외 팹 희석 효과 |
+| 공급망 병목 이동 | CoWoS·SiPh·eSSD 수요 | 패키징 증설이 실제 출하로 전환되는 속도 |
+| 지정학 | 대만 생산 집중과 해외 증설 | 지역별 원가·보조금·수출통제 변화 |
+| 수요의 비대칭 | AI 강세, 소비자 수요 압박 | 스마트폰·PC 재고와 메모리 가격 전가 |
+
+# 11월에 확인할 항목
+
+1. TSMC 10월 월매출에서 4분기 가이던스 진입 속도를 확인한다.
+2. 2나노 매출 비중 상승과 매출총이익률 희석 폭을 함께 본다.
+3. CoWoS·실리콘포토닉스 증설 발표와 실제 가동 시점을 구분한다.
+4. 기업용 SSD 강세가 파운드리·컨트롤러·패키징 매출로 전이되는지 확인한다.
+5. SK hynix 3분기 실적은 10월 28일 발표 예정이므로 이번 기준일에는 추정하지 않았다. 발표 후 메모리 공급망 숫자를 후속 점검한다.
+
+# 출처와 재현 기준
+
+공개 접근 가능한 공식 IR·공시·시장조사기관·증권사 자료 **8개**를 사용했다. 유료 리포트 전문, 비공개 IR, 실시간 계좌·개인정보는 사용하지 않았다.
+
+- [TSMC, 3Q26 Earnings Release, 2026-10-15](https://investor.tsmc.com/english/quarterly-results/2026/q3)
+- [TSMC, 3Q26 Presentation, 2026-10-15](https://investor.tsmc.com/english/quarterly-results/2026/q3)
+- [TSMC, 3Q26 Earnings Call Transcript, 2026-10-15](https://investor.tsmc.com/english/quarterly-results/2026/q3)
+- [SEC, TSMC 3Q26 results Exhibit 99.1 / Form 6-K, 2026-10-15](https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/a3q26e_withguidancexfinal.htm)
+- [TSMC, September 2026 Monthly Revenue, 2026-10-08](https://investor.tsmc.com/english/monthly-revenue/2026)
+- [TrendForce, Foundry Market Bulletin public summary, 2026-10-05](https://www.trendforce.com/research/download/RP261005QL3)
+- [TrendForce, AI Server Demand Sustains Memory Contract Price Increases in 4Q26, 2026-09-30](https://www.trendforce.com/presscenter/news/20260930-13258.html)
+- [KGI Singapore Research, Technical Analysis, 2026-10-19](https://www.kgieworld.sg/research/technical-analysis-19-october-2026/)
+
+차트는 위 공개값을 문서 안에 고정해 재현했다. 시장 전망과 회사 가이던스는 실적이 아니며, 전망치에는 `E` 또는 범위를 표시했다.

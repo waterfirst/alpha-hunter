@@ -192,6 +192,11 @@ function toggleTheme(){const t=document.body.getAttribute('data-theme');document
 const _sv=localStorage.getItem('ah-theme');if(_sv==='light'){document.body.setAttribute('data-theme','light');document.getElementById('themeBtn').textContent='☀️'}
 
 const CARDS=[
+  {cat:'tech',href:'gems/monthly_foundry_2nm_2026_10.html',date:'2026.10.25',
+   tags:[{c:'t-new',l:'NEW'},{c:'t-sector',l:'Monthly'},{c:'t-tech',l:'Foundry'}],
+   title:'2026년 10월 월간 기업·산업 분석 — TSMC 3분기와 2나노 양산',
+   sub:'TSMC 3Q26 매출 NT$1.494조·순이익 NT$7,631억 | 2nm 매출 비중 8%·HPC 68% | 파운드리·CoWoS·실리콘포토닉스·기업용 SSD 병목 지도',
+   perf:{t:'정보·연구 목적 — 투자자문 아님',type:'down'}},
   {cat:'tech',href:'gems/monthly_ai_memory_packaging_2026_09.html',date:'2026.09.30',
    tags:[{c:'t-new',l:'NEW'},{c:'t-sector',l:'Monthly'},{c:'t-tech',l:'AI Memory'}],
    title:'2026년 9월 월간 기업·산업 분석 — AI 메모리의 다음 병목',
