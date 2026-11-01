@@ -1,0 +1,100 @@
+---
+title: "삼성디스플레이 분기 실적 7분기 — 2025년 1분기~2026년 3분기"
+subtitle: "Alpha Hunter Sector Journal | 매출은 바닥을 지나 회복, 영업이익은 2025년 4분기 정점 이후 다시 올라오는 중"
+author: "Alpha Hunter"
+date: "2026-11-01"
+lang: ko
+format:
+  html:
+    theme:
+      dark: darkly
+      light: flatly
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    smooth-scroll: true
+    embed-resources: true
+    lightbox: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## 핵심 요약
+
+1. **2026년 3분기 매출 8.0조 원, 영업이익 1.1조 원.** 2025년 3분기와 비교하면 매출은 1% 줄었고 영업이익은 여전히 낮다.
+2. **2025년 4분기가 7분기 중 최고점이다.** 매출 9.5조 원, 영업이익 2.0조 원을 기록했다.
+3. **2026년 1분기에 바닥을 찍고 2, 3분기에 회복했다.** 매출은 6.7조 → 7.5조 → 8.0조 원, 영업이익은 0.4조 → 0.7조 → 1.1조 원으로 늘었다.
+4. **연간으로는 2025년이 2024년보다 좋았다.** 매출 29.8조 원(+2%), 영업이익 4.1조 원(+11%)이다.
+
+## 1. 분기별 실적
+
+| 분기 | 매출 (조 원) | 영업이익 (조 원) | 전분기 대비 매출 |
+|---|---:|---:|---:|
+| 2025년 1Q | 5.9 | 0.5 | — |
+| 2025년 2Q | 6.4 | 0.5 | +8% |
+| 2025년 3Q | 8.1 | 1.2 | +27% |
+| 2025년 4Q | 9.5 | 2.0 | +17% |
+| 2026년 1Q | 6.7 | 0.4 | -29% |
+| 2026년 2Q | 7.5 | 0.7 | +12% |
+| 2026년 3Q | 8.0 | 1.1 | +7% |
+
+전분기 대비 매출 증감은 표에 적은 분기 매출을 기준으로 계산했다. 원자료 반올림 때문에 실제 증감률과 조금 다를 수 있다.
+
+## 2. 분기 추이 그래프
+
+```{r}
+#| lightbox: true
+#| fig-width: 9
+#| fig-height: 5
+#| fig-cap: "SDC 분기 매출과 영업이익 (단위: 조 원)"
+library(ggplot2)
+kfont <- "Noto Sans CJK KR"
+
+q_levels <- c("25 1Q", "25 2Q", "25 3Q", "25 4Q", "26 1Q", "26 2Q", "26 3Q")
+d <- data.frame(
+  q = factor(rep(q_levels, 2), levels = q_levels),
+  metric = rep(c("매출", "영업이익"), each = 7),
+  value = c(5.9, 6.4, 8.1, 9.5, 6.7, 7.5, 8.0, 0.5, 0.5, 1.2, 2.0, 0.4, 0.7, 1.1)
+)
+
+ggplot(d, aes(q, value, fill = metric)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  geom_text(aes(label = sprintf("%.1f", value)),
+            position = position_dodge(width = 0.8), vjust = -0.4, size = 3.4, family = kfont) +
+  scale_fill_manual(values = c("매출" = "#1f4e79", "영업이익" = "#f59e0b")) +
+  labs(x = NULL, y = "조 원", fill = NULL) +
+  theme_minimal(base_size = 12, base_family = kfont) +
+  theme(legend.position = "top",
+        panel.grid.minor = element_blank())
+```
+
+## 3. 읽는 법
+
+**2025년 3분기부터 매출과 영업이익이 함께 올라갔고, 4분기에 영업이익이 2.0조 원으로 정점을 찍었다.** 이 표만으로는 2026년 1분기 하락의 원인을 확정할 수 없다. 원인 분해는 분기별 제품 믹스와 원가 자료가 있어야 가능하다.
+
+**2026년은 회복 중이지만 2025년 4분기 수준에는 못 미친다.** 3분기 영업이익 1.1조 원은 2025년 3분기 1.2조 원과 비슷하다. 매출은 2025년 3분기보다 소폭 낮다. 4분기 정점과 비교하면 아직 회복 중이다.
+
+**매출과 영업이익의 움직임이 다르다.** 2026년 1분기 매출은 2025년 4분기보다 29% 줄었지만 영업이익은 80% 가까이 줄었다. 매출이 줄 때 영업이익의 감소폭이 더 크다는 뜻이다. 반대로 2026년 2~3분기에는 매출이 소폭 늘어도 영업이익은 더 크게 늘었다. 원가와 믹스가 같이 개선됐다고 볼 수 있다.
+
+## 4. 확인할 점
+
+1. 부문 매출에는 삼성전자와의 내부 거래가 포함돼 있다. 외부 고객 매출만 분리한 값이 아니다.
+2. 2026년 2분기 전사 실적은 잠정치로 발표됐다. 확정치와 차이가 날 수 있다.
+3. 영업이익률은 이 표에서 따로 계산하지 않았다. 분기별 마진은 삼성디스플레이 2026 Q2·Q3 섹터 리포트의 공식 수치를 따른다.
+4. 외부 리서치 기사(OLED-Info)의 2025년 4분기와 2026년 1분기 달러 환산 수치는 위 원화 금액과 대략 맞는다.
+
+## 5. 원본 자료
+
+- 2026년 3Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2026/2026_3Q_conference_kor.pdf)
+- 2026년 2Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2026/2026_2Q_conference_kor.pdf)
+- 2026년 1Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2026/2026_1Q_conference_kor.pdf)
+- 2025년 4Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2025/2025_4Q_conference_kor.pdf)
+- 2025년 3Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2025/2025_3Q_conference_kor.pdf)
+- 2025년 2Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2025/2025_2Q_conference_kor.pdf)
+- 2025년 1Q: [삼성전자 IR 경영설명회 자료](https://images.samsung.com/kdp/ir/events/2025/2025_1Q_conference_kor.pdf)
+
+---
+
+> 이 프로젝트는 가상 투자 시뮬레이션 목적으로 작성되었습니다. 실제 투자 권유가 아닙니다.
